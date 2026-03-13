@@ -47,6 +47,17 @@
     <color name="md_theme_light_surfaceContainerHigh">#ECE6F0</color>
     <color name="md_theme_light_surfaceContainerHighest">#E6E0E9</color>
 
+    <!-- Semantic colors for settings -->
+    <color name="settings_section_title">@color/md_theme_light_primary</color>
+    <color name="settings_card_background">@color/md_theme_light_surfaceContainerHigh</color>
+    <color name="settings_icon_primary">@color/md_theme_light_primaryContainer</color>
+    <color name="settings_icon_on_primary">@color/md_theme_light_onPrimaryContainer</color>
+    <color name="settings_icon_secondary">@color/md_theme_light_secondaryContainer</color>
+    <color name="settings_icon_on_secondary">@color/md_theme_light_onSecondaryContainer</color>
+    <color name="settings_icon_tertiary">@color/md_theme_light_tertiaryContainer</color>
+    <color name="settings_icon_on_tertiary">@color/md_theme_light_onTertiaryContainer</color>
+    <color name="settings_text_on_surface">@color/md_theme_light_onSurface</color>
+
     <!-- Material Design 3 Color System - Dark Theme -->
     <color name="md_theme_dark_primary">#D0BCFF</color>
     <color name="md_theme_dark_onPrimary">#381E72</color>
@@ -83,4 +94,5 @@
     <color name="md_theme_dark_surfaceContainer">#211F26</color>
     <color name="md_theme_dark_surfaceContainerHigh">#2B2930</color>
     <color name="md_theme_dark_surfaceContainerHighest">#36343B</color>
+
 </resources>
