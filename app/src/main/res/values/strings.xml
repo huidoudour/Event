@@ -14,8 +14,8 @@
     <string name="delete">删除</string>
     <string name="clear_all">清空全部</string>
     <string name="confirm_delete">确认删除</string>
-    <string name="delete_confirmation_message">此操作不可恢复。请输入 "del" 以确认删除。</string>
-    <string name="please_type_del">请输入 "del"</string>
+    <string name="delete_confirmation_message">此操作不可恢复。请输入 "d" 以确认删除。</string>
+    <string name="please_type_del">请输入 "d"</string>
     <string name="confirm_clear">确认清空</string>
     <string name="clear_confirmation_message">此操作将删除所有事件。请输入 "clear" 以确认清空。</string>
     <string name="please_type_clear">请输入 "clear"</string>
@@ -31,4 +31,39 @@
         <item>编辑</item>
         <item>删除</item>
     </string-array>
+
+    <!--  MeActiivity use  -->
+    <string name="hello_world">Hello World</string>
+    <string name="about_description">你保护世界，我保护你</string>
+    <string name="about_developer">亻尔女子，我是 huidoudour（慧兜兜）</string>
+    <string name="visit_github">ω寻找我ω</string>
+        
+    <!-- Settings -->
+    <string name="settings">设置</string>
+    <string name="data_management">数据管理</string>
+    <string name="export_data">导出数据</string>
+    <string name="import_data">导入数据</string>
+    <string name="auto_backup">自动备份</string>
+    <string name="language_settings">语言设置</string>
+    <string name="theme_settings">主题设置</string>
+    <string name="select_language">选择语言</string>
+    <string name="select_theme">选择主题</string>
+    <string name="chinese">中文</string>
+    <string name="english">English</string>
+    <string name="light_theme">浅色主题</string>
+    <string name="dark_theme">深色主题</string>
+    <string name="system_theme">跟随系统</string>
+    <string name="export_success">导出成功</string>
+    <string name="import_success">导入成功</string>
+    <string name="export_failed">导出失败</string>
+    <string name="import_failed">导入失败</string>
+    <string name="no_data_to_export">没有可导出的数据</string>
+    <string name="confirm_import">确认导入</string>
+    <string name="import_warning">导入数据将覆盖当前数据，是否继续？</string>
+    <string name="about">关于</string>
+    <string name="about_app">关于应用</string>
+
+
+
+
 </resources>

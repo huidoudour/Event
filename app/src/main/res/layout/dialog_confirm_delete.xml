@@ -1,47 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="28dp"
-    app:cardElevation="0dp">
+    android:orientation="vertical"
+    android:padding="24dp">
 
+    <!-- Icon and Title Row -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
+        <!-- Icon with error color container -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:cardBackgroundColor="@color/md_theme_light_errorContainer"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@android:drawable/ic_menu_delete"
+                app:tint="@color/md_theme_light_error" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
             android:text="@string/confirm_delete"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/delete_confirmation_message"
-            android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutConfirmInput"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="@string/please_type_del">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editConfirmInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:maxLines="1" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+            android:textAppearance="?attr/textAppearanceHeadlineSmall"
+            android:textColor="@color/md_theme_light_onSurface"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+    <!-- Message -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/delete_confirmation_message"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="@color/md_theme_light_onSurfaceVariant" />
+
+    <!-- Input field -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutConfirmInput"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:hint="@string/please_type_del"
+        app:boxStrokeColor="@color/md_theme_light_outline"
+        app:hintTextColor="@color/md_theme_light_primary">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editConfirmInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColor="@color/md_theme_light_onSurface" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>

@@ -21,8 +21,23 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/transparent"
             app:title="@string/app_name"
-            app:titleCentered="true"
-            style="@style/Widget.Material3.Toolbar" />
+            app:titleCentered="false"
+            style="@style/Widget.Material3.Toolbar">
+            
+            <!-- Settings Button -->
+            <ImageButton
+                android:id="@+id/btnSettings"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_button_circle_ripple"
+                android:contentDescription="@string/settings"
+                android:src="@drawable/ic_settings"
+                android:scaleType="centerInside"
+                android:padding="12dp" />
+            
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -1,8 +1,10 @@
 package me.huidoudour.event.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -34,6 +36,13 @@ public class HomeActivity extends AppCompatActivity {
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        
+        // Add settings button click listener
+        ImageButton btnSettings = findViewById(R.id.btnSettings);
+        btnSettings.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+            startActivity(intent);
+        });
 
         recyclerView = findViewById(R.id.recyclerView);
         emptyView = findViewById(R.id.emptyView);
@@ -161,7 +170,7 @@ public class HomeActivity extends AppCompatActivity {
             .setView(dialogView)
             .setPositiveButton(R.string.delete, (dialog, which) -> {
                 String input = editInput.getText() != null ? editInput.getText().toString().trim() : "";
-                if ("del".equals(input)) {
+                if ("d".equals(input)) {
                     viewModel.deleteEvent(event);
                     Toast.makeText(this, R.string.event_deleted, Toast.LENGTH_SHORT).show();
                 } else {

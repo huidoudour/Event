@@ -57,6 +57,10 @@ public class EventViewModel extends AndroidViewModel {
             repository.deleteAll();
         });
     }
+    
+    public EventRepository getRepository() {
+        return repository;
+    }
 
     public static class Factory implements ViewModelProvider.Factory {
         private final Application application;
@@ -73,6 +77,11 @@ public class EventViewModel extends AndroidViewModel {
                 return (T) new EventViewModel(application);
             }
             throw new IllegalArgumentException("Unknown ViewModel class");
+        }
+        
+        public EventRepository createRepository() {
+            EventDatabase database = EventDatabase.getDatabase(application);
+            return new EventRepository(database.eventDao());
         }
     }
 }
