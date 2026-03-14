@@ -66,6 +66,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+        cache: 'gradle'
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
@@ -86,11 +87,10 @@ jobs:
     - name: Build Signed Release APK
       run: |
         ./gradlew assembleRelease \
-          -Pandroid.injected.signing.store.file=${{ env.SIGN_KEYSTORE_PATH }} \
+          -Pandroid.injected.signing.store.file="${{ env.SIGN_KEYSTORE_PATH }}" \
           -Pandroid.injected.signing.store.password="${{ secrets.SIGN_KEY_STORE_PASSWD }}" \
           -Pandroid.injected.signing.key.alias="${{ secrets.SIGN_KEY_ALIAS }}" \
-          -Pandroid.injected.signing.key.password="${{ secrets.SIGN_KEY_ALIAS_PASSWD }}" \
-          --stacktrace
+          -Pandroid.injected.signing.key.password="${{ secrets.SIGN_KEY_ALIAS_PASSWD }}"
 
     - name: Upload Signed APK as Artifact
       uses: actions/upload-artifact@v4
