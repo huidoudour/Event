@@ -1,0 +1,57 @@
+name: Debug Build
+
+on:
+  schedule:
+    # 每周一 UTC 00:00 运行（北京时间周一 8:00）
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+env:
+  DEBUG_KEYSTORE_PATH: ${{ github.workspace }}/debug_sign_key
+
+jobs:
+  debug-build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'gradle'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Decode Debug Keystore
+      run: |
+        echo "$DEBUG_STORE" | base64 -d > ${{ env.DEBUG_KEYSTORE_PATH }}
+      env:
+        DEBUG_STORE: ${{ secrets.DEBUG_STORE }}
+
+    - name: Build Signed Debug APK
+      run: |
+        ./gradlew assembleDebug \
+          -Pandroid.injected.signing.store.file="${{ env.DEBUG_KEYSTORE_PATH }}" \
+          -Pandroid.injected.signing.store.password="${{ secrets.DEBUG_PASSD }}" \
+          -Pandroid.injected.signing.key.alias="${{ secrets.DEBUG_ALIAS }}" \
+          -Pandroid.injected.signing.key.password="${{ secrets.DEBUG_PASSD }}"
+
+    - name: Upload Signed Debug APK
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: app-signed-debug
+        path: app/build/outputs/apk/debug/app-debug.apk
+        retention-days: 30
+
+    - name: Cleanup Debug Keystore
+      if: always()
+      run: rm -f ${{ env.DEBUG_KEYSTORE_PATH }}

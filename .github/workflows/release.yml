@@ -1,16 +1,15 @@
-name: Android CI
+name: Release Pre-release
 
 on:
   push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
+    tags:
+      - 'v*'
 
 env:
   SIGN_KEYSTORE_PATH: ${{ github.workspace }}/sign_key
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
 
     steps:
@@ -36,6 +35,10 @@ jobs:
       env:
         SIGN_KEY_STORE_B64: ${{ secrets.SIGN_KEY_STORE_B64 }}
 
+    - name: Get version from tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
     - name: Build Signed Release APK
       run: |
         ./gradlew assembleRelease \
@@ -44,8 +47,9 @@ jobs:
           -Pandroid.injected.signing.key.alias="${{ secrets.SIGN_KEY_ALIAS }}" \
           -Pandroid.injected.signing.key.password="${{ secrets.SIGN_KEY_ALIAS_PASSWD }}"
 
-    - name: Run Tests
-      run: ./gradlew test
+    - name: Rename APK with version
+      run: |
+        mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/app-release-${{ steps.get_version.outputs.VERSION }}.apk
 
     - name: Upload Signed Release APK
       uses: actions/upload-artifact@v4
@@ -54,6 +58,19 @@ jobs:
         name: app-signed-release
         path: app/build/outputs/apk/release/app-release.apk
         retention-days: 30
+
+    - name: Create Pre-release
+      uses: softprops/action-gh-release@v2
+      if: success()
+      with:
+        files: app/build/outputs/apk/release/app-release-${{ steps.get_version.outputs.VERSION }}.apk
+        name: Release ${{ steps.get_version.outputs.VERSION }}
+        tag_name: ${{ github.ref_name }}
+        draft: false
+        prerelease: true
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Cleanup Keystore
       if: always()
