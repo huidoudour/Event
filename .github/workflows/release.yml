@@ -56,7 +56,7 @@ jobs:
       if: success()
       with:
         name: app-signed-release
-        path: app/build/outputs/apk/release/app-release.apk
+        path: app/build/outputs/apk/release/app-release-${{ steps.get_version.outputs.VERSION }}.apk
         retention-days: 30
 
     - name: Create Pre-release
@@ -68,7 +68,12 @@ jobs:
         tag_name: ${{ github.ref_name }}
         draft: false
         prerelease: true
-        generate_release_notes: true
+        body: |
+          ## 更新内容
+          - 自动构建的预发布版本
+          
+          ### 安装说明
+          下载并安装 APK 文件即可使用。
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

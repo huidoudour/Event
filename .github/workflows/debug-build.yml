@@ -2,8 +2,9 @@ name: Debug Build
 
 on:
   schedule:
-    # 每周一 UTC 00:00 运行（北京时间周一 8:00）
-    - cron: '0 0 * * 1'
+    # 每三天 UTC 04:00 运行（北京时间 12:00）
+    # 从 2026-03-15 12:00 北京时间开始
+    - cron: '0 4 */3 * *'
   workflow_dispatch:
 
 env:
