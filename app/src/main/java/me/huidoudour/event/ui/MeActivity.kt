@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsControllerCompat
 
 class MeActivity : AppCompatActivity() {
     

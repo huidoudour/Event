@@ -66,6 +66,7 @@ public class EventAdapter extends ListAdapter<Event, EventAdapter.EventViewHolde
         void bind(Event event) {
             textTitle.setText(event.getTitle());
 
+            // 显示描述文本
             if (event.getDescription() != null && !event.getDescription().isEmpty()) {
                 textDescription.setText(event.getDescription());
                 textDescription.setVisibility(View.VISIBLE);

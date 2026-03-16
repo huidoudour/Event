@@ -11,12 +11,14 @@ public class Event {
     private String description;
     private long eventTime;
     private long createdAt;
+    private long updatedAt;
 
     public Event(String title, String description, long eventTime) {
         this.title = title;
         this.description = description;
         this.eventTime = eventTime;
         this.createdAt = System.currentTimeMillis();
+        this.updatedAt = System.currentTimeMillis();
     }
 
     // Getters and Setters
@@ -60,6 +62,14 @@ public class Event {
         this.createdAt = createdAt;
     }
 
+    public long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(long updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -68,12 +78,13 @@ public class Event {
         return id == event.id &&
                eventTime == event.eventTime &&
                createdAt == event.createdAt &&
+               updatedAt == event.updatedAt &&
                java.util.Objects.equals(title, event.title) &&
                java.util.Objects.equals(description, event.description);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(id, title, description, eventTime, createdAt);
+        return java.util.Objects.hash(id, title, description, eventTime, createdAt, updatedAt);
     }
 }

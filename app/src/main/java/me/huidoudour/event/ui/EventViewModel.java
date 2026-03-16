@@ -33,6 +33,18 @@ public class EventViewModel extends AndroidViewModel {
         return allEvents;
     }
 
+    public LiveData<List<Event>> getSortedEvents() {
+        return repository.getSortedEvents();
+    }
+
+    public void toggleSortOrder() {
+        repository.toggleSortOrder();
+    }
+
+    public boolean isAscending() {
+        return repository.isAscending();
+    }
+
     public void addEvent(String title, String description, long eventTime) {
         executor.execute(() -> {
             Event event = new Event(title, description, eventTime);

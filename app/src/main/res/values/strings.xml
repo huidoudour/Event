@@ -27,7 +27,6 @@
     <string name="ok">确定</string>
     <string name="event_options">事件操作</string>
     <string-array name="event_options_array">
-        <item>查看详情</item>
         <item>编辑</item>
         <item>删除</item>
     </string-array>
@@ -62,6 +61,11 @@
     <string name="import_warning">导入数据将覆盖当前数据，是否继续？</string>
     <string name="about">关于</string>
     <string name="about_app">关于应用</string>
+    <string name="refresh_order">刷新顺序</string>
+    <string name="order_refreshed">顺序已刷新</string>
+    <string name="toggle_sort_order">切换排序</string>
+    <string name="sort_ascending">正序排列</string>
+    <string name="sort_descending">倒序排列</string>
 
 
 

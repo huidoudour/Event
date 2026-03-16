@@ -11,8 +11,14 @@ import java.util.List;
 
 @Dao
 public interface EventDao {
-    @Query("SELECT * FROM events ORDER BY eventTime ASC")
+    @Query("SELECT * FROM events ORDER BY updatedAt DESC")
     LiveData<List<Event>> getAllEvents();
+
+    @Query("SELECT * FROM events ORDER BY eventTime ASC")
+    LiveData<List<Event>> getEventsByTimeAscending();
+
+    @Query("SELECT * FROM events ORDER BY eventTime DESC")
+    LiveData<List<Event>> getEventsByTimeDescending();
 
     @Insert
     long insert(Event event);

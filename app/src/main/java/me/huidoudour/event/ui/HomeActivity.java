@@ -2,14 +2,11 @@ package me.huidoudour.event.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,6 +41,14 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        // Add sort order toggle button click listener
+        ImageButton btnSortOrder = findViewById(R.id.btnSortOrder);
+        btnSortOrder.setOnClickListener(v -> {
+            viewModel.toggleSortOrder();
+            String sortOrder = viewModel.isAscending() ? getString(R.string.sort_ascending) : getString(R.string.sort_descending);
+            Toast.makeText(HomeActivity.this, sortOrder, Toast.LENGTH_SHORT).show();
+        });
+
         recyclerView = findViewById(R.id.recyclerView);
         emptyView = findViewById(R.id.emptyView);
         FloatingActionButton fabAddEvent = findViewById(R.id.fabAddEvent);
@@ -54,15 +59,15 @@ public class HomeActivity extends AppCompatActivity {
 
         // Setup RecyclerView
         adapter = new EventAdapter(
-            event -> { /* Click handled by ripple effect */ },
+            event -> showEventDetail(event),  // 点击查看详情
             (event, view) -> showLongClickMenu(event, view)
         );
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        // Observe events
-        viewModel.getAllEvents().observe(this, events -> {
+        // Observe events with sorted order
+        viewModel.getSortedEvents().observe(this, events -> {
             adapter.submitList(events);
             if (events.isEmpty()) {
                 recyclerView.setVisibility(View.GONE);
@@ -104,18 +109,13 @@ public class HomeActivity extends AppCompatActivity {
 
         editTitle.setText(event.getTitle());
         editDescription.setText(event.getDescription() != null ? event.getDescription() : "");
-        
-        // Disable editing for detail view
-        editTitle.setEnabled(false);
-        editDescription.setEnabled(false);
 
-        new MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.event_detail)
-            .setView(dialogView)
-            .setPositiveButton(R.string.ok, null)
-            .setNeutralButton(R.string.edit, (dialog, which) -> showEditDialog(event))
-            .setNegativeButton(R.string.delete, (dialog, which) -> showDeleteConfirmDialog(event))
-            .show();
+        MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(this)
+            .setView(dialogView);
+        
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
     }
 
     private void showEditDialog(Event event) {
@@ -149,12 +149,9 @@ public class HomeActivity extends AppCompatActivity {
             .setTitle(R.string.event_options)
             .setItems(R.array.event_options_array, (dialog, which) -> {
                 if (which == 0) {
-                    // 查看详情
-                    showEventDetail(event);
-                } else if (which == 1) {
                     // 编辑
                     showEditDialog(event);
-                } else if (which == 2) {
+                } else if (which == 1) {
                     // 删除
                     showDeleteConfirmDialog(event);
                 }
