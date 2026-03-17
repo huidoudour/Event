@@ -49,6 +49,13 @@ public class HomeActivity extends AppCompatActivity {
             Toast.makeText(HomeActivity.this, sortOrder, Toast.LENGTH_SHORT).show();
         });
 
+        // Add refresh button click listener
+        ImageButton btnRefresh = findViewById(R.id.btnRefresh);
+        btnRefresh.setOnClickListener(v -> {
+            adapter.notifyDataSetChanged();
+            Toast.makeText(HomeActivity.this, R.string.refreshed, Toast.LENGTH_SHORT).show();
+        });
+
         recyclerView = findViewById(R.id.recyclerView);
         emptyView = findViewById(R.id.emptyView);
         FloatingActionButton fabAddEvent = findViewById(R.id.fabAddEvent);
@@ -103,7 +110,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void showEventDetail(Event event) {
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_event, null);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_event_detail, null);
         TextInputEditText editTitle = dialogView.findViewById(R.id.editEventTitle);
         TextInputEditText editDescription = dialogView.findViewById(R.id.editEventDescription);
 
@@ -136,6 +143,8 @@ public class HomeActivity extends AppCompatActivity {
                 if (!title.isEmpty()) {
                     event.setTitle(title);
                     event.setDescription(description);
+                    // 更新时间为当前时间，以便重新排序
+                    event.setEventTime(System.currentTimeMillis());
                     viewModel.updateEvent(event);
                     Toast.makeText(this, R.string.event_saved, Toast.LENGTH_SHORT).show();
                 }

@@ -50,6 +50,19 @@
                 android:scaleType="centerInside"
                 android:padding="12dp" />
             
+            <!-- Refresh Button -->
+            <ImageButton
+                android:id="@+id/btnRefresh"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_button_circle_ripple"
+                android:contentDescription="@string/refresh"
+                android:src="@android:drawable/ic_menu_rotate"
+                android:scaleType="centerInside"
+                android:padding="12dp" />
+            
         </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -82,6 +95,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:contentDescription="@string/add_event"
+        android:src="@drawable/ic_add"
         app:tint="?attr/colorOnPrimary"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
         style="@style/Widget.Material3.FloatingActionButton.Primary" />

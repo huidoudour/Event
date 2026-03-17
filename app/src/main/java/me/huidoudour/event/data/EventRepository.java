@@ -35,6 +35,7 @@ public class EventRepository {
     }
 
     public void update(Event event) {
+        // 只在内容变化时更新时间戳
         event.setUpdatedAt(System.currentTimeMillis());
         eventDao.update(event);
     }
