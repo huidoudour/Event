@@ -26,7 +26,7 @@
             android:label="@string/settings" />
         
         <activity
-            android:name=".MeActivity"
+            android:name=".ui.MeActivity"
             android:exported="false"
             android:label="@string/about_developer" />
     </application>

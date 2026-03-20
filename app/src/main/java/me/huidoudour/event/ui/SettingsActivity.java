@@ -141,7 +141,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void setupAboutDeveloper() {
         MaterialCardView cardAbout = findViewById(R.id.card_about_developer);
         cardAbout.setOnClickListener(v -> {
-            Intent intent = new Intent(SettingsActivity.this, me.huidoudour.event.MeActivity.class);
+            Intent intent = new Intent(SettingsActivity.this, MeActivity.class);
             startActivity(intent);
         });
     }

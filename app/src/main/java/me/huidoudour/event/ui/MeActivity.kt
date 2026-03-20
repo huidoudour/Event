@@ -1,4 +1,4 @@
-package me.huidoudour.event
+package me.huidoudour.event.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import me.huidoudour.event.R
 
 class MeActivity : AppCompatActivity() {
     

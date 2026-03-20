@@ -1,3 +1,10 @@
+
+### 03200817-refactor(ui): 调整MeActivity包结构并添加应用图标资源
+ - 将MeActivity从默认包移动到ui包下
+ - 更新AndroidManifest.xml中的MeActivity路径引用
+ - 修改SettingsActivity中MeActivity的导入引用
+ - 在R类中添加必要的资源引用
+ - 新增SVG格式的应用图标文件，采用圆角矩形背景和摩尔斯电码图案设计
 ### 03170932-新增变更日志
  - 增加文件记录变更记录
 ### 03170852-修复文本输入bug

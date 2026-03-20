@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景：圆角矩形 (#D8F5C5) -->
+  <defs>
+    <clipPath id="roundedRect">
+      <rect x="0" y="0" width="512" height="512" rx="48" ry="48"/>
+    </clipPath>
+  </defs>
+  
+  <!-- 背景层 -->
+  <rect x="0" y="0" width="512" height="512" fill="#D8F5C5" clip-path="url(#roundedRect)"/>
+  
+  <!-- 前景层：摩尔斯电码图案 (左偏 4dp) -->
+  <g transform="translate(-18.96, 0)" clip-path="url(#roundedRect)">
+    <!-- 第一排：点 划 划 -->
+    <!-- 点 -->
+    <circle cx="189.63" cy="179.63" r="18.96" fill="#2E7D32"/>
+    <!-- 划 -->
+    <rect x="227.55" y="189.11" width="66.36" height="9.48" fill="#2E7D32"/>
+    <!-- 划 -->
+    <rect x="322.39" y="189.11" width="66.36" height="9.48" fill="#2E7D32"/>
+    
+    <!-- 第二排：点 划 划 -->
+    <!-- 点 -->
+    <circle cx="189.63" cy="236.51" r="18.96" fill="#2E7D32"/>
+    <!-- 划 -->
+    <rect x="227.55" y="245.99" width="66.36" height="9.48" fill="#2E7D32"/>
+    <!-- 划 -->
+    <rect x="322.39" y="245.99" width="66.36" height="9.48" fill="#2E7D32"/>
+    
+    <!-- 第三排：点 划 划 -->
+    <!-- 点 -->
+    <circle cx="189.63" cy="293.39" r="18.96" fill="#2E7D32"/>
+    <!-- 划 -->
+    <rect x="227.55" y="302.87" width="66.36" height="9.48" fill="#2E7D32"/>
+    <!-- 划 -->
+    <rect x="322.39" y="302.87" width="66.36" height="9.48" fill="#2E7D32"/>
+  </g>
+</svg>
