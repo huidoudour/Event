@@ -9,6 +9,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="light_pink">#FFB6C1</color>
+    <color name="white_pink">#FEF7FF</color>
 
     <!-- Material Design 3 Color System - Light Theme -->
     <color name="md_theme_light_primary">#6750A4</color>
