@@ -69,7 +69,13 @@ public class EventViewModel extends AndroidViewModel {
             repository.deleteAll();
         });
     }
-    
+
+    public void deleteEventsByIds(java.util.List<Long> ids) {
+        executor.execute(() -> {
+            repository.deleteByIds(ids);
+        });
+    }
+
     public EventRepository getRepository() {
         return repository;
     }

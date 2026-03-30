@@ -19,3 +19,5 @@ local.properties
 log.txt
 /.gradle/
 /.idea/
+.workbuddy
+cache

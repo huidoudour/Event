@@ -27,8 +27,9 @@
     <string name="ok">确定</string>
     <string name="event_options">事件操作</string>
     <string-array name="event_options_array">
-        <item>编辑</item>
-        <item>删除</item>
+        <item>修改日期时间</item>
+        <item>编辑事件</item>
+        <item>删除事件</item>
     </string-array>
 
     <!--  MeActiivity use  -->
@@ -69,7 +70,28 @@
     <string name="refresh">刷新</string>
     <string name="refreshed">已刷新</string>
 
+    <!-- 批量管理 -->
+    <string name="multi_select">批量管理</string>
+    <string name="select_all">全选</string>
+    <string name="deselect_all">取消全选</string>
+    <string name="delete_selected">删除所选</string>
+    <string name="selected_count_0">未选择任何项目</string>
+    <string name="selected_count_format">已选 %d 项</string>
+    <string name="confirm_delete_selected">确认批量删除</string>
+    <string name="confirm_delete_selected_message">将删除已选中的 %d 个事件，此操作不可恢复。</string>
+    <string name="deleted_selected">已删除所选事件</string>
+    <string name="exit_multi_select">退出多选</string>
+    <string name="exit_multi_select_first">请先退出批量管理模式</string>
 
+    <!-- 日期时间 -->
+    <string name="change_datetime">修改日期时间</string>
+    <string name="event_datetime_changed">日期时间已更新</string>>
+
+    <!-- 清除按钮提示 -->
+    <string name="long_press_to_clear">长按此按钮可清空全部数据</string>
+    <string name="confirm">确认</string>
+    <string name="confirm_clear_all_message">确定要清空所有事件吗？此操作不可恢复。</string>
+    <string name="type_clear_to_confirm">请输入 "clear" 以确认</string>
 
 
 </resources>

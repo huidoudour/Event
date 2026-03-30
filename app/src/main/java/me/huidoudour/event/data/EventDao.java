@@ -14,6 +14,10 @@ public interface EventDao {
     @Query("SELECT * FROM events ORDER BY updatedAt DESC")
     LiveData<List<Event>> getAllEvents();
 
+    /** 同步查询所有事件（用于导出，必须在后台线程调用） */
+    @Query("SELECT * FROM events ORDER BY updatedAt DESC")
+    List<Event> getAllEventsSync();
+
     @Query("SELECT * FROM events ORDER BY eventTime ASC")
     LiveData<List<Event>> getEventsByTimeAscending();
 
@@ -31,4 +35,7 @@ public interface EventDao {
 
     @Query("DELETE FROM events")
     void deleteAll();
+
+    @Query("DELETE FROM events WHERE id IN (:ids)")
+    void deleteByIds(List<Long> ids);
 }

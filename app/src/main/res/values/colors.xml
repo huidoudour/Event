@@ -58,6 +58,10 @@
     <color name="settings_icon_tertiary">@color/md_theme_light_tertiaryContainer</color>
     <color name="settings_icon_on_tertiary">@color/md_theme_light_onTertiaryContainer</color>
     <color name="settings_text_on_surface">@color/md_theme_light_onSurface</color>
+    <!-- Danger colors (for clear-all) -->
+    <color name="settings_icon_danger">@color/md_theme_light_errorContainer</color>
+    <color name="settings_icon_on_danger">@color/md_theme_light_onErrorContainer</color>
+    <color name="settings_danger_text">@color/md_theme_light_error</color>
 
     <!-- Material Design 3 Color System - Dark Theme -->
     <color name="md_theme_dark_primary">#D0BCFF</color>

@@ -23,7 +23,7 @@
             app:title="@string/app_name"
             app:titleCentered="false"
             style="@style/Widget.Material3.Toolbar">
-            
+
             <!-- Settings Button -->
             <ImageButton
                 android:id="@+id/btnSettings"
@@ -36,7 +36,7 @@
                 android:src="@drawable/ic_settings"
                 android:scaleType="centerInside"
                 android:padding="12dp" />
-            
+
             <!-- Sort Order Toggle Button -->
             <ImageButton
                 android:id="@+id/btnSortOrder"
@@ -49,7 +49,7 @@
                 android:src="@android:drawable/ic_menu_sort_by_size"
                 android:scaleType="centerInside"
                 android:padding="12dp" />
-            
+
             <!-- Refresh Button -->
             <ImageButton
                 android:id="@+id/btnRefresh"
@@ -62,7 +62,33 @@
                 android:src="@android:drawable/ic_menu_rotate"
                 android:scaleType="centerInside"
                 android:padding="12dp" />
-            
+
+            <!-- Clear All Button (Long Press) -->
+            <ImageButton
+                android:id="@+id/btnClearAll"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_button_circle_ripple"
+                android:contentDescription="@string/clear_all"
+                android:src="@android:drawable/ic_menu_delete"
+                android:scaleType="centerInside"
+                android:padding="12dp" />
+
+            <!-- Multi-Select Button -->
+            <ImageButton
+                android:id="@+id/btnMultiSelect"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_button_circle_ripple"
+                android:contentDescription="@string/multi_select"
+                android:src="@android:drawable/ic_menu_agenda"
+                android:scaleType="centerInside"
+                android:padding="12dp" />
+
         </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -87,6 +113,43 @@
         android:text="@string/no_events"
         android:textAppearance="?attr/textAppearanceBodyLarge"
         android:visibility="gone" />
+
+    <!-- 批量操作按钮组（多选模式下显示，位于FAB上方，竖向排列） -->
+    <LinearLayout
+        android:id="@+id/batchActionContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="88dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:visibility="gone">
+
+        <!-- 全选按钮（圆形，无阴影，与FAB同大小） -->
+        <ImageButton
+            android:id="@+id/btnSelectAll"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/bg_circle_secondary"
+            android:contentDescription="@string/select_all"
+            android:src="@android:drawable/ic_menu_agenda"
+            android:scaleType="centerInside"
+            android:padding="12dp" />
+
+        <!-- 删除所选按钮（圆形，错误颜色，无阴影，与FAB同大小） -->
+        <ImageButton
+            android:id="@+id/btnDeleteSelected"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_circle_error"
+            android:contentDescription="@string/delete_selected"
+            android:src="@android:drawable/ic_menu_delete"
+            android:scaleType="centerInside"
+            android:padding="12dp" />
+
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddEvent"

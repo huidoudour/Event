@@ -48,6 +48,15 @@ public class EventRepository {
         eventDao.deleteAll();
     }
 
+    public void deleteByIds(java.util.List<Long> ids) {
+        eventDao.deleteByIds(ids);
+    }
+
+    /** 同步查询所有事件，必须在后台线程调用 */
+    public List<Event> getAllEventsSync() {
+        return eventDao.getAllEventsSync();
+    }
+
     public LiveData<List<Event>> getSortedEvents() {
         return sortedEvents;
     }
