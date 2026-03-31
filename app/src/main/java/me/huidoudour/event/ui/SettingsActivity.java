@@ -107,11 +107,16 @@ public class SettingsActivity extends AppCompatActivity {
             .setTitle(R.string.confirm_import)
             .setMessage(R.string.import_warning)
             .setPositiveButton(R.string.ok, (dialog, which) -> {
-                if (dataHelper.importDataFromUri(repository, uri, true)) {
-                    Toast.makeText(this, R.string.import_success, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, R.string.import_failed, Toast.LENGTH_SHORT).show();
-                }
+                executor.execute(() -> {
+                    boolean success = dataHelper.importDataFromUri(repository, uri, true);
+                    mainHandler.post(() -> {
+                        if (success) {
+                            Toast.makeText(this, R.string.import_success, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, R.string.import_failed, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                });
             })
             .setNegativeButton(R.string.cancel, null)
             .show();
