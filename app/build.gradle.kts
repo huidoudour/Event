@@ -14,8 +14,8 @@ android {
         applicationId = "me.huidoudour.event"
         minSdk = 29
         targetSdk = 36
-        versionCode = 19
-        versionName = "0.19"
+        versionCode = 23
+        versionName = "0.23"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -47,6 +47,6 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     // MTDataFilesProvider
-    debugImplementation("com.github.L-JINBIN:MTDataFilesProvider:v1.0.0") // Debug版本
-    // implementation("com.github.L-JINBIN:MTDataFilesProvider:v1.0.0")  // Release版本
+    debugImplementation(libs.mt.data.files.provider)
+    implementation(libs.mt.data.files.provider)
 }

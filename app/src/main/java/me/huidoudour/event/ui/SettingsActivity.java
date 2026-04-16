@@ -1,5 +1,6 @@
 package me.huidoudour.event.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import java.util.concurrent.Executors;
 import me.huidoudour.event.R;
 import me.huidoudour.event.data.DataImportExportHelper;
 import me.huidoudour.event.data.EventRepository;
+import me.huidoudour.event.utils.LocaleHelper;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -29,6 +31,12 @@ public class SettingsActivity extends AppCompatActivity {
     private DataImportExportHelper dataHelper;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        // 应用语言设置
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
+    }
 
     // 导出文件选择器
     private final ActivityResultLauncher<String> exportFileLauncher =
@@ -124,12 +132,70 @@ public class SettingsActivity extends AppCompatActivity {
 
 
 
-    /** 语言设置（UI 预留，待实现） */
+    /** 语言设置 */
     private void setupLanguageSettings() {
         MaterialCardView cardLanguage = findViewById(R.id.card_language_settings);
-        cardLanguage.setOnClickListener(v -> {
-            // TODO: 显示语言选择对话框
-        });
+        cardLanguage.setOnClickListener(v -> showLanguageDialog());
+    }
+    
+    /** 显示语言选择对话框 */
+    private void showLanguageDialog() {
+        String[] languages = LocaleHelper.getSupportedLanguages();
+        String[] languageNames = new String[languages.length];
+        
+        // 获取当前语言
+        String currentLanguage = LocaleHelper.getLanguage(this);
+        int checkedItem = 0;
+        
+        // 构建语言名称列表
+        for (int i = 0; i < languages.length; i++) {
+            languageNames[i] = LocaleHelper.getLanguageDisplayName(this, languages[i]);
+            if (languages[i].equals(currentLanguage)) {
+                checkedItem = i;
+            }
+        }
+        
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.select_language)
+            .setSingleChoiceItems(languageNames, checkedItem, (dialog, which) -> {
+                String selectedLanguage = languages[which];
+                
+                // 如果选择的语言和当前语言相同，不做任何操作
+                if (selectedLanguage.equals(currentLanguage)) {
+                    dialog.dismiss();
+                    return;
+                }
+                
+                // 保存并应用语言设置
+                LocaleHelper.setLanguage(this, selectedLanguage);
+                
+                dialog.dismiss();
+                
+                // 显示Toast提示
+                Toast.makeText(this, R.string.language_changed_restart, Toast.LENGTH_LONG).show();
+                
+                // 延迟重启App以应用新的语言设置
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    restartApp();
+                }, 500);
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
+    }
+    
+    /** 重启整个App */
+    private void restartApp() {
+        // 获取启动Intent
+        Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
+        if (intent != null) {
+            // 添加标志以清除任务栈
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            // 退出当前Activity
+            finish();
+            // 退出整个应用进程
+            System.exit(0);
+        }
     }
 
     /** 主题设置（UI 预留，待实现） */

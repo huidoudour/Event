@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Event</string>
+    <string name="add_event">イベントを追加</string>
+    <string name="no_events">イベントなし</string>
+    <string name="event_title">イベントタイトル</string>
+    <string name="event_description">イベントの説明</string>
+    <string name="event_time">イベント時間</string>
+    <string name="event_time_millis">タイムスタンプ（ミリ秒）</string>
+    <string name="now">現在</string>
+    <string name="custom">カスタム</string>
+    <string name="save">保存</string>
+    <string name="cancel">キャンセル</string>
+    <string name="edit">編集</string>
+    <string name="delete">削除</string>
+    <string name="clear_all">すべてクリア</string>
+    <string name="confirm_delete">削除の確認</string>
+    <string name="delete_confirmation_message">この操作は元に戻せません。削除を確認するには \"d\" と入力してください。</string>
+    <string name="please_type_del">\"d\" と入力してください</string>
+    <string name="confirm_clear">クリアの確認</string>
+    <string name="clear_confirmation_message">この操作ですべてのイベントが削除されます。確認するには \"clear\" と入力してください。</string>
+    <string name="please_type_clear">\"clear\" と入力してください</string>
+    <string name="invalid_input">無効な入力です。もう一度お試しください</string>
+    <string name="event_saved">イベントを保存しました</string>
+    <string name="event_deleted">イベントを削除しました</string>
+    <string name="all_events_cleared">すべてのイベントをクリアしました</string>
+    <string name="event_detail">イベントの詳細</string>
+    <string name="ok">OK</string>
+    <string name="event_options">イベントオプション</string>
+    <string-array name="event_options_array">
+        <item>日時を変更</item>
+        <item>イベントを編集</item>
+        <item>イベントを削除</item>
+    </string-array>
+
+    <!--  MeActiivity use (保持中文) -->
+    <string name="hello_world">Hello World</string>
+    <string name="about_description">你保护世界，我保护你</string>
+    <string name="about_developer">亻尔女子，我是 huidoudour（慧兜兜）</string>
+    <string name="visit_github">ω寻找我ω</string>
+        
+    <!-- Settings -->
+    <string name="settings">設定</string>
+    <string name="data_management">データ管理</string>
+    <string name="export_data">データをエクスポート</string>
+    <string name="import_data">データをインポート</string>
+    <string name="auto_backup">自動バックアップ</string>
+    <string name="language_settings">言語設定</string>
+    <string name="theme_settings">テーマ設定</string>
+    <string name="select_language">言語を選択</string>
+    <string name="select_theme">テーマを選択</string>
+    <string name="chinese">中文</string>
+    <string name="traditional_chinese">繁體中文</string>
+    <string name="english">English</string>
+    <string name="russian">Русский</string>
+    <string name="japanese">日本語</string>
+    <string name="light_theme">ライトテーマ</string>
+    <string name="dark_theme">ダークテーマ</string>
+    <string name="system_theme">システムデフォルト</string>
+    <string name="export_success">エクスポート成功</string>
+    <string name="import_success">インポート成功</string>
+    <string name="export_failed">エクスポート失敗</string>
+    <string name="import_failed">インポート失敗</string>
+    <string name="no_data_to_export">エクスポートするデータがありません</string>
+    <string name="confirm_import">インポートの確認</string>
+    <string name="import_warning">データをインポートすると現在のデータが上書きされます。続行しますか？</string>
+    <string name="about">について</string>
+    <string name="about_app">アプリについて</string>
+    <string name="refresh_order">順序を更新</string>
+    <string name="order_refreshed">順序を更新しました</string>
+    <string name="toggle_sort_order">並べ替えを切り替え</string>
+    <string name="sort_ascending">昇順</string>
+    <string name="sort_descending">降順</string>
+    <string name="refresh">更新</string>
+    <string name="refreshed">更新済み</string>
+
+    <!-- バッチ管理 -->
+    <string name="multi_select">バッチ管理</string>
+    <string name="select_all">すべて選択</string>
+    <string name="deselect_all">すべて解除</string>
+    <string name="delete_selected">選択した項目を削除</string>
+    <string name="selected_count_0">項目が選択されていません</string>
+    <string name="selected_count_format">%d 件選択</string>
+    <string name="confirm_delete_selected">バッチ削除の確認</string>
+    <string name="confirm_delete_selected_message">選択した %d 件のイベントを削除します。この操作は元に戻せません。</string>
+    <string name="deleted_selected">選択したイベントを削除しました</string>
+    <string name="exit_multi_select">マルチ選択を終了</string>
+    <string name="exit_multi_select_first">まずバッチ管理モードを終了してください</string>
+
+    <!-- 日付と時刻 -->
+    <string name="change_datetime">日時を変更</string>
+    <string name="event_datetime_changed">日時を更新しました</string>
+
+    <!-- 言語切り替え -->
+    <string name="language_changed_restart">言語が変更されました。アプリを再起動します…</string>
+
+    <!-- クリアボタンのヒント -->
+    <string name="long_press_to_clear">長押しですべてのデータをクリア</string>
+    <string name="confirm">確認</string>
+    <string name="confirm_clear_all_message">すべてのイベントをクリアしてもよろしいですか？この操作は元に戻せません。</string>
+    <string name="type_clear_to_confirm">確認するには \"clear\" と入力してください</string>
+
+
+</resources>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Event</string>
+    <string name="add_event">Добавить событие</string>
+    <string name="no_events">Нет событий</string>
+    <string name="event_title">Название события</string>
+    <string name="event_description">Описание события</string>
+    <string name="event_time">Время события</string>
+    <string name="event_time_millis">Временная метка (миллисекунды)</string>
+    <string name="now">Сейчас</string>
+    <string name="custom">Пользовательский</string>
+    <string name="save">Сохранить</string>
+    <string name="cancel">Отмена</string>
+    <string name="edit">Редактировать</string>
+    <string name="delete">Удалить</string>
+    <string name="clear_all">Очистить все</string>
+    <string name="confirm_delete">Подтвердить удаление</string>
+    <string name="delete_confirmation_message">Это действие нельзя отменить. Введите \"d\" для подтверждения удаления.</string>
+    <string name="please_type_del">Введите \"d\"</string>
+    <string name="confirm_clear">Подтвердить очистку</string>
+    <string name="clear_confirmation_message">Это действие удалит все события. Введите \"clear\" для подтверждения.</string>
+    <string name="please_type_clear">Введите \"clear\"</string>
+    <string name="invalid_input">Неверный ввод, попробуйте снова</string>
+    <string name="event_saved">Событие сохранено</string>
+    <string name="event_deleted">Событие удалено</string>
+    <string name="all_events_cleared">Все события очищены</string>
+    <string name="event_detail">Детали события</string>
+    <string name="ok">OK</string>
+    <string name="event_options">Действия с событием</string>
+    <string-array name="event_options_array">
+        <item>Изменить дату и время</item>
+        <item>Редактировать событие</item>
+        <item>Удалить событие</item>
+    </string-array>
+
+    <!--  MeActiivity use (保持中文) -->
+    <string name="hello_world">Hello World</string>
+    <string name="about_description">你保护世界，我保护你</string>
+    <string name="about_developer">亻尔女子，我是 huidoudour（慧兜兜）</string>
+    <string name="visit_github">ω寻找我ω</string>
+        
+    <!-- Settings -->
+    <string name="settings">Настройки</string>
+    <string name="data_management">Управление данными</string>
+    <string name="export_data">Экспорт данных</string>
+    <string name="import_data">Импорт данных</string>
+    <string name="auto_backup">Автоматическое резервное копирование</string>
+    <string name="language_settings">Язык</string>
+    <string name="theme_settings">Тема</string>
+    <string name="select_language">Выберите язык</string>
+    <string name="select_theme">Выберите тему</string>
+    <string name="chinese">中文</string>
+    <string name="traditional_chinese">繁體中文</string>
+    <string name="english">English</string>
+    <string name="russian">Русский</string>
+    <string name="japanese">日本語</string>
+    <string name="light_theme">Светлая тема</string>
+    <string name="dark_theme">Тёмная тема</string>
+    <string name="system_theme">Как в системе</string>
+    <string name="export_success">Экспорт выполнен успешно</string>
+    <string name="import_success">Импорт выполнен успешно</string>
+    <string name="export_failed">Ошибка экспорта</string>
+    <string name="import_failed">Ошибка импорта</string>
+    <string name="no_data_to_export">Нет данных для экспорта</string>
+    <string name="confirm_import">Подтвердить импорт</string>
+    <string name="import_warning">Импорт данных перезапишет текущие данные. Продолжить?</string>
+    <string name="about">О приложении</string>
+    <string name="about_app">О приложении</string>
+    <string name="refresh_order">Обновить порядок</string>
+    <string name="order_refreshed">Порядок обновлён</string>
+    <string name="toggle_sort_order">Переключить сортировку</string>
+    <string name="sort_ascending">По возрастанию</string>
+    <string name="sort_descending">По убыванию</string>
+    <string name="refresh">Обновить</string>
+    <string name="refreshed">Обновлено</string>
+
+    <!-- Пакетное управление -->
+    <string name="multi_select">Пакетное управление</string>
+    <string name="select_all">Выбрать все</string>
+    <string name="deselect_all">Отменить выбор всех</string>
+    <string name="delete_selected">Удалить выбранные</string>
+    <string name="selected_count_0">Ничего не выбрано</string>
+    <string name="selected_count_format">Выбрано: %d</string>
+    <string name="confirm_delete_selected">Подтвердить пакетное удаление</string>
+    <string name="confirm_delete_selected_message">Будет удалено %d выбранных событий. Это действие нельзя отменить.</string>
+    <string name="deleted_selected">Выбранные события удалены</string>
+    <string name="exit_multi_select">Выйти из множественного выбора</string>
+    <string name="exit_multi_select_first">Сначала выйдите из режима пакетного управления</string>
+
+    <!-- Дата и время -->
+    <string name="change_datetime">Изменить дату и время</string>
+    <string name="event_datetime_changed">Дата и время обновлены</string>
+
+    <!-- Переключение языка -->
+    <string name="language_changed_restart">Язык изменён, приложение перезапускается…</string>
+
+    <!-- Подсказка кнопки очистки -->
+    <string name="long_press_to_clear">Длительное нажатие для очистки всех данных</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="confirm_clear_all_message">Вы уверены, что хотите очистить все события? Это действие нельзя отменить.</string>
+    <string name="type_clear_to_confirm">Введите \"clear\" для подтверждения</string>
+
+
+</resources>

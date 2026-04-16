@@ -29,6 +29,14 @@
             android:name=".ui.MeActivity"
             android:exported="false"
             android:label="@string/about_developer" />
+
+        <meta-data
+            android:name="me.huidoudour.core"
+            android:value="true" />
+        <meta-data
+            android:name="me.huidoudour.core.version"
+            android:value="23" />
+
     </application>
 
 </manifest>

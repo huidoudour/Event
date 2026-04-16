@@ -17,6 +17,8 @@ local.properties
 /app/release
 /app/build
 log.txt
+*.log
+/.kotlin
 /.gradle/
 /.idea/
 .workbuddy

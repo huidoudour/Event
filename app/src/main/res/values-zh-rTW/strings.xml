@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Event</string>
+    <string name="add_event">添加事件</string>
+    <string name="no_events">暫無事件</string>
+    <string name="event_title">事件標題</string>
+    <string name="event_description">事件描述</string>
+    <string name="event_time">事件時間</string>
+    <string name="event_time_millis">時間戳（毫秒）</string>
+    <string name="now">現在</string>
+    <string name="custom">自定義</string>
+    <string name="save">保存</string>
+    <string name="cancel">取消</string>
+    <string name="edit">編輯</string>
+    <string name="delete">刪除</string>
+    <string name="clear_all">清空全部</string>
+    <string name="confirm_delete">確認刪除</string>
+    <string name="delete_confirmation_message">此操作不可恢復。請輸入 \"d\" 以確認刪除。</string>
+    <string name="please_type_del">請輸入 \"d\"</string>
+    <string name="confirm_clear">確認清空</string>
+    <string name="clear_confirmation_message">此操作將刪除所有事件。請輸入 \"clear\" 以確認清空。</string>
+    <string name="please_type_clear">請輸入 \"clear\"</string>
+    <string name="invalid_input">輸入無效，請重試</string>
+    <string name="event_saved">事件已保存</string>
+    <string name="event_deleted">事件已刪除</string>
+    <string name="all_events_cleared">所有事件已清空</string>
+    <string name="event_detail">事件詳情</string>
+    <string name="ok">確定</string>
+    <string name="event_options">事件操作</string>
+    <string-array name="event_options_array">
+        <item>修改日期時間</item>
+        <item>編輯事件</item>
+        <item>刪除事件</item>
+    </string-array>
+
+    <!--  MeActiivity use  -->
+    <string name="hello_world">Hello World</string>
+    <string name="about_description">你保護世界，我保護你</string>
+    <string name="about_developer">亻尔女子，我是 huidoudour（慧兜兜）</string>
+    <string name="visit_github">ω尋找我ω</string>
+        
+    <!-- Settings -->
+    <string name="settings">設置</string>
+    <string name="data_management">數據管理</string>
+    <string name="export_data">導出數據</string>
+    <string name="import_data">導入數據</string>
+    <string name="auto_backup">自動備份</string>
+    <string name="language_settings">語言設置</string>
+    <string name="theme_settings">主題設置</string>
+    <string name="select_language">選擇語言</string>
+    <string name="select_theme">選擇主題</string>
+    <string name="chinese">中文</string>
+    <string name="traditional_chinese">繁體中文</string>
+    <string name="english">English</string>
+    <string name="russian">Русский</string>
+    <string name="japanese">日本語</string>
+    <string name="light_theme">淺色主題</string>
+    <string name="dark_theme">深色主題</string>
+    <string name="system_theme">跟隨系統</string>
+    <string name="export_success">導出成功</string>
+    <string name="import_success">導入成功</string>
+    <string name="export_failed">導出失敗</string>
+    <string name="import_failed">導入失敗</string>
+    <string name="no_data_to_export">沒有可導出的數據</string>
+    <string name="confirm_import">確認導入</string>
+    <string name="import_warning">導入數據將覆蓋當前數據，是否繼續？</string>
+    <string name="about">關於</string>
+    <string name="about_app">關於應用</string>
+    <string name="refresh_order">刷新順序</string>
+    <string name="order_refreshed">順序已刷新</string>
+    <string name="toggle_sort_order">切換排序</string>
+    <string name="sort_ascending">正序排列</string>
+    <string name="sort_descending">倒序排列</string>
+    <string name="refresh">刷新</string>
+    <string name="refreshed">已刷新</string>
+
+    <!-- 批量管理 -->
+    <string name="multi_select">批量管理</string>
+    <string name="select_all">全選</string>
+    <string name="deselect_all">取消全選</string>
+    <string name="delete_selected">刪除所選</string>
+    <string name="selected_count_0">未選擇任何項目</string>
+    <string name="selected_count_format">已選 %d 項</string>
+    <string name="confirm_delete_selected">確認批量刪除</string>
+    <string name="confirm_delete_selected_message">將刪除已選中的 %d 個事件，此操作不可恢復。</string>
+    <string name="deleted_selected">已刪除所選事件</string>
+    <string name="exit_multi_select">退出多選</string>
+    <string name="exit_multi_select_first">請先退出批量管理模式</string>
+
+    <!-- 日期时间 -->
+    <string name="change_datetime">修改日期時間</string>
+    <string name="event_datetime_changed">日期時間已更新</string>>
+
+    <!-- 語言切換 -->
+    <string name="language_changed_restart">語言已更改，應用即將重啟…</string>
+
+    <!-- 清除按钮提示 -->
+    <string name="long_press_to_clear">長按此按鈕可清空全部數據</string>
+    <string name="confirm">確認</string>
+    <string name="confirm_clear_all_message">確定要清空所有事件嗎？此操作不可恢復。</string>
+    <string name="type_clear_to_confirm">請輸入 \"clear\" 以確認</string>
+
+
+</resources>

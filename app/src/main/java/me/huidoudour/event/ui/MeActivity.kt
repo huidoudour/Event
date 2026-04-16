@@ -1,5 +1,6 @@
 package me.huidoudour.event.ui
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -9,8 +10,14 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import me.huidoudour.event.R
+import me.huidoudour.event.utils.LocaleHelper
 
 class MeActivity : AppCompatActivity() {
+    
+    override fun attachBaseContext(newBase: Context?) {
+        // 应用语言设置
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase!!))
+    }
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

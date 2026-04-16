@@ -2,6 +2,7 @@ package me.huidoudour.event.ui;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -32,6 +33,7 @@ import java.util.Set;
 
 import me.huidoudour.event.R;
 import me.huidoudour.event.data.Event;
+import me.huidoudour.event.utils.LocaleHelper;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -48,6 +50,12 @@ public class HomeActivity extends AppCompatActivity {
     private ImageButton btnMultiSelect;
     private ImageButton btnClearAll;
     private boolean isMultiSelectMode = false;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        // 应用语言设置
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
