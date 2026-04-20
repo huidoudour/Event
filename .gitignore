@@ -1,5 +1,6 @@
 *.iml
 .gradle
+/.lingma
 /local.properties
 /.idea/caches
 /.idea/libraries

@@ -23,6 +23,7 @@ import me.huidoudour.event.R;
 import me.huidoudour.event.data.DataImportExportHelper;
 import me.huidoudour.event.data.EventRepository;
 import me.huidoudour.event.utils.LocaleHelper;
+import me.huidoudour.event.utils.ThemeHelper;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -71,6 +72,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 在 onCreate 开始时初始化主题
+        ThemeHelper.initTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
@@ -198,12 +201,47 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    /** 主题设置（UI 预留，待实现） */
+    /** 主题设置 */
     private void setupThemeSettings() {
         MaterialCardView cardTheme = findViewById(R.id.card_theme_settings);
-        cardTheme.setOnClickListener(v -> {
-            // TODO: 显示主题选择对话框
-        });
+        cardTheme.setOnClickListener(v -> showThemeDialog());
+    }
+    
+    /** 显示主题选择对话框 */
+    private void showThemeDialog() {
+        int[] themes = ThemeHelper.getSupportedThemes();
+        String[] themeNames = new String[themes.length];
+        
+        // 获取当前主题
+        int currentTheme = ThemeHelper.getTheme(this);
+        int checkedItem = 0;
+        
+        // 构建主题名称列表
+        for (int i = 0; i < themes.length; i++) {
+            themeNames[i] = ThemeHelper.getThemeDisplayName(this, themes[i]);
+            if (themes[i] == currentTheme) {
+                checkedItem = i;
+            }
+        }
+        
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.select_theme)
+            .setSingleChoiceItems(themeNames, checkedItem, (dialog, which) -> {
+                int selectedTheme = themes[which];
+                
+                // 如果选择的主题和当前主题相同，不做任何操作
+                if (selectedTheme == currentTheme) {
+                    dialog.dismiss();
+                    return;
+                }
+                
+                // 保存并应用主题设置
+                ThemeHelper.setTheme(this, selectedTheme);
+                
+                dialog.dismiss();
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
     }
 
     /** 关于开发者 */

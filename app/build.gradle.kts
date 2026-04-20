@@ -14,8 +14,8 @@ android {
         applicationId = "me.huidoudour.event"
         minSdk = 29
         targetSdk = 36
-        versionCode = 23
-        versionName = "0.23"
+        versionCode = 27
+        versionName = "0.27"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         

@@ -34,6 +34,7 @@ import java.util.Set;
 import me.huidoudour.event.R;
 import me.huidoudour.event.data.Event;
 import me.huidoudour.event.utils.LocaleHelper;
+import me.huidoudour.event.utils.ThemeHelper;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -59,6 +60,8 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 在 onCreate 开始时初始化主题
+        ThemeHelper.initTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 

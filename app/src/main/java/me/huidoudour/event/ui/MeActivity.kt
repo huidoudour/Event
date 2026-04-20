@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import me.huidoudour.event.R
 import me.huidoudour.event.utils.LocaleHelper
+import me.huidoudour.event.utils.ThemeHelper
 
 class MeActivity : AppCompatActivity() {
     
@@ -20,6 +21,8 @@ class MeActivity : AppCompatActivity() {
     }
     
     override fun onCreate(savedInstanceState: Bundle?) {
+        // 在 onCreate 开始时初始化主题
+        ThemeHelper.initTheme(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_me)
         
