@@ -6,6 +6,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
+import io.requery.android.database.sqlite.RequerySQLiteOpenHelperFactory;
 
 @Database(entities = {Event.class}, version = 2, exportSchema = false)
 public abstract class EventDatabase extends RoomDatabase {
@@ -34,6 +35,7 @@ public abstract class EventDatabase extends RoomDatabase {
                         "event_database"
                     ).addMigrations(MIGRATION_1_2)
                     .fallbackToDestructiveMigration()
+                    .openHelperFactory(new RequerySQLiteOpenHelperFactory())
                     .build();
                 }
             }

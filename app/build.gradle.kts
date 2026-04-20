@@ -18,6 +18,12 @@ android {
         versionName = "0.23"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // 指定要包含的 ABI 架构（所有架构）
+        ndk {
+            // 包含所有支持的架构：armeabi-v7a, arm64-v8a, x86, x86_64
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+        }
     }
 
     buildTypes {
@@ -33,6 +39,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    
+    // 配置 NDK 版本
+    ndkVersion = "27.0.12077973" // 使用与 AGP 9.0.1 兼容的 NDK 版本
 }
 
 dependencies {
@@ -49,4 +58,8 @@ dependencies {
     // MTDataFilesProvider
     debugImplementation(libs.mt.data.files.provider)
     implementation(libs.mt.data.files.provider)
+
+    // SQLite Android - 增强版 SQLite 库（从 JitPack 获取完整版本）
+    debugImplementation(libs.sqlite.android)
+    implementation(libs.sqlite.android)
 }

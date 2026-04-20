@@ -20,6 +20,10 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
+        // 支持本地 AAR 文件
+        flatDir {
+            dirs("app/libs")
+        }
     }
 }
 
