@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Event">
         <activity
-            android:name=".ui.HomeActivity"
+            android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,6 +29,11 @@
             android:name=".ui.MeActivity"
             android:exported="false"
             android:label="@string/about_developer" />
+
+        <activity
+            android:name=".ui.ListViewActivity"
+            android:exported="false"
+            android:label="@string/list_view" />
 
         <meta-data
             android:name="me.huidoudour.core"

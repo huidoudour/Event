@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,6 +25,7 @@ import me.huidoudour.event.data.DataImportExportHelper;
 import me.huidoudour.event.data.EventRepository;
 import me.huidoudour.event.utils.LocaleHelper;
 import me.huidoudour.event.utils.ThemeHelper;
+import me.huidoudour.event.utils.ViewModeHelper;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -87,6 +89,7 @@ public class SettingsActivity extends AppCompatActivity {
         setupImportData();
         setupLanguageSettings();
         setupThemeSettings();
+        setupDataDisplayMode();
         setupAboutDeveloper();
     }
 
@@ -239,6 +242,56 @@ public class SettingsActivity extends AppCompatActivity {
                 ThemeHelper.setTheme(this, selectedTheme);
                 
                 dialog.dismiss();
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
+    }
+
+    /** 数据展示模式设置 */
+    private void setupDataDisplayMode() {
+        MaterialCardView cardDataDisplayMode = findViewById(R.id.card_data_display_mode);
+        
+        cardDataDisplayMode.setOnClickListener(v -> showViewModeDialog());
+    }
+    
+    /** 显示视图模式选择对话框 */
+    private void showViewModeDialog() {
+        int[] modes = {ViewModeHelper.VIEW_MODE_CARD, ViewModeHelper.VIEW_MODE_LIST};
+        String[] modeNames = {
+            getString(R.string.card_view),
+            getString(R.string.list_view)
+        };
+        
+        // 获取当前视图模式
+        int currentMode = ViewModeHelper.getViewMode(this);
+        int checkedItem = 0;
+        
+        // 找到当前选中项
+        for (int i = 0; i < modes.length; i++) {
+            if (modes[i] == currentMode) {
+                checkedItem = i;
+                break;
+            }
+        }
+        
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.data_display_mode)
+            .setSingleChoiceItems(modeNames, checkedItem, (dialog, which) -> {
+                int selectedMode = modes[which];
+                
+                // 如果选择的模式和当前模式相同，不做任何操作
+                if (selectedMode == currentMode) {
+                    dialog.dismiss();
+                    return;
+                }
+                
+                // 保存视图模式设置
+                ViewModeHelper.setViewMode(this, selectedMode);
+                
+                dialog.dismiss();
+                
+                // 显示Toast提示
+                android.widget.Toast.makeText(this, R.string.view_mode_changed, android.widget.Toast.LENGTH_SHORT).show();
             })
             .setNegativeButton(R.string.cancel, null)
             .show();

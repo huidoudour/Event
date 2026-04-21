@@ -100,5 +100,12 @@
     <string name="confirm_clear_all_message">Are you sure you want to clear all events? This action cannot be undone.</string>
     <string name="type_clear_to_confirm">Please type \"clear\" to confirm</string>
 
+    <!-- Data View -->
+    <string name="table_id">ID</string>
+    <string name="data_display_mode">Data View</string>
+    <string name="card_view">Card View</string>
+    <string name="list_view">List View</string>
+    <string name="view_mode_changed">View mode changed</string>
+
 
 </resources>

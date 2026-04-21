@@ -100,5 +100,12 @@
     <string name="confirm_clear_all_message">Вы уверены, что хотите очистить все события? Это действие нельзя отменить.</string>
     <string name="type_clear_to_confirm">Введите \"clear\" для подтверждения</string>
 
+    <!-- Режим отображения данных -->
+    <string name="table_id">ID</string>
+    <string name="data_display_mode">Режим отображения</string>
+    <string name="card_view">Карточки</string>
+    <string name="list_view">Список</string>
+    <string name="view_mode_changed">Режим отображения изменён</string>
+
 
 </resources>

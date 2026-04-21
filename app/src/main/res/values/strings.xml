@@ -99,5 +99,12 @@
     <string name="confirm_clear_all_message">确定要清空所有事件吗？此操作不可恢复。</string>
     <string name="type_clear_to_confirm">请输入 "clear" 以确认</string>
 
+    <!-- 数据展示视图 -->
+    <string name="table_id">ID</string>
+    <string name="data_display_mode">数据视图</string>
+    <string name="card_view">条目视图</string>
+    <string name="list_view">列表视图</string>
+    <string name="view_mode_changed">视图已更改</string>
+
 
 </resources>

@@ -12,10 +12,10 @@ android {
 
     defaultConfig {
         applicationId = "me.huidoudour.event"
-        minSdk = 29
+        minSdk = 28
         targetSdk = 36
-        versionCode = 27
-        versionName = "0.27"
+        versionCode = 33
+        versionName = "0.33"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
@@ -51,6 +51,10 @@ dependencies {
     implementation(libs.lifecycle.livedata)
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
+    
+    // Fragment
+    implementation(libs.fragment.ktx)
+    
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -59,7 +63,7 @@ dependencies {
     debugImplementation(libs.mt.data.files.provider)
     implementation(libs.mt.data.files.provider)
 
-    // SQLite Android - 增强版 SQLite 库（从 JitPack 获取完整版本）
+    // SQLite Android - 增强版 SQLite 库
     debugImplementation(libs.sqlite.android)
     implementation(libs.sqlite.android)
 }

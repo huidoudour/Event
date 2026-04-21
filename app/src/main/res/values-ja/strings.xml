@@ -100,5 +100,12 @@
     <string name="confirm_clear_all_message">すべてのイベントをクリアしてもよろしいですか？この操作は元に戻せません。</string>
     <string name="type_clear_to_confirm">確認するには \"clear\" と入力してください</string>
 
+    <!-- データ表示モード -->
+    <string name="table_id">ID</string>
+    <string name="data_display_mode">データ表示</string>
+    <string name="card_view">カード表示</string>
+    <string name="list_view">リスト表示</string>
+    <string name="view_mode_changed">表示モードを変更しました</string>
+
 
 </resources>
