@@ -192,8 +192,8 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, eventTableFragment)
                 .commit();
         
-        // 隐藏FAB、批量操作按钮和排序按钮
-        fabAddEvent.setVisibility(View.GONE);
+        // 显示FAB，隐藏批量操作按钮和排序按钮
+        fabAddEvent.setVisibility(View.VISIBLE);
         btnMultiSelect.setVisibility(View.GONE);
         btnSortOrder.setVisibility(View.GONE);
     }

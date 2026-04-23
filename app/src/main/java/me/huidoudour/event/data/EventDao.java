@@ -18,10 +18,10 @@ public interface EventDao {
     @Query("SELECT * FROM events ORDER BY updatedAt DESC")
     List<Event> getAllEventsSync();
 
-    @Query("SELECT * FROM events ORDER BY eventTime ASC")
+    @Query("SELECT * FROM events ORDER BY eventTime ASC, id ASC")
     LiveData<List<Event>> getEventsByTimeAscending();
 
-    @Query("SELECT * FROM events ORDER BY eventTime DESC")
+    @Query("SELECT * FROM events ORDER BY eventTime DESC, id DESC")
     LiveData<List<Event>> getEventsByTimeDescending();
 
     @Insert
@@ -35,6 +35,10 @@ public interface EventDao {
 
     @Query("DELETE FROM events")
     void deleteAll();
+
+    /** 重置自增ID计数器（清空数据后调用） */
+    @Query("DELETE FROM sqlite_sequence WHERE name='events'")
+    void resetAutoIncrement();
 
     @Query("DELETE FROM events WHERE id IN (:ids)")
     void deleteByIds(List<Long> ids);

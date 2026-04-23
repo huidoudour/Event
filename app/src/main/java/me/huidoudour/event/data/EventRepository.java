@@ -46,6 +46,7 @@ public class EventRepository {
 
     public void deleteAll() {
         eventDao.deleteAll();
+        eventDao.resetAutoIncrement();
     }
 
     public void deleteByIds(java.util.List<Long> ids) {

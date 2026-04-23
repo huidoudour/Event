@@ -66,4 +66,9 @@ dependencies {
     // SQLite Android - 增强版 SQLite 库
     debugImplementation(libs.sqlite.android)
     implementation(libs.sqlite.android)
+    // 本地依赖，仅用于调试（仅在文件存在时添加）
+    val localSqliteFile = file("libs/android.aar")
+    if (localSqliteFile.exists()) {
+        debugImplementation(files(localSqliteFile))
+    }
 }

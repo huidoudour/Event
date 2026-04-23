@@ -38,6 +38,9 @@ class DataImportExportHelper(private val context: Context) {
                 put(KEY_TITLE, event.title ?: "")
                 put(KEY_DETAIL, event.description ?: "")
                 put(KEY_TIME, DATE_FORMAT.format(java.util.Date(event.eventTime)))
+                // 保存 createdAt 和 updatedAt 以保持原始时间戳
+                put("createdAt", event.createdAt)
+                put("updatedAt", event.updatedAt)
             }
             array.put(obj)
         }
@@ -87,6 +90,7 @@ class DataImportExportHelper(private val context: Context) {
      * 解析 JSON 字符串并写入数据库。
      * 同时兼容旧格式（英文字段 id/title/description/eventTime/createdAt）
      * 和新格式（中文字段 事件标题/事件详情/事件时间）。
+     * 导入时会清空数据库并重新生成连续的ID。
      */
     private fun parseAndSaveJsonData(
         jsonString: String,
@@ -97,27 +101,36 @@ class DataImportExportHelper(private val context: Context) {
             val array = JSONArray(jsonString)
             if (clearExisting) repository.deleteAll()
 
+            // 按时间戳排序，确保导入后ID顺序与时间顺序一致（新的在前）
+            val eventsToImport = mutableListOf<Triple<String, String, Long>>()
             for (i in 0 until array.length()) {
                 val obj = array.getJSONObject(i)
-
-                val event: Event = if (obj.has(KEY_TITLE)) {
+                
+                val (title, detail, eventTime) = if (obj.has(KEY_TITLE)) {
                     // ── 新格式（中文字段）──
-                    val title = obj.optString(KEY_TITLE, "")
-                    val detail = obj.optString(KEY_DETAIL, "")
-                    val timeStr = obj.optString(KEY_TIME, "")
-                    val eventTime = parseTime(timeStr)
-                    Event(title, detail, eventTime)
+                    Triple(
+                        obj.optString(KEY_TITLE, ""),
+                        obj.optString(KEY_DETAIL, ""),
+                        parseTime(obj.optString(KEY_TIME, ""))
+                    )
                 } else {
                     // ── 旧格式（英文字段）──
-                    val title = obj.optString("title", "")
-                    val desc = obj.optString("description", "")
-                    val eventTime = obj.optLong("eventTime", System.currentTimeMillis())
-                    val event = Event(title, desc, eventTime)
-                    if (obj.has("id")) event.id = obj.getLong("id")
-                    if (obj.has("createdAt")) event.createdAt = obj.getLong("createdAt")
-                    event
+                    Triple(
+                        obj.optString("title", ""),
+                        obj.optString("description", ""),
+                        obj.optLong("eventTime", System.currentTimeMillis())
+                    )
                 }
-
+                
+                eventsToImport.add(Triple(title, detail, eventTime))
+            }
+            
+            // 按时间升序排序（最旧的在前），这样导入时ID会从1开始递增，且最大的ID对应最新的时间
+            eventsToImport.sortBy { it.third }
+            
+            // 按排序后的顺序插入，ID会自动从1开始递增
+            for ((title, detail, eventTime) in eventsToImport) {
+                val event = Event(title, detail, eventTime)
                 repository.insert(event)
             }
             true
