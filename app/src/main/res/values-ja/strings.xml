@@ -41,7 +41,7 @@
         
     <!-- Settings -->
     <string name="settings">設定</string>
-    <string name="data_management">データ管理</string>
+    <string name="data_management">データ</string>
     <string name="export_data">データをエクスポート</string>
     <string name="import_data">データをインポート</string>
     <string name="auto_backup">自動バックアップ</string>
@@ -92,7 +92,18 @@
     <string name="event_datetime_changed">日時を更新しました</string>
 
     <!-- 言語切り替え -->
+    <string name="language_changed">言語が変更されました</string>
     <string name="language_changed_restart">言語が変更されました。アプリを再起動します…</string>
+
+    <!-- テーマ切り替え -->
+    <string name="theme_changed">テーマが変更されました</string>
+
+    <!-- アイコン色の選択 -->
+    <string name="select_icon_color">アイコンの色を選択</string>
+    <string name="default_icon">デフォルトアイコン</string>
+    <string name="colorful_icon">カラフルアイコン</string>
+    <string name="switched_to_colorful">カラフルアイコンに切り替えました</string>
+    <string name="switched_to_default">デフォルトアイコンに切り替えました</string>
 
     <!-- クリアボタンのヒント -->
     <string name="long_press_to_clear">長押しですべてのデータをクリア</string>
@@ -101,6 +112,7 @@
     <string name="type_clear_to_confirm">確認するには \"clear\" と入力してください</string>
 
     <!-- データ表示モード -->
+    <string name="data_view">表示</string>
     <string name="table_id">ID</string>
     <string name="data_display_mode">データ表示</string>
     <string name="card_view">カード表示</string>

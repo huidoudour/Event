@@ -100,7 +100,7 @@
                 android:id="@+id/card_import_data"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:strokeWidth="0dp"
@@ -207,7 +207,7 @@
                 android:id="@+id/card_theme_settings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:strokeWidth="0dp"
@@ -248,6 +248,17 @@
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- 视图部分 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/data_view"
+                android:textAppearance="?attr/textAppearanceTitleSmall"
+                android:textColor="@color/settings_section_title"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
 
             <!-- 数据展示模式卡片 -->
             <com.google.android.material.card.MaterialCardView
@@ -298,6 +309,7 @@
 
             <!-- 关于部分 -->
             <TextView
+                android:id="@+id/aboutTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/about"

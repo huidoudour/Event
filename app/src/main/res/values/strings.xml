@@ -40,7 +40,7 @@
         
     <!-- Settings -->
     <string name="settings">设置</string>
-    <string name="data_management">数据管理</string>
+    <string name="data_management">数据</string>
     <string name="export_data">导出数据</string>
     <string name="import_data">导入数据</string>
     <string name="auto_backup">自动备份</string>
@@ -91,6 +91,7 @@
     <string name="event_datetime_changed">日期时间已更新</string>>
 
     <!-- 语言切换 -->
+    <string name="language_changed">语言已更改</string>
     <string name="language_changed_restart">语言已更改，应用即将重启…</string>
 
     <!-- 清除按钮提示 -->
@@ -99,7 +100,18 @@
     <string name="confirm_clear_all_message">确定要清空所有事件吗？此操作不可恢复。</string>
     <string name="type_clear_to_confirm">请输入 "clear" 以确认</string>
 
+    <!-- 主题切换 -->
+    <string name="theme_changed">主题已更改</string>
+
+    <!-- 图标颜色选择 -->
+    <string name="select_icon_color">选择图标颜色</string>
+    <string name="default_icon">默认图标</string>
+    <string name="colorful_icon">彩色图标</string>
+    <string name="switched_to_colorful">已切换为彩色图标</string>
+    <string name="switched_to_default">已切换为默认图标</string>
+
     <!-- 数据展示视图 -->
+    <string name="data_view">视图</string>
     <string name="table_id">ID</string>
     <string name="data_display_mode">数据视图</string>
     <string name="card_view">条目视图</string>

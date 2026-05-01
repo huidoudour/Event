@@ -41,7 +41,7 @@
         
     <!-- Settings -->
     <string name="settings">設置</string>
-    <string name="data_management">數據管理</string>
+    <string name="data_management">數據</string>
     <string name="export_data">導出數據</string>
     <string name="import_data">導入數據</string>
     <string name="auto_backup">自動備份</string>
@@ -92,7 +92,18 @@
     <string name="event_datetime_changed">日期時間已更新</string>>
 
     <!-- 語言切換 -->
+    <string name="language_changed">語言已更改</string>
     <string name="language_changed_restart">語言已更改，應用即將重啟…</string>
+
+    <!-- 主題切換 -->
+    <string name="theme_changed">主題已更改</string>
+
+    <!-- 圖標顏色選擇 -->
+    <string name="select_icon_color">選擇圖標顏色</string>
+    <string name="default_icon">預設圖標</string>
+    <string name="colorful_icon">彩色圖標</string>
+    <string name="switched_to_colorful">已切換為彩色圖標</string>
+    <string name="switched_to_default">已切換為預設圖標</string>
 
     <!-- 清除按钮提示 -->
     <string name="long_press_to_clear">長按此按鈕可清空全部數據</string>
@@ -101,6 +112,7 @@
     <string name="type_clear_to_confirm">請輸入 \"clear\" 以確認</string>
 
     <!-- 數據視圖 -->
+    <string name="data_view">視圖</string>
     <string name="table_id">ID</string>
     <string name="data_display_mode">數據視圖</string>
     <string name="card_view">條目視圖</string>

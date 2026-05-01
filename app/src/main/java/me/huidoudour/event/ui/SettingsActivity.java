@@ -23,6 +23,7 @@ import java.util.concurrent.Executors;
 import me.huidoudour.event.R;
 import me.huidoudour.event.data.DataImportExportHelper;
 import me.huidoudour.event.data.EventRepository;
+import me.huidoudour.event.utils.IconColorHelper;
 import me.huidoudour.event.utils.LocaleHelper;
 import me.huidoudour.event.utils.ThemeHelper;
 import me.huidoudour.event.utils.ViewModeHelper;
@@ -178,32 +179,17 @@ public class SettingsActivity extends AppCompatActivity {
                 dialog.dismiss();
                 
                 // 显示Toast提示
-                Toast.makeText(this, R.string.language_changed_restart, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.language_changed, Toast.LENGTH_SHORT).show();
                 
-                // 延迟重启App以应用新的语言设置
+                // 延迟重建Activity以应用新的语言设置
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    restartApp();
-                }, 500);
+                    recreate();
+                }, 300);
             })
             .setNegativeButton(R.string.cancel, null)
             .show();
     }
     
-    /** 重启整个App */
-    private void restartApp() {
-        // 获取启动Intent
-        Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
-        if (intent != null) {
-            // 添加标志以清除任务栈
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            // 退出当前Activity
-            finish();
-            // 退出整个应用进程
-            System.exit(0);
-        }
-    }
-
     /** 主题设置 */
     private void setupThemeSettings() {
         MaterialCardView cardTheme = findViewById(R.id.card_theme_settings);
@@ -242,6 +228,9 @@ public class SettingsActivity extends AppCompatActivity {
                 ThemeHelper.setTheme(this, selectedTheme);
                 
                 dialog.dismiss();
+                
+                // 显示Toast提示
+                Toast.makeText(this, R.string.theme_changed, Toast.LENGTH_SHORT).show();
             })
             .setNegativeButton(R.string.cancel, null)
             .show();
@@ -299,10 +288,49 @@ public class SettingsActivity extends AppCompatActivity {
 
     /** 关于开发者 */
     private void setupAboutDeveloper() {
+        // 获取"关于"标题TextView
+        TextView aboutTitle = findViewById(R.id.aboutTitle);
+        
+        // 设置长按事件显示切换图标颜色对话框
+        aboutTitle.setOnLongClickListener(v -> {
+            showIconColorDialog();
+            return true;
+        });
+        
         MaterialCardView cardAbout = findViewById(R.id.card_about_developer);
         cardAbout.setOnClickListener(v -> {
             Intent intent = new Intent(SettingsActivity.this, MeActivity.class);
             startActivity(intent);
         });
+    }
+    
+    /** 显示图标颜色选择对话框 */
+    private void showIconColorDialog() {
+        boolean useColorful = IconColorHelper.useColorfulIcon(this);
+        String[] options = {getString(R.string.default_icon), getString(R.string.colorful_icon)};
+        int checkedItem = useColorful ? 1 : 0;
+        
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.select_icon_color)
+            .setSingleChoiceItems(options, checkedItem, (dialog, which) -> {
+                boolean selectedColorful = (which == 1);
+                
+                // 如果选择的和当前相同，不做任何操作
+                if (selectedColorful == useColorful) {
+                    dialog.dismiss();
+                    return;
+                }
+                
+                // 切换图标颜色
+                IconColorHelper.toggleColorfulIcon(this);
+                
+                dialog.dismiss();
+                
+                // 显示Toast提示
+                int messageRes = selectedColorful ? R.string.switched_to_colorful : R.string.switched_to_default;
+                Toast.makeText(this, messageRes, Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
     }
 }

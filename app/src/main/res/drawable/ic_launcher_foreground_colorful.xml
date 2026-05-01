@@ -1,0 +1,43 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <group
+        android:translateX="-4"
+        android:translateY="0">
+        <!-- 第一排：点 划 划 -->
+        <path
+            android:fillColor="#FF5252"
+            android:pathData="M40,38 A4,4 0 1,1 40,46 A4,4 0 1,1 40,38 Z" />
+        <path
+            android:fillColor="#4CAF50"
+            android:pathData="M48,40.5 L62,40.5 L62,42.5 L48,42.5 Z" />
+        <path
+            android:fillColor="#2196F3"
+            android:pathData="M68,40.5 L82,40.5 L82,42.5 L68,42.5 Z" />
+        
+        <!-- 第二排：点 划 划 -->
+        <path
+            android:fillColor="#FFC107"
+            android:pathData="M40,50 A4,4 0 1,1 40,58 A4,4 0 1,1 40,50 Z" />
+        <path
+            android:fillColor="#9C27B0"
+            android:pathData="M48,52.5 L62,52.5 L62,54.5 L48,54.5 Z" />
+        <path
+            android:fillColor="#FF9800"
+            android:pathData="M68,52.5 L82,52.5 L82,54.5 L68,54.5 Z" />
+        
+        <!-- 第三排：点 划 划 -->
+        <path
+            android:fillColor="#00BCD4"
+            android:pathData="M40,62 A4,4 0 1,1 40,70 A4,4 0 1,1 40,62 Z" />
+        <path
+            android:fillColor="#E91E63"
+            android:pathData="M48,64.5 L62,64.5 L62,66.5 L48,66.5 Z" />
+        <path
+            android:fillColor="#00E676"
+            android:pathData="M68,64.5 L82,64.5 L82,66.5 L68,66.5 Z" />
+    </group>
+</vector>

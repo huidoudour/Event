@@ -92,7 +92,18 @@
     <string name="event_datetime_changed">Дата и время обновлены</string>
 
     <!-- Переключение языка -->
+    <string name="language_changed">Язык изменён</string>
     <string name="language_changed_restart">Язык изменён, приложение перезапускается…</string>
+
+    <!-- Переключение темы -->
+    <string name="theme_changed">Тема изменена</string>
+
+    <!-- Выбор цвета иконки -->
+    <string name="select_icon_color">Выберите цвет иконки</string>
+    <string name="default_icon">Стандартная иконка</string>
+    <string name="colorful_icon">Цветная иконка</string>
+    <string name="switched_to_colorful">Переключено на цветную иконку</string>
+    <string name="switched_to_default">Переключено на стандартную иконку</string>
 
     <!-- Подсказка кнопки очистки -->
     <string name="long_press_to_clear">Длительное нажатие для очистки всех данных</string>
@@ -101,6 +112,7 @@
     <string name="type_clear_to_confirm">Введите \"clear\" для подтверждения</string>
 
     <!-- Режим отображения данных -->
+    <string name="data_view">Вид</string>
     <string name="table_id">ID</string>
     <string name="data_display_mode">Режим отображения</string>
     <string name="card_view">Карточки</string>
