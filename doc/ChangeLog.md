@@ -1,3 +1,36 @@
+### 05022323-HTML与AGP
+ - 创建HTML文件
+ - 升级AGP到9.1.0
+### 05022223-图标设计，工作流优化
+ - 优化彩色图标
+ - 修改工作流内容
+### 05011231-图标与布局
+- 彩色图标
+- 布局设计优化
+### 04231408-调试
+
+### 04211613-UI大重构，使用Fragment技术
+
+### 04202248-Night
+
+### 04202234-SQLite
+
+### 04170256-feat(i18n): 添加多语言支持功能
+- 新增 LocaleHelper 工具类实现语言切换功能
+- 在 HomeActivity、MeActivity 和 SettingsActivity 中集成语言设置
+- 添加英语、日语、俄语和繁体中文的字符串资源文件
+- 在设置页面实现语言选择对话框功能
+- 修改 AndroidManifest.xml 添加核心组件元数据
+- 更新依赖配置使用 libs.versions.toml 管理 MTDataFilesProvider
+### add LICENSE
+
+### 03310859-bug fix - 修复导入失败的bug
+
+### 03302124-功能优化
+- 增加批量管理功能
+- 完善导入导出功能
+- 完善全部清除功能
+### 03222033-布局UI颜色修正
 
 ### 03200817-refactor(ui): 调整MeActivity包结构并添加应用图标资源
  - 将MeActivity从默认包移动到ui包下
