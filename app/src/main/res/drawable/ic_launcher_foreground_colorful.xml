@@ -10,34 +10,34 @@
         <!-- 第一排：点 划 划 -->
         <path
             android:fillColor="#FF5252"
-            android:pathData="M40,38 A4,4 0 1,1 40,46 A4,4 0 1,1 40,38 Z" />
+            android:pathData="M40,37 A5,5 0 1,1 40,47 A5,5 0 1,1 40,37 Z" />
         <path
             android:fillColor="#4CAF50"
-            android:pathData="M48,40.5 L62,40.5 L62,42.5 L48,42.5 Z" />
+            android:pathData="M48,40.5 L62,40.5 L62,43.5 L48,43.5 Z" />
         <path
             android:fillColor="#2196F3"
-            android:pathData="M68,40.5 L82,40.5 L82,42.5 L68,42.5 Z" />
+            android:pathData="M68,40.5 L82,40.5 L82,43.5 L68,43.5 Z" />
         
         <!-- 第二排：点 划 划 -->
         <path
             android:fillColor="#FFC107"
-            android:pathData="M40,50 A4,4 0 1,1 40,58 A4,4 0 1,1 40,50 Z" />
+            android:pathData="M40,49 A5,5 0 1,1 40,59 A5,5 0 1,1 40,49 Z" />
         <path
             android:fillColor="#9C27B0"
-            android:pathData="M48,52.5 L62,52.5 L62,54.5 L48,54.5 Z" />
+            android:pathData="M48,52.5 L62,52.5 L62,55.5 L48,55.5 Z" />
         <path
             android:fillColor="#FF9800"
-            android:pathData="M68,52.5 L82,52.5 L82,54.5 L68,54.5 Z" />
+            android:pathData="M68,52.5 L82,52.5 L82,55.5 L68,55.5 Z" />
         
         <!-- 第三排：点 划 划 -->
         <path
             android:fillColor="#00BCD4"
-            android:pathData="M40,62 A4,4 0 1,1 40,70 A4,4 0 1,1 40,62 Z" />
+            android:pathData="M40,61 A5,5 0 1,1 40,71 A5,5 0 1,1 40,61 Z" />
         <path
             android:fillColor="#E91E63"
-            android:pathData="M48,64.5 L62,64.5 L62,66.5 L48,66.5 Z" />
+            android:pathData="M48,64.5 L62,64.5 L62,67.5 L48,67.5 Z" />
         <path
             android:fillColor="#00E676"
-            android:pathData="M68,64.5 L82,64.5 L82,66.5 L68,66.5 Z" />
+            android:pathData="M68,64.5 L82,64.5 L82,67.5 L68,67.5 Z" />
     </group>
 </vector>
