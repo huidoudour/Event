@@ -13,9 +13,10 @@ android {
     defaultConfig {
         applicationId = "me.huidoudour.event"
         minSdk = 28
+        //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 41
-        versionName = "0.41"
+        versionCode = 49
+        versionName = "0.49"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         

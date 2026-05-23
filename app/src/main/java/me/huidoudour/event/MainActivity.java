@@ -106,10 +106,8 @@ public class MainActivity extends AppCompatActivity {
 
         btnRefresh = findViewById(R.id.btnRefresh);
         btnRefresh.setOnClickListener(v -> {
-            if (eventListFragment != null) {
-                eventListFragment.refresh();
-                Toast.makeText(MainActivity.this, R.string.refreshed, Toast.LENGTH_SHORT).show();
-            }
+            refreshCurrentFragment();
+            Toast.makeText(MainActivity.this, R.string.refreshed, Toast.LENGTH_SHORT).show();
         });
 
         btnClearAll = findViewById(R.id.btnClearAll);
@@ -120,9 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnMultiSelect = findViewById(R.id.btnMultiSelect);
         btnMultiSelect.setOnClickListener(v -> {
-            if (eventListFragment != null) {
-                eventListFragment.toggleMultiSelectMode();
-            }
+            toggleMultiSelectOnCurrentFragment();
         });
 
         // 批量操作按钮
@@ -131,15 +127,11 @@ public class MainActivity extends AppCompatActivity {
         btnDeleteSelected = findViewById(R.id.btnDeleteSelected);
 
         btnSelectAll.setOnClickListener(v -> {
-            if (eventListFragment != null) {
-                eventListFragment.selectAll();
-            }
+            selectAllOnCurrentFragment();
         });
 
         btnDeleteSelected.setOnClickListener(v -> {
-            if (eventListFragment != null) {
-                eventListFragment.deleteSelected();
-            }
+            deleteSelectedOnCurrentFragment();
         });
     }
 
@@ -151,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupFAB() {
         fabAddEvent = findViewById(R.id.fabAddEvent);
         fabAddEvent.setOnClickListener(v -> {
-            if (eventListFragment != null && eventListFragment.isMultiSelectMode()) {
+            if (isMultiSelectModeOnCurrentFragment()) {
                 Toast.makeText(this, R.string.exit_multi_select_first, Toast.LENGTH_SHORT).show();
             } else {
                 showAddDialog();
@@ -195,10 +187,10 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, eventTableFragment)
                 .commit();
         
-        // 显示FAB，隐藏批量操作按钮和排序按钮
+        // 显示FAB、多选按钮和排序按钮（表格视图同样支持多选）
         fabAddEvent.setVisibility(View.VISIBLE);
-        btnMultiSelect.setVisibility(View.GONE);
-        btnSortOrder.setVisibility(View.GONE);
+        btnMultiSelect.setVisibility(View.VISIBLE);
+        btnSortOrder.setVisibility(View.VISIBLE);
     }
 
     // ─────────────────────────────────────────────
@@ -221,8 +213,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showLongClickMenu(Event event, View view) {
+        String title;
+        if (currentFragment instanceof EventTableFragment) {
+            // 表格视图：显示 ID 和标题，防止误触时不知道操作的是哪条记录
+            title = "[ID: " + event.getId() + "] " + event.getTitle();
+        } else {
+            // 条目视图：仅显示标题
+            title = event.getTitle();
+        }
+
         new MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.event_options)
+            .setTitle(title)
             .setItems(R.array.event_options_array, (dialog, which) -> {
                 if (which == 0) {
                     showChangeDateTimeDialog(event);
@@ -244,6 +245,59 @@ public class MainActivity extends AppCompatActivity {
         btnSelectAll.setImageResource(allSelected ? android.R.drawable.ic_menu_close_clear_cancel : android.R.drawable.ic_menu_agenda);
     }
 
+    // ─────────────────────────────────────────────
+    // 辅助方法 - 统一路由到当前Fragment
+    // ─────────────────────────────────────────────
+
+    private void toggleMultiSelectOnCurrentFragment() {
+        if (currentFragment instanceof EventListFragment) {
+            ((EventListFragment) currentFragment).toggleMultiSelectMode();
+        } else if (currentFragment instanceof EventTableFragment) {
+            ((EventTableFragment) currentFragment).toggleMultiSelectMode();
+        }
+    }
+
+    private void selectAllOnCurrentFragment() {
+        if (currentFragment instanceof EventListFragment) {
+            ((EventListFragment) currentFragment).selectAll();
+        } else if (currentFragment instanceof EventTableFragment) {
+            ((EventTableFragment) currentFragment).selectAll();
+        }
+    }
+
+    private void deleteSelectedOnCurrentFragment() {
+        if (currentFragment instanceof EventListFragment) {
+            ((EventListFragment) currentFragment).deleteSelected();
+        } else if (currentFragment instanceof EventTableFragment) {
+            ((EventTableFragment) currentFragment).deleteSelected();
+        }
+    }
+
+    private boolean isMultiSelectModeOnCurrentFragment() {
+        if (currentFragment instanceof EventListFragment) {
+            return ((EventListFragment) currentFragment).isMultiSelectMode();
+        } else if (currentFragment instanceof EventTableFragment) {
+            return ((EventTableFragment) currentFragment).isMultiSelectMode();
+        }
+        return false;
+    }
+
+    private void exitMultiSelectOnCurrentFragment() {
+        if (currentFragment instanceof EventListFragment) {
+            ((EventListFragment) currentFragment).exitMultiSelectMode();
+        } else if (currentFragment instanceof EventTableFragment) {
+            ((EventTableFragment) currentFragment).exitMultiSelectMode();
+        }
+    }
+
+    private void refreshCurrentFragment() {
+        if (currentFragment instanceof EventListFragment) {
+            ((EventListFragment) currentFragment).refresh();
+        } else if (currentFragment instanceof EventTableFragment) {
+            ((EventTableFragment) currentFragment).refresh();
+        }
+    }
+
     public void showDeleteSelectedConfirmDialog(Set<Long> selectedIds) {
         int count = selectedIds.size();
         new MaterialAlertDialogBuilder(this)
@@ -252,9 +306,7 @@ public class MainActivity extends AppCompatActivity {
             .setPositiveButton(R.string.delete, (dialog, which) -> {
                 viewModel.deleteEventsByIds(new ArrayList<>(selectedIds));
                 Toast.makeText(this, R.string.deleted_selected, Toast.LENGTH_SHORT).show();
-                if (eventListFragment != null) {
-                    eventListFragment.exitMultiSelectMode();
-                }
+                exitMultiSelectOnCurrentFragment();
             })
             .setNegativeButton(R.string.cancel, null)
             .show();

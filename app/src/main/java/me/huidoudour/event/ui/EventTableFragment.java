@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -15,9 +16,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
+import me.huidoudour.event.MainActivity;
 import me.huidoudour.event.R;
 import me.huidoudour.event.data.Event;
 
@@ -27,6 +31,13 @@ public class EventTableFragment extends Fragment {
     private TableLayout tableLayout;
     private View emptyView;
     private View scrollView;
+
+    // 保存当前数据用于重绘
+    private List<Event> currentEvents;
+
+    // 多选模式相关
+    private boolean isMultiSelectMode = false;
+    private final Set<Long> selectedIds = new HashSet<>();
 
     public static EventTableFragment newInstance() {
         return new EventTableFragment();
@@ -47,6 +58,7 @@ public class EventTableFragment extends Fragment {
 
         // 观察事件列表
         viewModel.getSortedEvents().observe(getViewLifecycleOwner(), events -> {
+            currentEvents = events;
             if (events == null || events.isEmpty()) {
                 scrollView.setVisibility(View.GONE);
                 emptyView.setVisibility(View.VISIBLE);
@@ -61,7 +73,7 @@ public class EventTableFragment extends Fragment {
     }
 
     /**
-     * 渲染表格（参考 CodeScan 的 StartupRecordsActivity）
+     * 渲染表格
      */
     private void renderTable(List<Event> events) {
         tableLayout.removeAllViews();
@@ -72,10 +84,27 @@ public class EventTableFragment extends Fragment {
         TableRow headerRow = (TableRow) LayoutInflater.from(getContext())
                 .inflate(R.layout.item_table_row, tableLayout, false);
         
+        CheckBox cbHeader = headerRow.findViewById(R.id.cbSelect);
         TextView tvIdHeader = headerRow.findViewById(R.id.tvId);
         TextView tvTitleHeader = headerRow.findViewById(R.id.tvTime);
         TextView tvDescHeader = headerRow.findViewById(R.id.tvPage);
         TextView tvTimeHeader = headerRow.findViewById(R.id.tvExtra);
+
+        // 多选模式下显示表头的全选CheckBox
+        if (isMultiSelectMode) {
+            cbHeader.setVisibility(View.VISIBLE);
+            cbHeader.setChecked(selectedIds.size() == events.size() && !events.isEmpty());
+            cbHeader.setOnClickListener(v -> {
+                if (selectedIds.size() == events.size()) {
+                    clearSelection();
+                } else {
+                    selectAll();
+                }
+                renderTable(currentEvents);
+            });
+        } else {
+            cbHeader.setVisibility(View.GONE);
+        }
         
         tvIdHeader.setText(getString(R.string.table_id));
         tvTitleHeader.setText(getString(R.string.event_title));
@@ -105,10 +134,39 @@ public class EventTableFragment extends Fragment {
             TableRow dataRow = (TableRow) LayoutInflater.from(getContext())
                     .inflate(R.layout.item_table_row, tableLayout, false);
 
+            CheckBox cbSelect = dataRow.findViewById(R.id.cbSelect);
             TextView tvId = dataRow.findViewById(R.id.tvId);
             TextView tvTitle = dataRow.findViewById(R.id.tvTime);
             TextView tvDescription = dataRow.findViewById(R.id.tvPage);
             TextView tvTime = dataRow.findViewById(R.id.tvExtra);
+
+            // 多选模式
+            if (isMultiSelectMode) {
+                cbSelect.setVisibility(View.VISIBLE);
+                cbSelect.setChecked(selectedIds.contains(event.getId()));
+
+                dataRow.setOnClickListener(v -> {
+                    long id = event.getId();
+                    if (selectedIds.contains(id)) {
+                        selectedIds.remove(id);
+                    } else {
+                        selectedIds.add(id);
+                    }
+                    renderTable(currentEvents);
+                    updateSelectionBar();
+                });
+                dataRow.setOnLongClickListener(null);
+            } else {
+                cbSelect.setVisibility(View.GONE);
+
+                dataRow.setOnClickListener(v -> {
+                    ((MainActivity) requireActivity()).showEventDetail(event);
+                });
+                dataRow.setOnLongClickListener(v -> {
+                    ((MainActivity) requireActivity()).showLongClickMenu(event, v);
+                    return true;
+                });
+            }
 
             tvId.setText(String.valueOf(event.getId()));
             tvTitle.setText(event.getTitle());
@@ -120,5 +178,84 @@ public class EventTableFragment extends Fragment {
 
             tableLayout.addView(dataRow);
         }
+    }
+
+    // ─────────────────────────────────────────────
+    // 多选模式相关方法
+    // ─────────────────────────────────────────────
+
+    public void toggleMultiSelectMode() {
+        if (isMultiSelectMode) {
+            exitMultiSelectMode();
+        } else {
+            enterMultiSelectMode();
+        }
+    }
+
+    public void enterMultiSelectMode() {
+        isMultiSelectMode = true;
+        selectedIds.clear();
+        ((MainActivity) requireActivity()).updateBatchActionContainerVisibility(true);
+        renderTable(currentEvents);
+    }
+
+    public void exitMultiSelectMode() {
+        isMultiSelectMode = false;
+        selectedIds.clear();
+        ((MainActivity) requireActivity()).updateBatchActionContainerVisibility(false);
+        renderTable(currentEvents);
+    }
+
+    public void selectAll() {
+        if (currentEvents != null) {
+            for (Event event : currentEvents) {
+                selectedIds.add(event.getId());
+            }
+        }
+        renderTable(currentEvents);
+        updateSelectionBar();
+    }
+
+    public void clearSelection() {
+        selectedIds.clear();
+        renderTable(currentEvents);
+        updateSelectionBar();
+    }
+
+    public void deleteSelected() {
+        Set<Long> ids = getSelectedIds();
+        if (ids.isEmpty()) {
+            if (getContext() != null) {
+                android.widget.Toast.makeText(getContext(), R.string.selected_count_0, android.widget.Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+        ((MainActivity) requireActivity()).showDeleteSelectedConfirmDialog(ids);
+    }
+
+    public boolean isMultiSelectMode() {
+        return isMultiSelectMode;
+    }
+
+    public int getSelectedCount() {
+        return selectedIds.size();
+    }
+
+    public Set<Long> getSelectedIds() {
+        return new HashSet<>(selectedIds);
+    }
+
+    private void updateSelectionBar() {
+        if (currentEvents != null) {
+            ((MainActivity) requireActivity()).updateSelectionBar(selectedIds.size(), currentEvents.size());
+        }
+    }
+
+    // ─────────────────────────────────────────────
+    // 公共方法供MainActivity调用
+    // ─────────────────────────────────────────────
+
+    public void refresh() {
+        renderTable(currentEvents);
     }
 }

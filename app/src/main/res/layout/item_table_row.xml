@@ -4,6 +4,13 @@
     android:layout_height="wrap_content"
     android:paddingVertical="6dp">
 
+    <CheckBox
+        android:id="@+id/cbSelect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone" />
+
     <TextView
         android:id="@+id/tvId"
         android:layout_width="wrap_content"
