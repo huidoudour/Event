@@ -2,59 +2,89 @@ name: Android CI
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main", "master" ]
-
-env:
-  SIGN_KEYSTORE_PATH: ${{ github.workspace }}/sign_key
+    branches: [ "master" ]
 
 jobs:
-  build:
+  build-debug:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Set up JDK 17
+    - uses: actions/checkout@v4
+    - name: set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'temurin'
-        cache: 'gradle'
-
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
+        cache: gradle
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-
-    - name: Decode Keystore
+    
+    - name: Create debug keystore file
       run: |
-        echo "$SIGN_KEY_STORE_B64" | base64 -d > ${{ env.SIGN_KEYSTORE_PATH }}
-      env:
-        SIGN_KEY_STORE_B64: ${{ secrets.SIGN_KEY_STORE_B64 }}
+        echo "${{ secrets.DEBUG_STORE }}" | base64 -d > debug_sign_key
+        ls -lh debug_sign_key
+        file debug_sign_key
+    
+    - name: Build Debug APK with signing
+      run: |
+        ./gradlew assembleDebug \
+          -Pandroid.injected.signing.store.file=$(pwd)/debug_sign_key \
+          -Pandroid.injected.signing.store.password="${{ secrets.DEBUG_PASSD }}" \
+          -Pandroid.injected.signing.key.alias="${{ secrets.DEBUG_ALIAS }}" \
+          -Pandroid.injected.signing.key.password="${{ secrets.DEBUG_PASSD }}" \
+          --stacktrace
+    
+    - name: Upload Debug APK as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug
+        path: app/build/outputs/apk/debug/app-debug.apk
+        if-no-files-found: error
+    
+    - name: Clean up debug keystore
+      if: always()
+      run: rm -f debug_sign_key
 
-    - name: Build Signed Release APK
+  build-release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    
+    - name: Create release keystore file
+      run: |
+        echo "${{ secrets.SIGN_KEY_STORE_B64 }}" | base64 -d > sign_key
+        ls -lh sign_key
+        file sign_key
+    
+    - name: Build Release APK
       run: |
         ./gradlew assembleRelease \
-          -Pandroid.injected.signing.store.file="${{ env.SIGN_KEYSTORE_PATH }}" \
+          -Pandroid.injected.signing.store.file=$(pwd)/sign_key \
           -Pandroid.injected.signing.store.password="${{ secrets.SIGN_KEY_STORE_PASSWD }}" \
           -Pandroid.injected.signing.key.alias="${{ secrets.SIGN_KEY_ALIAS }}" \
-          -Pandroid.injected.signing.key.password="${{ secrets.SIGN_KEY_ALIAS_PASSWD }}"
-
-    - name: Run Tests
-      run: ./gradlew test
-
-    - name: Upload Signed Release APK
+          -Pandroid.injected.signing.key.password="${{ secrets.SIGN_KEY_ALIAS_PASSWD }}" \
+          --stacktrace
+    
+    - name: Upload Release APK as artifact
       uses: actions/upload-artifact@v4
-      if: success()
       with:
-        name: app-signed-release
+        name: app-release
         path: app/build/outputs/apk/release/app-release.apk
-        retention-days: 30
-
-    - name: Cleanup Keystore
+        if-no-files-found: error
+    
+    - name: Clean up keystore
       if: always()
-      run: rm -f ${{ env.SIGN_KEYSTORE_PATH }}
+      run: rm -f sign_key

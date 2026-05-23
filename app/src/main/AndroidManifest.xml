@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Event">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,7 +26,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_colorful"
             android:roundIcon="@mipmap/ic_launcher_round_colorful"
-            android:targetActivity=".ui.MainActivity">
+            android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -39,7 +39,7 @@
             android:label="@string/settings" />
         
         <activity
-            android:name=".ui.MeActivity"
+            android:name=".MeActivity"
             android:exported="false"
             android:label="@string/about_developer" />
 

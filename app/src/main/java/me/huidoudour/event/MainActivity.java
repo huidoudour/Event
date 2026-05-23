@@ -1,4 +1,4 @@
-package me.huidoudour.event.ui;
+package me.huidoudour.event;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -29,8 +29,11 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
-import me.huidoudour.event.R;
 import me.huidoudour.event.data.Event;
+import me.huidoudour.event.ui.EventListFragment;
+import me.huidoudour.event.ui.EventTableFragment;
+import me.huidoudour.event.ui.EventViewModel;
+import me.huidoudour.event.ui.SettingsActivity;
 import me.huidoudour.event.utils.LocaleHelper;
 import me.huidoudour.event.utils.ThemeHelper;
 import me.huidoudour.event.utils.ViewModeHelper;

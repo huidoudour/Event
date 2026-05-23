@@ -20,6 +20,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import me.huidoudour.event.MeActivity;
 import me.huidoudour.event.R;
 import me.huidoudour.event.data.DataImportExportHelper;
 import me.huidoudour.event.data.EventRepository;
