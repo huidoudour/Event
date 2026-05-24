@@ -9,7 +9,7 @@ public class IconColorHelper {
     private static final String PREFS_NAME = "icon_color_prefs";
     private static final String KEY_USE_COLORFUL_ICON = "use_colorful_icon";
     
-    private static final String MAIN_ACTIVITY_CLASS = "me.huidoudour.event.ui.MainActivity";
+    private static final String MAIN_ACTIVITY_CLASS = "me.huidoudour.event.MainActivity";
     private static final String COLORFUL_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityColorful";
     
     /**
