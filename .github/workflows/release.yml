@@ -7,6 +7,7 @@ on:
 
 env:
   SIGN_KEYSTORE_PATH: ${{ github.workspace }}/sign_key
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   release:
