@@ -61,7 +61,6 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     // MTDataFilesProvider
-    debugImplementation(libs.mt.data.files.provider)
     implementation(libs.mt.data.files.provider)
 
     // SQLite Android - 增强版 SQLite 库

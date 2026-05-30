@@ -107,8 +107,14 @@
     <string name="select_icon_color">选择图标颜色</string>
     <string name="default_icon">默认图标</string>
     <string name="colorful_icon">彩色图标</string>
-    <string name="switched_to_colorful">已切换为彩色图标</string>
-    <string name="switched_to_default">已切换为默认图标</string>
+    <string name="red_icon">红色图标</string>
+    <string name="blue_icon">蓝色图标</string>
+    <string name="yellow_icon">黄色图标</string>
+    <string name="purple_icon">紫色图标</string>
+    <string name="orange_icon">橙色图标</string>
+    <string name="cyan_icon">青色图标</string>
+    <string name="pink_icon">粉色图标</string>
+    <string name="icon_color_changed">图标颜色已更改</string>
 
     <!-- 数据展示视图 -->
     <string name="data_view">视图</string>

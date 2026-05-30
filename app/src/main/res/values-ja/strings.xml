@@ -102,8 +102,14 @@
     <string name="select_icon_color">アイコンの色を選択</string>
     <string name="default_icon">デフォルトアイコン</string>
     <string name="colorful_icon">カラフルアイコン</string>
-    <string name="switched_to_colorful">カラフルアイコンに切り替えました</string>
-    <string name="switched_to_default">デフォルトアイコンに切り替えました</string>
+    <string name="red_icon">赤いアイコン</string>
+    <string name="blue_icon">青いアイコン</string>
+    <string name="yellow_icon">黄色いアイコン</string>
+    <string name="purple_icon">紫色のアイコン</string>
+    <string name="orange_icon">オレンジのアイコン</string>
+    <string name="cyan_icon">水色のアイコン</string>
+    <string name="pink_icon">ピンクのアイコン</string>
+    <string name="icon_color_changed">アイコンの色を変更しました</string>
 
     <!-- クリアボタンのヒント -->
     <string name="long_press_to_clear">長押しですべてのデータをクリア</string>

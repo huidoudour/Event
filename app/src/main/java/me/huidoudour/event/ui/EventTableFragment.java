@@ -38,6 +38,7 @@ public class EventTableFragment extends Fragment {
     // 多选模式相关
     private boolean isMultiSelectMode = false;
     private final Set<Long> selectedIds = new HashSet<>();
+    private CheckBox headerCheckBox;
 
     public static EventTableFragment newInstance() {
         return new EventTableFragment();
@@ -92,17 +93,18 @@ public class EventTableFragment extends Fragment {
 
         // 多选模式下显示表头的全选CheckBox
         if (isMultiSelectMode) {
+            headerCheckBox = cbHeader;
             cbHeader.setVisibility(View.VISIBLE);
             cbHeader.setChecked(selectedIds.size() == events.size() && !events.isEmpty());
-            cbHeader.setOnClickListener(v -> {
-                if (selectedIds.size() == events.size()) {
-                    clearSelection();
-                } else {
+            cbHeader.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
                     selectAll();
+                } else {
+                    clearSelection();
                 }
-                renderTable(currentEvents);
             });
         } else {
+            headerCheckBox = null;
             cbHeader.setVisibility(View.GONE);
         }
         
@@ -140,20 +142,24 @@ public class EventTableFragment extends Fragment {
             TextView tvDescription = dataRow.findViewById(R.id.tvPage);
             TextView tvTime = dataRow.findViewById(R.id.tvExtra);
 
-            // 多选模式
+            // 多选模式：原地更新，不重建表格
             if (isMultiSelectMode) {
                 cbSelect.setVisibility(View.VISIBLE);
                 cbSelect.setChecked(selectedIds.contains(event.getId()));
 
-                dataRow.setOnClickListener(v -> {
+                cbSelect.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     long id = event.getId();
-                    if (selectedIds.contains(id)) {
-                        selectedIds.remove(id);
-                    } else {
+                    if (isChecked) {
                         selectedIds.add(id);
+                    } else {
+                        selectedIds.remove(id);
                     }
-                    renderTable(currentEvents);
+                    updateHeaderCheckboxState();
                     updateSelectionBar();
+                });
+
+                dataRow.setOnClickListener(v -> {
+                    cbSelect.toggle();
                 });
                 dataRow.setOnLongClickListener(null);
             } else {
@@ -243,6 +249,22 @@ public class EventTableFragment extends Fragment {
 
     public Set<Long> getSelectedIds() {
         return new HashSet<>(selectedIds);
+    }
+
+    private void updateHeaderCheckboxState() {
+        if (headerCheckBox != null && currentEvents != null) {
+            boolean allSelected = selectedIds.size() == currentEvents.size() && !currentEvents.isEmpty();
+            // 静默更新，不触发OnCheckedChangeListener
+            headerCheckBox.setOnCheckedChangeListener(null);
+            headerCheckBox.setChecked(allSelected);
+            headerCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    selectAll();
+                } else {
+                    clearSelection();
+                }
+            });
+        }
     }
 
     private void updateSelectionBar() {

@@ -307,29 +307,61 @@ public class SettingsActivity extends AppCompatActivity {
     
     /** 显示图标颜色选择对话框 */
     private void showIconColorDialog() {
-        boolean useColorful = IconColorHelper.useColorfulIcon(this);
-        String[] options = {getString(R.string.default_icon), getString(R.string.colorful_icon)};
-        int checkedItem = useColorful ? 1 : 0;
+        int[] colors = {
+            IconColorHelper.COLOR_DEFAULT,
+            IconColorHelper.COLOR_COLORFUL,
+            IconColorHelper.COLOR_RED,
+            IconColorHelper.COLOR_BLUE,
+            IconColorHelper.COLOR_YELLOW,
+            IconColorHelper.COLOR_PURPLE,
+            IconColorHelper.COLOR_ORANGE,
+            IconColorHelper.COLOR_CYAN,
+            IconColorHelper.COLOR_PINK
+        };
+        
+        String[] colorNames = {
+            getString(R.string.default_icon),
+            getString(R.string.colorful_icon),
+            getString(R.string.red_icon),
+            getString(R.string.blue_icon),
+            getString(R.string.yellow_icon),
+            getString(R.string.purple_icon),
+            getString(R.string.orange_icon),
+            getString(R.string.cyan_icon),
+            getString(R.string.pink_icon)
+        };
+        
+        // 获取当前图标颜色
+        int currentColor = IconColorHelper.getIconColor(this);
+        int checkedItem = 0;
+        
+        // 找到当前选中项
+        for (int i = 0; i < colors.length; i++) {
+            if (colors[i] == currentColor) {
+                checkedItem = i;
+                break;
+            }
+        }
         
         new MaterialAlertDialogBuilder(this)
             .setTitle(R.string.select_icon_color)
-            .setSingleChoiceItems(options, checkedItem, (dialog, which) -> {
-                boolean selectedColorful = (which == 1);
+            .setSingleChoiceItems(colorNames, checkedItem, (dialog, which) -> {
+                int selectedColor = colors[which];
                 
-                // 如果选择的和当前相同，不做任何操作
-                if (selectedColorful == useColorful) {
+                // 如果选择的颜色和当前相同，不做任何操作
+                if (selectedColor == currentColor) {
                     dialog.dismiss();
                     return;
                 }
                 
-                // 切换图标颜色
-                IconColorHelper.toggleColorfulIcon(this);
+                // 保存并应用图标颜色
+                IconColorHelper.setIconColor(this, selectedColor);
+                IconColorHelper.applyIconColor(this, selectedColor);
                 
                 dialog.dismiss();
                 
                 // 显示Toast提示
-                int messageRes = selectedColorful ? R.string.switched_to_colorful : R.string.switched_to_default;
-                Toast.makeText(this, messageRes, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.icon_color_changed, Toast.LENGTH_SHORT).show();
             })
             .setNegativeButton(R.string.cancel, null)
             .show();

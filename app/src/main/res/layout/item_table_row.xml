@@ -4,22 +4,40 @@
     android:layout_height="wrap_content"
     android:paddingVertical="6dp">
 
-    <CheckBox
-        android:id="@+id/cbSelect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:visibility="gone" />
+    <!-- ID列：CheckBox与ID文本共享空间，避免列数变化导致宽度跳动 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="8dp">
 
-    <TextView
-        android:id="@+id/tvId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:textColor="?attr/colorOnSurface"
-        android:textSize="13sp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <android.widget.CheckBox
+                android:id="@+id/cbSelect"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="8dp"
+                android:button="@drawable/selector_checkbox_circle"
+                android:buttonTint="@color/light_and_night"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+    </FrameLayout>
 
     <TextView
         android:id="@+id/tvTime"

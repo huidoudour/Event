@@ -23,10 +23,10 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="12dp"
+            android:buttonTint="@color/light_and_night"
             android:clickable="false"
             android:focusable="false"
-            android:visibility="gone"
-            app:useMaterialThemeColors="true" />
+            android:visibility="gone" />
 
         <!-- 事件内容 -->
         <LinearLayout
