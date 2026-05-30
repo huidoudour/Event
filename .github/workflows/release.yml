@@ -1,4 +1,4 @@
-name: Release Pre-release
+name: Release
 
 on:
   push:
@@ -15,17 +15,17 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Set up JDK 17
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: 'gradle'
 
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
+      uses: gradle/actions/setup-gradle@v5
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -38,7 +38,7 @@ jobs:
 
     - name: Get version from tag
       id: get_version
-      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
     - name: Build Signed Release APK
       run: |
@@ -50,30 +50,30 @@ jobs:
 
     - name: Rename APK with version
       run: |
-        mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/app-release-${{ steps.get_version.outputs.VERSION }}.apk
+        mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/Event-${{ steps.get_version.outputs.VERSION }}.apk
 
     - name: Upload Signed Release APK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       if: success()
       with:
         name: app-signed-release
-        path: app/build/outputs/apk/release/app-release-${{ steps.get_version.outputs.VERSION }}.apk
+        path: app/build/outputs/apk/release/Event-${{ steps.get_version.outputs.VERSION }}.apk
         retention-days: 30
 
-    - name: Create Pre-release
-      uses: softprops/action-gh-release@v2
+    - name: Create Release
+      uses: softprops/action-gh-release@v2.2.2
       if: success()
       with:
-        files: app/build/outputs/apk/release/app-release-${{ steps.get_version.outputs.VERSION }}.apk
+        files: app/build/outputs/apk/release/Event-${{ steps.get_version.outputs.VERSION }}.apk
         name: Release ${{ steps.get_version.outputs.VERSION }}
         tag_name: ${{ github.ref_name }}
         draft: false
-        prerelease: true
+        prerelease: false
         body: |
           ## 更新内容
-          - 自动构建的正式或预览版本
+          - 自动构建的正式版本
           - 该版本添加多个实用新功能
-          
+                  
           ### 安装说明
           下载并安装 APK 文件即可使用。
       env:
