@@ -7,14 +7,14 @@
 
     <!-- 第一条横线（长） -->
     <path
-        android:fillColor="#FF000000"
+        android:fillColor="@color/light_and_night"
         android:pathData="M3,6h18v2h-18z" />
     <!-- 第二条横线（正常） -->
     <path
-        android:fillColor="#FF000000"
+        android:fillColor="@color/light_and_night"
         android:pathData="M3,11h12v2h-12z" />
     <!-- 第三条横线（短） -->
     <path
-        android:fillColor="#FF000000"
+        android:fillColor="@color/light_and_night"
         android:pathData="M3,16h7v2h-7z" />
 </vector>

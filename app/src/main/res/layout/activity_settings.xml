@@ -70,7 +70,7 @@
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        app:cardBackgroundColor="@color/settings_icon_primary"
+                        app:cardBackgroundColor="@color/settings_icon_secondary"
                         app:cardCornerRadius="20dp"
                         app:cardElevation="0dp">
 
@@ -117,7 +117,7 @@
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        app:cardBackgroundColor="@color/settings_icon_primary"
+                        app:cardBackgroundColor="@color/settings_icon_secondary"
                         app:cardCornerRadius="20dp"
                         app:cardElevation="0dp">
 
@@ -271,7 +271,7 @@
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        app:cardBackgroundColor="@color/settings_icon_tertiary"
+                        app:cardBackgroundColor="@color/settings_icon_secondary"
                         app:cardCornerRadius="20dp"
                         app:cardElevation="0dp">
 
@@ -279,7 +279,8 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_palette" />
+                            android:src="@drawable/ic_palette"
+                            app:tint="@color/settings_icon_on_secondary" />
 
                     </com.google.android.material.card.MaterialCardView>
 
@@ -328,7 +329,7 @@
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        app:cardBackgroundColor="@color/settings_icon_tertiary"
+                        app:cardBackgroundColor="@color/settings_icon_secondary"
                         app:cardCornerRadius="20dp"
                         app:cardElevation="0dp">
 
@@ -336,7 +337,8 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_version" />
+                            android:src="@drawable/ic_version"
+                            app:tint="@color/settings_icon_on_secondary" />
 
                     </com.google.android.material.card.MaterialCardView>
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="light_and_night">#48444d</color>
     <!-- Semantic colors for settings - Dark Theme -->
     <color name="settings_section_title">@color/md_theme_dark_primary</color>
     <color name="settings_card_background">@color/md_theme_dark_surfaceContainerHigh</color>
