@@ -37,19 +37,6 @@
                 android:scaleType="centerInside"
                 android:padding="12dp" />
 
-            <!-- Sort Order Toggle Button -->
-            <ImageButton
-                android:id="@+id/btnSortOrder"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="4dp"
-                android:background="@drawable/bg_button_circle_ripple"
-                android:contentDescription="@string/toggle_sort_order"
-                android:src="@drawable/ic_sort"
-                android:scaleType="centerInside"
-                android:padding="12dp" />
-
             <!-- Refresh Button -->
             <ImageButton
                 android:id="@+id/btnRefresh"

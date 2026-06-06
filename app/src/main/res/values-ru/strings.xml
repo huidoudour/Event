@@ -69,6 +69,7 @@
     <string name="refresh_order">Обновить порядок</string>
     <string name="order_refreshed">Порядок обновлён</string>
     <string name="toggle_sort_order">Переключить сортировку</string>
+    <string name="sort_order_settings">Порядок сортировки</string>
     <string name="sort_ascending">По возрастанию</string>
     <string name="sort_descending">По убыванию</string>
     <string name="refresh">Обновить</string>

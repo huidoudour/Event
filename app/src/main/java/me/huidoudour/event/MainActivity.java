@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private EventViewModel viewModel;
     
     // Toolbar按钮
-    private ImageButton btnSortOrder;
     private ImageButton btnRefresh;
     private ImageButton btnClearAll;
     private ImageButton btnMultiSelect;
@@ -95,17 +94,6 @@ public class MainActivity extends AppCompatActivity {
         btnSettings.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);
-        });
-
-        btnSortOrder = findViewById(R.id.btnSortOrder);
-        btnSortOrder.setOnClickListener(v -> {
-            if (viewModel != null) {
-                viewModel.toggleSortOrder();
-                String sortOrder = viewModel.isAscending()
-                        ? getString(R.string.sort_ascending)
-                        : getString(R.string.sort_descending);
-                Toast.makeText(MainActivity.this, sortOrder, Toast.LENGTH_SHORT).show();
-            }
         });
 
         btnRefresh = findViewById(R.id.btnRefresh);
@@ -179,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
         // 显示FAB和批量操作按钮
         fabAddEvent.setVisibility(View.VISIBLE);
         btnMultiSelect.setVisibility(View.VISIBLE);
-        btnSortOrder.setVisibility(View.VISIBLE);
     }
 
     private void loadEventTableFragment() {
@@ -191,10 +178,9 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, eventTableFragment)
                 .commit();
         
-        // 显示FAB、多选按钮和排序按钮（表格视图同样支持多选）
+        // 显示FAB和多选按钮（表格视图同样支持多选）
         fabAddEvent.setVisibility(View.VISIBLE);
         btnMultiSelect.setVisibility(View.VISIBLE);
-        btnSortOrder.setVisibility(View.VISIBLE);
     }
 
     // ─────────────────────────────────────────────
@@ -476,6 +462,11 @@ public class MainActivity extends AppCompatActivity {
             (viewMode == ViewModeHelper.VIEW_MODE_CARD && !isListMode)) {
             // 视图模式已改变，重新加载
             loadFragmentByViewMode();
+        }
+        
+        // 同步排序状态（从设置页返回时）
+        if (viewModel != null) {
+            viewModel.getRepository().syncSortOrder();
         }
     }
 }

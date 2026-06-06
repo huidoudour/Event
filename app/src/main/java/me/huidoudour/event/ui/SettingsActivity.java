@@ -92,6 +92,7 @@ public class SettingsActivity extends AppCompatActivity {
         setupLanguageSettings();
         setupThemeSettings();
         setupDataDisplayMode();
+        setupSortSettings();
         setupAboutDeveloper();
     }
 
@@ -282,6 +283,48 @@ public class SettingsActivity extends AppCompatActivity {
                 
                 // 显示Toast提示
                 android.widget.Toast.makeText(this, R.string.view_mode_changed, android.widget.Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
+    }
+
+    /** 排序设置 */
+    private void setupSortSettings() {
+        MaterialCardView cardSortSettings = findViewById(R.id.card_sort_settings);
+        cardSortSettings.setOnClickListener(v -> showSortOrderDialog());
+    }
+    
+    /** 显示排序顺序选择对话框 */
+    private void showSortOrderDialog() {
+        boolean isAscending = viewModel.getRepository().isAscending();
+        int checkedItem = isAscending ? 0 : 1;
+        
+        String[] sortOrderNames = {
+            getString(R.string.sort_ascending),
+            getString(R.string.sort_descending)
+        };
+        
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.sort_order_settings)
+            .setSingleChoiceItems(sortOrderNames, checkedItem, (dialog, which) -> {
+                boolean selectedAscending = (which == 0);
+                
+                // 如果选择的排序和当前相同，不做任何操作
+                if (selectedAscending == isAscending) {
+                    dialog.dismiss();
+                    return;
+                }
+                
+                // 更新排序顺序
+                viewModel.toggleSortOrder();
+                
+                dialog.dismiss();
+                
+                // 显示Toast提示
+                String sortOrder = selectedAscending
+                    ? getString(R.string.sort_ascending)
+                    : getString(R.string.sort_descending);
+                Toast.makeText(this, sortOrder, Toast.LENGTH_SHORT).show();
             })
             .setNegativeButton(R.string.cancel, null)
             .show();

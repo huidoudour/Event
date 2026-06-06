@@ -69,6 +69,7 @@
     <string name="refresh_order">順序を更新</string>
     <string name="order_refreshed">順序を更新しました</string>
     <string name="toggle_sort_order">並べ替えを切り替え</string>
+    <string name="sort_order_settings">並べ替え順序</string>
     <string name="sort_ascending">昇順</string>
     <string name="sort_descending">降順</string>
     <string name="refresh">更新</string>

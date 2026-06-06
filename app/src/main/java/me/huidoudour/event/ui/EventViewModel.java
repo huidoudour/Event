@@ -25,7 +25,7 @@ public class EventViewModel extends AndroidViewModel {
         super(application);
         EventDatabase database = EventDatabase.getDatabase(application);
         EventDao eventDao = database.eventDao();
-        repository = new EventRepository(eventDao);
+        repository = new EventRepository(application, eventDao);
         allEvents = repository.allEvents;
     }
 
@@ -99,7 +99,7 @@ public class EventViewModel extends AndroidViewModel {
         
         public EventRepository createRepository() {
             EventDatabase database = EventDatabase.getDatabase(application);
-            return new EventRepository(database.eventDao());
+            return new EventRepository(application, database.eventDao());
         }
     }
 }

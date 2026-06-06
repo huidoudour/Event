@@ -1,21 +1,30 @@
 package me.huidoudour.event.data;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import java.util.List;
 
 public class EventRepository {
+    private static final String PREFS_NAME = "sort_prefs";
+    private static final String KEY_SORT_ASCENDING = "sort_ascending";
+    
     private final EventDao eventDao;
+    private final SharedPreferences preferences;
     public final LiveData<List<Event>> allEvents;
     private final MediatorLiveData<List<Event>> sortedEvents = new MediatorLiveData<>();
-    private boolean isAscending = false; // false 表示倒序，true 表示正序
+    private boolean isAscending;
     private LiveData<List<Event>> currentSource;
 
-    public EventRepository(EventDao eventDao) {
+    public EventRepository(Context context, EventDao eventDao) {
         this.eventDao = eventDao;
+        this.preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         this.allEvents = eventDao.getAllEvents();
-        // 默认倒序
-        setSortOrder(false);
+        // 从SharedPreferences读取排序状态，默认为倒序
+        this.isAscending = preferences.getBoolean(KEY_SORT_ASCENDING, false);
+        setSortOrder(isAscending);
     }
 
     private void setSortOrder(boolean ascending) {
@@ -68,6 +77,17 @@ public class EventRepository {
 
     public void toggleSortOrder() {
         isAscending = !isAscending;
+        // 保存排序状态到SharedPreferences
+        preferences.edit().putBoolean(KEY_SORT_ASCENDING, isAscending).apply();
         setSortOrder(isAscending);
+    }
+    
+    /** 同步排序状态（从SharedPreferences读取） */
+    public void syncSortOrder() {
+        boolean savedAscending = preferences.getBoolean(KEY_SORT_ASCENDING, false);
+        if (savedAscending != isAscending) {
+            isAscending = savedAscending;
+            setSortOrder(isAscending);
+        }
     }
 }

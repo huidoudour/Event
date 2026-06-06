@@ -68,6 +68,7 @@
     <string name="refresh_order">刷新顺序</string>
     <string name="order_refreshed">顺序已刷新</string>
     <string name="toggle_sort_order">切换排序</string>
+    <string name="sort_order_settings">数据排序</string>
     <string name="sort_ascending">正序排列</string>
     <string name="sort_descending">倒序排列</string>
     <string name="refresh">刷新</string>
