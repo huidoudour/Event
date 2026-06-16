@@ -1,6 +1,5 @@
 package me.huidoudour.event.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.card.MaterialCardView;
@@ -24,24 +22,19 @@ import me.huidoudour.event.MeActivity;
 import me.huidoudour.event.R;
 import me.huidoudour.event.data.DataImportExportHelper;
 import me.huidoudour.event.data.EventRepository;
+import me.huidoudour.event.utils.BaseActivity;
 import me.huidoudour.event.utils.IconColorHelper;
 import me.huidoudour.event.utils.LocaleHelper;
 import me.huidoudour.event.utils.ThemeHelper;
 import me.huidoudour.event.utils.ViewModeHelper;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
 
     private EventViewModel viewModel;
     private EventRepository repository;
     private DataImportExportHelper dataHelper;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        // 应用语言设置
-        super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
-    }
 
     // 导出文件选择器
     private final ActivityResultLauncher<String> exportFileLauncher =
@@ -76,8 +69,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // 在 onCreate 开始时初始化主题
-        ThemeHelper.initTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
@@ -91,6 +82,7 @@ public class SettingsActivity extends AppCompatActivity {
         setupImportData();
         setupLanguageSettings();
         setupThemeSettings();
+        setupThemeColorSettings();
         setupDataDisplayMode();
         setupSortSettings();
         setupAboutDeveloper();
@@ -139,8 +131,6 @@ public class SettingsActivity extends AppCompatActivity {
             .show();
     }
 
-
-
     /** 语言设置 */
     private void setupLanguageSettings() {
         MaterialCardView cardLanguage = findViewById(R.id.card_language_settings);
@@ -183,9 +173,9 @@ public class SettingsActivity extends AppCompatActivity {
                 // 显示Toast提示
                 Toast.makeText(this, R.string.language_changed, Toast.LENGTH_SHORT).show();
                 
-                // 延迟重建Activity以应用新的语言设置
+                // 重启应用以应用新的语言设置（确保所有页面全部生效）
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    recreate();
+                    restartApp();
                 }, 300);
             })
             .setNegativeButton(R.string.cancel, null)
@@ -233,6 +223,55 @@ public class SettingsActivity extends AppCompatActivity {
                 
                 // 显示Toast提示
                 Toast.makeText(this, R.string.theme_changed, Toast.LENGTH_SHORT).show();
+                
+                // 重启应用以应用新的主题设置
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    restartApp();
+                }, 300);
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
+    }
+
+    /** 主题色设置 */
+    private void setupThemeColorSettings() {
+        MaterialCardView cardThemeColor = findViewById(R.id.card_theme_color_settings);
+        cardThemeColor.setOnClickListener(v -> showThemeColorDialog());
+    }
+    
+    /** 显示主题色选择对话框 */
+    private void showThemeColorDialog() {
+        int[] colors = ThemeHelper.getSupportedThemeColors();
+        String[] colorNames = new String[colors.length];
+        
+        int currentColor = ThemeHelper.getThemeColor(this);
+        int checkedItem = 0;
+        
+        for (int i = 0; i < colors.length; i++) {
+            colorNames[i] = ThemeHelper.getThemeColorDisplayName(this, colors[i]);
+            if (colors[i] == currentColor) {
+                checkedItem = i;
+            }
+        }
+        
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.select_theme_color)
+            .setSingleChoiceItems(colorNames, checkedItem, (dialog, which) -> {
+                int selectedColor = colors[which];
+                
+                if (selectedColor == currentColor) {
+                    dialog.dismiss();
+                    return;
+                }
+                
+                ThemeHelper.setThemeColor(this, selectedColor);
+                dialog.dismiss();
+                
+                Toast.makeText(this, R.string.theme_color_changed, Toast.LENGTH_SHORT).show();
+                
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    restartApp();
+                }, 300);
             })
             .setNegativeButton(R.string.cancel, null)
             .show();

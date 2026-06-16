@@ -99,6 +99,18 @@
     <!-- Переключение темы -->
     <string name="theme_changed">Тема изменена</string>
 
+    <!-- Цвет темы -->
+    <string name="theme_color_settings">Цвет темы</string>
+    <string name="select_theme_color">Выберите цвет темы</string>
+    <string name="theme_color_changed">Цвет темы изменён</string>
+    <string name="default_color">По умолчанию</string>
+    <string name="pink_color">Розовый</string>
+    <string name="blue_color">Синий</string>
+    <string name="green_color">Зелёный</string>
+    <string name="orange_color">Оранжевый</string>
+    <string name="red_color">Красный</string>
+    <string name="cyan_color">Голубой</string>
+
     <!-- Выбор цвета иконки -->
     <string name="select_icon_color">Выберите цвет иконки</string>
     <string name="default_icon">Стандартная иконка</string>

@@ -99,6 +99,18 @@
     <!-- 主題切換 -->
     <string name="theme_changed">主題已更改</string>
 
+    <!-- 主題色切換 -->
+    <string name="theme_color_settings">主題色</string>
+    <string name="select_theme_color">選擇主題色</string>
+    <string name="theme_color_changed">主題色已更改</string>
+    <string name="default_color">預設</string>
+    <string name="pink_color">粉色</string>
+    <string name="blue_color">藍色</string>
+    <string name="green_color">綠色</string>
+    <string name="orange_color">橙色</string>
+    <string name="red_color">紅色</string>
+    <string name="cyan_color">青色</string>
+
     <!-- 圖標顏色選擇 -->
     <string name="select_icon_color">選擇圖標顏色</string>
     <string name="default_icon">預設圖標</string>

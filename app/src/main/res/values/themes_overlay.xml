@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 粉色主题色 -->
+    <style name="ThemeOverlay.Event.Pink" parent="">
+        <item name="colorPrimary">@color/pink_primary</item>
+        <item name="colorOnPrimary">@color/pink_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/pink_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/pink_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/pink_secondary</item>
+        <item name="colorSecondaryContainer">@color/pink_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/pink_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/pink_tertiary</item>
+        <item name="colorTertiaryContainer">@color/pink_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/pink_onTertiaryContainer</item>
+    </style>
+
+    <!-- 蓝色主题色 -->
+    <style name="ThemeOverlay.Event.Blue" parent="">
+        <item name="colorPrimary">@color/blue_primary</item>
+        <item name="colorOnPrimary">@color/blue_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/blue_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/blue_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/blue_secondary</item>
+        <item name="colorSecondaryContainer">@color/blue_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/blue_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/blue_tertiary</item>
+        <item name="colorTertiaryContainer">@color/blue_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/blue_onTertiaryContainer</item>
+    </style>
+
+    <!-- 绿色主题色 -->
+    <style name="ThemeOverlay.Event.Green" parent="">
+        <item name="colorPrimary">@color/green_primary</item>
+        <item name="colorOnPrimary">@color/green_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/green_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/green_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/green_secondary</item>
+        <item name="colorSecondaryContainer">@color/green_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/green_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/green_tertiary</item>
+        <item name="colorTertiaryContainer">@color/green_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/green_onTertiaryContainer</item>
+    </style>
+
+    <!-- 橙色主题色 -->
+    <style name="ThemeOverlay.Event.Orange" parent="">
+        <item name="colorPrimary">@color/orange_primary</item>
+        <item name="colorOnPrimary">@color/orange_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/orange_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/orange_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/orange_secondary</item>
+        <item name="colorSecondaryContainer">@color/orange_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/orange_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/orange_tertiary</item>
+        <item name="colorTertiaryContainer">@color/orange_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/orange_onTertiaryContainer</item>
+    </style>
+
+    <!-- 红色主题色 -->
+    <style name="ThemeOverlay.Event.Red" parent="">
+        <item name="colorPrimary">@color/red_primary</item>
+        <item name="colorOnPrimary">@color/red_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/red_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/red_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/red_secondary</item>
+        <item name="colorSecondaryContainer">@color/red_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/red_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/red_tertiary</item>
+        <item name="colorTertiaryContainer">@color/red_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/red_onTertiaryContainer</item>
+    </style>
+
+    <!-- 青色主题色 -->
+    <style name="ThemeOverlay.Event.Cyan" parent="">
+        <item name="colorPrimary">@color/cyan_primary</item>
+        <item name="colorOnPrimary">@color/cyan_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/cyan_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/cyan_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/cyan_secondary</item>
+        <item name="colorSecondaryContainer">@color/cyan_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/cyan_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/cyan_tertiary</item>
+        <item name="colorTertiaryContainer">@color/cyan_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/cyan_onTertiaryContainer</item>
+    </style>
+</resources>

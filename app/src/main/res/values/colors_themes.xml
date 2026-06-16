@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 粉色主题色 - Light -->
+    <color name="pink_primary">#BC0074</color>
+    <color name="pink_onPrimary">#FFFFFF</color>
+    <color name="pink_primaryContainer">#FFD9E2</color>
+    <color name="pink_onPrimaryContainer">#3F0021</color>
+    <color name="pink_secondary">#745660</color>
+    <color name="pink_secondaryContainer">#FFD9E2</color>
+    <color name="pink_onSecondaryContainer">#2A151D</color>
+    <color name="pink_tertiary">#7D5635</color>
+    <color name="pink_tertiaryContainer">#FFDCC2</color>
+    <color name="pink_onTertiaryContainer">#2F1500</color>
+
+    <!-- 蓝色主题色 - Light -->
+    <color name="blue_primary">#00639B</color>
+    <color name="blue_onPrimary">#FFFFFF</color>
+    <color name="blue_primaryContainer">#CEE5FF</color>
+    <color name="blue_onPrimaryContainer">#001D33</color>
+    <color name="blue_secondary">#51606F</color>
+    <color name="blue_secondaryContainer">#D5E3F6</color>
+    <color name="blue_onSecondaryContainer">#0E1D2A</color>
+    <color name="blue_tertiary">#68587A</color>
+    <color name="blue_tertiaryContainer">#EEDBFF</color>
+    <color name="blue_onTertiaryContainer">#231533</color>
+
+    <!-- 绿色主题色 - Light -->
+    <color name="green_primary">#006D3B</color>
+    <color name="green_onPrimary">#FFFFFF</color>
+    <color name="green_primaryContainer">#96F7B5</color>
+    <color name="green_onPrimaryContainer">#00210F</color>
+    <color name="green_secondary">#4F6353</color>
+    <color name="green_secondaryContainer">#D2E8D4</color>
+    <color name="green_onSecondaryContainer">#0D1F13</color>
+    <color name="green_tertiary">#3A656F</color>
+    <color name="green_tertiaryContainer">#BEEAF6</color>
+    <color name="green_onTertiaryContainer">#001F26</color>
+
+    <!-- 橙色主题色 - Light -->
+    <color name="orange_primary">#8B5000</color>
+    <color name="orange_onPrimary">#FFFFFF</color>
+    <color name="orange_primaryContainer">#FFDCBE</color>
+    <color name="orange_onPrimaryContainer">#2C1600</color>
+    <color name="orange_secondary">#725A42</color>
+    <color name="orange_secondaryContainer">#FEDDBE</color>
+    <color name="orange_onSecondaryContainer">#291806</color>
+    <color name="orange_tertiary">#56633B</color>
+    <color name="orange_tertiaryContainer">#D9E8B5</color>
+    <color name="orange_onTertiaryContainer">#141E01</color>
+
+    <!-- 红色主题色 - Light -->
+    <color name="red_primary">#BA1627</color>
+    <color name="red_onPrimary">#FFFFFF</color>
+    <color name="red_primaryContainer">#FFDAD6</color>
+    <color name="red_onPrimaryContainer">#410004</color>
+    <color name="red_secondary">#775653</color>
+    <color name="red_secondaryContainer">#FFDAD6</color>
+    <color name="red_onSecondaryContainer">#2C1513</color>
+    <color name="red_tertiary">#705C2E</color>
+    <color name="red_tertiaryContainer">#FCDFA6</color>
+    <color name="red_onTertiaryContainer">#261A00</color>
+
+    <!-- 青色主题色 - Light -->
+    <color name="cyan_primary">#006874</color>
+    <color name="cyan_onPrimary">#FFFFFF</color>
+    <color name="cyan_primaryContainer">#97F0FF</color>
+    <color name="cyan_onPrimaryContainer">#001F24</color>
+    <color name="cyan_secondary">#4A6267</color>
+    <color name="cyan_secondaryContainer">#CDE7ED</color>
+    <color name="cyan_onSecondaryContainer">#051F23</color>
+    <color name="cyan_tertiary">#525E7D</color>
+    <color name="cyan_tertiaryContainer">#DAE2FF</color>
+    <color name="cyan_onTertiaryContainer">#0E1B36</color>
+</resources>

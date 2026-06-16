@@ -99,6 +99,18 @@
     <!-- Theme Switch -->
     <string name="theme_changed">Theme changed</string>
 
+    <!-- Theme Color -->
+    <string name="theme_color_settings">Theme Color</string>
+    <string name="select_theme_color">Select Theme Color</string>
+    <string name="theme_color_changed">Theme color changed</string>
+    <string name="default_color">Default</string>
+    <string name="pink_color">Pink</string>
+    <string name="blue_color">Blue</string>
+    <string name="green_color">Green</string>
+    <string name="orange_color">Orange</string>
+    <string name="red_color">Red</string>
+    <string name="cyan_color">Cyan</string>
+
     <!-- Icon Color Selection -->
     <string name="select_icon_color">Select Icon Color</string>
     <string name="default_icon">Default Icon</string>

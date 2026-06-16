@@ -162,7 +162,7 @@
             android:value="true" />
         <meta-data
             android:name="me.huidoudour.core.version"
-            android:value="23" />
+            android:value="27" />
 
     </application>
 

@@ -99,6 +99,18 @@
     <!-- テーマ切り替え -->
     <string name="theme_changed">テーマが変更されました</string>
 
+    <!-- テーマ色 -->
+    <string name="theme_color_settings">テーマ色</string>
+    <string name="select_theme_color">テーマ色を選択</string>
+    <string name="theme_color_changed">テーマ色を変更しました</string>
+    <string name="default_color">デフォルト</string>
+    <string name="pink_color">ピンク</string>
+    <string name="blue_color">青</string>
+    <string name="green_color">緑</string>
+    <string name="orange_color">オレンジ</string>
+    <string name="red_color">赤</string>
+    <string name="cyan_color">水色</string>
+
     <!-- アイコン色の選択 -->
     <string name="select_icon_color">アイコンの色を選択</string>
     <string name="default_icon">デフォルトアイコン</string>

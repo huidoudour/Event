@@ -67,12 +67,8 @@ public class LocaleHelper {
         Locale locale;
         
         if (LANG_SYSTEM.equals(language)) {
-            // 跟随系统语言
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                return context;
-            } else {
-                locale = Locale.getDefault();
-            }
+            // 跟随系统语言：重置为系统默认Locale
+            locale = Locale.getDefault();
         } else {
             // 解析语言代码（支持新格式如 "zh-rCN" 和旧格式如 "zh"）
             locale = parseLocale(language);

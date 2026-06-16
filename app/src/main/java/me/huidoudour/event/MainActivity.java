@@ -2,7 +2,6 @@ package me.huidoudour.event;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -34,12 +32,11 @@ import me.huidoudour.event.ui.EventListFragment;
 import me.huidoudour.event.ui.EventTableFragment;
 import me.huidoudour.event.ui.EventViewModel;
 import me.huidoudour.event.ui.SettingsActivity;
+import me.huidoudour.event.utils.BaseActivity;
 import me.huidoudour.event.utils.IconColorHelper;
-import me.huidoudour.event.utils.LocaleHelper;
-import me.huidoudour.event.utils.ThemeHelper;
 import me.huidoudour.event.utils.ViewModeHelper;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private EventViewModel viewModel;
     
@@ -61,13 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private EventTableFragment eventTableFragment;
 
     @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeHelper.initTheme(this);
         super.onCreate(savedInstanceState);
         
         // 恢复图标颜色状态（确保alias与SharedPreferences一致）
@@ -453,7 +444,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        super.onResume();
+        super.onResume(); // BaseActivity会检测语言/主题变化并自动重启
+        if (isRestarting) return;
+        
         // 检查视图模式是否变化，如果变化则重新加载Fragment
         int viewMode = ViewModeHelper.getViewMode(this);
         boolean isListMode = (currentFragment instanceof EventListFragment);

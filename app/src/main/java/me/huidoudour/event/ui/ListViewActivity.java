@@ -1,6 +1,5 @@
 package me.huidoudour.event.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,7 +9,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,11 +23,10 @@ import java.util.Locale;
 import me.huidoudour.event.MainActivity;
 import me.huidoudour.event.R;
 import me.huidoudour.event.data.Event;
-import me.huidoudour.event.utils.LocaleHelper;
-import me.huidoudour.event.utils.ThemeHelper;
+import me.huidoudour.event.utils.BaseActivity;
 import me.huidoudour.event.utils.ViewModeHelper;
 
-public class ListViewActivity extends AppCompatActivity {
+public class ListViewActivity extends BaseActivity {
 
     private EventViewModel viewModel;
     private RecyclerView recyclerView;
@@ -37,20 +34,13 @@ public class ListViewActivity extends AppCompatActivity {
     private ListAdapter adapter;
 
     @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeHelper.initTheme(this);
-        
         // 检查当前视图模式，如果是条目视图则跳转回MainActivity
         int viewMode = ViewModeHelper.getViewMode(this);
         if (viewMode == ViewModeHelper.VIEW_MODE_CARD) {
             Intent intent = new Intent(ListViewActivity.this, MainActivity.class);
             startActivity(intent);
-            finish(); // 关闭ListViewActivity
+            finish();
             return;
         }
         

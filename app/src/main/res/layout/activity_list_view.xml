@@ -59,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="@color/settings_card_background"
+                android:background="?attr/colorSecondaryContainer"
                 android:padding="8dp">
 
                 <TextView
@@ -104,7 +104,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/settings_section_title" />
+                android:background="?attr/colorPrimary" />
 
             <!-- 数据列表 -->
             <androidx.recyclerview.widget.RecyclerView
