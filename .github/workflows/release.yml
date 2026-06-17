@@ -16,6 +16,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
 
     - name: Set up JDK 17
       uses: actions/setup-java@v5
@@ -60,6 +62,20 @@ jobs:
         path: app/build/outputs/apk/release/Event-${{ steps.get_version.outputs.VERSION }}.apk
         retention-days: 30
 
+    - name: Get git commit messages
+      id: git_commits
+      run: |
+        PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        if [ -n "$PREV_TAG" ]; then
+          COMMITS=$(git log --oneline --no-merges $PREV_TAG..HEAD)
+        else
+          COMMITS=$(git log --oneline --no-merges)
+        fi
+        FORMATTED=$(echo "$COMMITS" | sed 's/^/- /')
+        echo "commits<<EOF" >> $GITHUB_OUTPUT
+        echo "$FORMATTED" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
     - name: Create Release
       uses: softprops/action-gh-release@v2.2.2
       if: success()
@@ -71,9 +87,8 @@ jobs:
         prerelease: false
         body: |
           ## 更新内容
-          - 自动构建的正式版本
-          - 该版本添加多个实用新功能
-                  
+          ${{ steps.git_commits.outputs.commits }}
+
           ### 安装说明
           下载并安装 APK 文件即可使用。
       env:
