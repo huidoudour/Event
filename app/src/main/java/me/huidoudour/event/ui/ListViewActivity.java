@@ -23,6 +23,7 @@ import java.util.Locale;
 import me.huidoudour.event.MainActivity;
 import me.huidoudour.event.R;
 import me.huidoudour.event.data.Event;
+import me.huidoudour.event.util.ActionMonitor;
 import me.huidoudour.event.utils.BaseActivity;
 import me.huidoudour.event.utils.ViewModeHelper;
 
@@ -49,11 +50,15 @@ public class ListViewActivity extends BaseActivity {
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        toolbar.setNavigationOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "列表视图返回", 0);
+            onBackPressed();
+        });
 
         // 设置按钮
         ImageButton btnSettings = findViewById(R.id.btnSettings);
         btnSettings.setOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "列表视图打开设置", 0);
             Intent intent = new Intent(ListViewActivity.this, SettingsActivity.class);
             startActivity(intent);
         });

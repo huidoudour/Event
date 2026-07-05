@@ -15,6 +15,7 @@ import me.huidoudour.event.data.Event;
 import me.huidoudour.event.data.EventDao;
 import me.huidoudour.event.data.EventDatabase;
 import me.huidoudour.event.data.EventRepository;
+import me.huidoudour.event.util.ActionMonitor;
 
 public class EventViewModel extends AndroidViewModel {
     private final EventRepository repository;
@@ -48,30 +49,35 @@ public class EventViewModel extends AndroidViewModel {
     public void addEvent(String title, String description, long eventTime) {
         executor.execute(() -> {
             Event event = new Event(title, description, eventTime);
-            repository.insert(event);
+            long id = repository.insert(event);
+            ActionMonitor.log("CREATE", "创建事件: " + title, id);
         });
     }
 
     public void updateEvent(Event event) {
         executor.execute(() -> {
             repository.update(event);
+            ActionMonitor.log("UPDATE", "修改事件: " + event.getTitle(), event.getId());
         });
     }
 
     public void deleteEvent(Event event) {
         executor.execute(() -> {
+            ActionMonitor.log("DELETE", "删除事件: " + event.getTitle(), event.getId());
             repository.delete(event);
         });
     }
 
     public void deleteAllEvents() {
         executor.execute(() -> {
+            ActionMonitor.log("DELETE_ALL", "清空所有事件", 0);
             repository.deleteAll();
         });
     }
 
     public void deleteEventsByIds(java.util.List<Long> ids) {
         executor.execute(() -> {
+            ActionMonitor.log("DELETE_BATCH", "批量删除 " + ids.size() + " 个事件", 0);
             repository.deleteByIds(ids);
         });
     }

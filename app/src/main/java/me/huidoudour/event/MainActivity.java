@@ -32,6 +32,7 @@ import me.huidoudour.event.ui.EventListFragment;
 import me.huidoudour.event.ui.EventTableFragment;
 import me.huidoudour.event.ui.EventViewModel;
 import me.huidoudour.event.ui.SettingsActivity;
+import me.huidoudour.event.util.ActionMonitor;
 import me.huidoudour.event.utils.BaseActivity;
 import me.huidoudour.event.utils.IconColorHelper;
 import me.huidoudour.event.utils.ViewModeHelper;
@@ -83,24 +84,28 @@ public class MainActivity extends BaseActivity {
     private void setupButtons() {
         btnSettings = findViewById(R.id.btnSettings);
         btnSettings.setOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "点击设置按钮", 0);
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);
         });
 
         btnRefresh = findViewById(R.id.btnRefresh);
         btnRefresh.setOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "点击刷新按钮", 0);
             refreshCurrentFragment();
             Toast.makeText(MainActivity.this, R.string.refreshed, Toast.LENGTH_SHORT).show();
         });
 
         btnClearAll = findViewById(R.id.btnClearAll);
         btnClearAll.setOnLongClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "长按清空按钮", 0);
             showClearAllConfirmDialog();
             return true;
         });
 
         btnMultiSelect = findViewById(R.id.btnMultiSelect);
         btnMultiSelect.setOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "点击多选按钮", 0);
             toggleMultiSelectOnCurrentFragment();
         });
 
@@ -110,10 +115,12 @@ public class MainActivity extends BaseActivity {
         btnDeleteSelected = findViewById(R.id.btnDeleteSelected);
 
         btnSelectAll.setOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "点击全选按钮", 0);
             selectAllOnCurrentFragment();
         });
 
         btnDeleteSelected.setOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "点击删除选中按钮", 0);
             deleteSelectedOnCurrentFragment();
         });
     }
@@ -127,8 +134,10 @@ public class MainActivity extends BaseActivity {
         fabAddEvent = findViewById(R.id.fabAddEvent);
         fabAddEvent.setOnClickListener(v -> {
             if (isMultiSelectModeOnCurrentFragment()) {
+                ActionMonitor.log("UI_ACTION", "多选模式下点击FAB被拦截", 0);
                 Toast.makeText(this, R.string.exit_multi_select_first, Toast.LENGTH_SHORT).show();
             } else {
+                ActionMonitor.log("UI_ACTION", "点击FAB打开添加事件对话框", 0);
                 showAddDialog();
             }
         });
@@ -179,6 +188,7 @@ public class MainActivity extends BaseActivity {
     // ─────────────────────────────────────────────
 
     public void showEventDetail(Event event) {
+        ActionMonitor.log("DIALOG_OPEN", "查看事件详情: " + event.getTitle(), event.getId());
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_event_detail, null);
         TextInputEditText editTitle = dialogView.findViewById(R.id.editEventTitle);
         TextInputEditText editDescription = dialogView.findViewById(R.id.editEventDescription);
@@ -196,21 +206,24 @@ public class MainActivity extends BaseActivity {
     public void showLongClickMenu(Event event, View view) {
         String title;
         if (currentFragment instanceof EventTableFragment) {
-            // 表格视图：显示 ID 和标题，防止误触时不知道操作的是哪条记录
             title = "[ID: " + event.getId() + "] " + event.getTitle();
         } else {
-            // 条目视图：仅显示标题
             title = event.getTitle();
         }
+
+        ActionMonitor.log("UI_ACTION", "长按事件弹出操作菜单: " + event.getTitle(), event.getId());
 
         new MaterialAlertDialogBuilder(this)
             .setTitle(title)
             .setItems(R.array.event_options_array, (dialog, which) -> {
                 if (which == 0) {
+                    ActionMonitor.log("MENU_SELECT", "选择修改时间: " + event.getTitle(), event.getId());
                     showChangeDateTimeDialog(event);
                 } else if (which == 1) {
+                    ActionMonitor.log("MENU_SELECT", "选择编辑: " + event.getTitle(), event.getId());
                     showEditDialog(event);
                 } else if (which == 2) {
+                    ActionMonitor.log("MENU_SELECT", "选择删除: " + event.getTitle(), event.getId());
                     showDeleteConfirmDialog(event);
                 }
             })
@@ -281,15 +294,19 @@ public class MainActivity extends BaseActivity {
 
     public void showDeleteSelectedConfirmDialog(Set<Long> selectedIds) {
         int count = selectedIds.size();
+        ActionMonitor.log("DIALOG_OPEN", "打开批量删除确认对话框，选中 " + count + " 条", 0);
         new MaterialAlertDialogBuilder(this)
             .setTitle(R.string.confirm_delete_selected)
             .setMessage(getString(R.string.confirm_delete_selected_message, count))
             .setPositiveButton(R.string.delete, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CONFIRM", "确认批量删除 " + count + " 条", 0);
                 viewModel.deleteEventsByIds(new ArrayList<>(selectedIds));
                 Toast.makeText(this, R.string.deleted_selected, Toast.LENGTH_SHORT).show();
                 exitMultiSelectOnCurrentFragment();
             })
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CANCEL", "取消批量删除", 0);
+            })
             .show();
     }
 
@@ -302,6 +319,8 @@ public class MainActivity extends BaseActivity {
         TextInputEditText editTitle = dialogView.findViewById(R.id.editEventTitle);
         TextInputEditText editDescription = dialogView.findViewById(R.id.editEventDescription);
 
+        ActionMonitor.log("DIALOG_OPEN", "打开添加事件对话框", 0);
+
         new MaterialAlertDialogBuilder(this)
             .setTitle(R.string.add_event)
             .setView(dialogView)
@@ -311,11 +330,16 @@ public class MainActivity extends BaseActivity {
                 String description = editDescription.getText() != null
                         ? editDescription.getText().toString().trim() : "";
                 if (!title.isEmpty()) {
+                    ActionMonitor.log("DIALOG_CONFIRM", "确认添加事件: " + title, 0);
                     viewModel.addEvent(title, description, System.currentTimeMillis());
                     Toast.makeText(this, R.string.event_saved, Toast.LENGTH_SHORT).show();
+                } else {
+                    ActionMonitor.log("UI_ACTION", "添加事件对话框保存但标题为空", 0);
                 }
             })
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CANCEL", "取消添加事件", 0);
+            })
             .show();
     }
 
@@ -327,6 +351,8 @@ public class MainActivity extends BaseActivity {
         editTitle.setText(event.getTitle());
         editDescription.setText(event.getDescription());
 
+        ActionMonitor.log("DIALOG_OPEN", "打开编辑事件对话框: " + event.getTitle(), event.getId());
+
         new MaterialAlertDialogBuilder(this)
             .setTitle(R.string.edit)
             .setView(dialogView)
@@ -336,17 +362,21 @@ public class MainActivity extends BaseActivity {
                 String description = editDescription.getText() != null
                         ? editDescription.getText().toString().trim() : "";
                 if (!title.isEmpty()) {
+                    ActionMonitor.log("DIALOG_CONFIRM", "确认编辑事件: " + title, event.getId());
                     event.setTitle(title);
                     event.setDescription(description);
                     viewModel.updateEvent(event);
                     Toast.makeText(this, R.string.event_saved, Toast.LENGTH_SHORT).show();
                 }
             })
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CANCEL", "取消编辑事件", event.getId());
+            })
             .show();
     }
 
     private void showChangeDateTimeDialog(Event event) {
+        ActionMonitor.log("DIALOG_OPEN", "打开修改时间对话框: " + event.getTitle(), event.getId());
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(event.getEventTime());
         int year = calendar.get(Calendar.YEAR);
@@ -358,8 +388,10 @@ public class MainActivity extends BaseActivity {
         DatePickerDialog datePickerDialog = new DatePickerDialog(
             this,
             (view, selectedYear, selectedMonth, selectedDay) -> {
+                ActionMonitor.log("DIALOG_INTERACT", "DatePicker选择日期", event.getId());
                 calendar.set(selectedYear, selectedMonth, selectedDay);
 
+                ActionMonitor.log("DIALOG_OPEN", "打开TimePicker选择时间", event.getId());
                 TimePickerDialog timePickerDialog = new TimePickerDialog(
                     this,
                     (timeView, selectedHour, selectedMinute) -> {
@@ -372,6 +404,7 @@ public class MainActivity extends BaseActivity {
                         viewModel.updateEvent(event);
 
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                        ActionMonitor.log("DIALOG_CONFIRM", "确认修改时间: " + sdf.format(new Date(event.getEventTime())), event.getId());
                         Toast.makeText(this,
                             getString(R.string.event_datetime_changed) + ": " + sdf.format(new Date(event.getEventTime())),
                             Toast.LENGTH_LONG).show();
@@ -393,30 +426,40 @@ public class MainActivity extends BaseActivity {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_confirm_delete, null);
         TextInputEditText editInput = dialogView.findViewById(R.id.editConfirmInput);
 
+        ActionMonitor.log("DIALOG_OPEN", "打开删除确认对话框: " + event.getTitle(), event.getId());
+
         new MaterialAlertDialogBuilder(this)
             .setView(dialogView)
             .setPositiveButton(R.string.delete, (dialog, which) -> {
                 String input = editInput.getText() != null
                         ? editInput.getText().toString().trim() : "";
                 if ("d".equals(input)) {
+                    ActionMonitor.log("DIALOG_CONFIRM", "确认删除事件", event.getId());
                     viewModel.deleteEvent(event);
                     Toast.makeText(this, R.string.event_deleted, Toast.LENGTH_SHORT).show();
                 } else {
+                    ActionMonitor.log("UI_ACTION", "删除确认输入错误", event.getId());
                     Toast.makeText(this, R.string.invalid_input, Toast.LENGTH_SHORT).show();
                 }
             })
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CANCEL", "取消删除事件", event.getId());
+            })
             .show();
     }
 
     private void showClearAllConfirmDialog() {
+        ActionMonitor.log("DIALOG_OPEN", "打开清空确认对话框", 0);
         new MaterialAlertDialogBuilder(this)
             .setTitle(R.string.clear_all)
             .setMessage(R.string.confirm_clear_all_message)
             .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CONFIRM", "确认继续清空操作", 0);
                 showClearAllInputDialog();
             })
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CANCEL", "取消清空操作", 0);
+            })
             .show();
     }
 
@@ -424,6 +467,7 @@ public class MainActivity extends BaseActivity {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_confirm_clear, null);
         TextInputEditText editInput = dialogView.findViewById(R.id.editClearInput);
 
+        ActionMonitor.log("DIALOG_OPEN", "打开清空输入确认对话框", 0);
         new MaterialAlertDialogBuilder(this)
             .setTitle(R.string.clear_all)
             .setMessage(R.string.type_clear_to_confirm)
@@ -432,13 +476,17 @@ public class MainActivity extends BaseActivity {
                 String input = editInput.getText() != null
                         ? editInput.getText().toString().trim() : "";
                 if ("clear".equals(input)) {
+                    ActionMonitor.log("DIALOG_CONFIRM", "确认清空所有事件", 0);
                     viewModel.deleteAllEvents();
                     Toast.makeText(this, R.string.all_events_cleared, Toast.LENGTH_SHORT).show();
                 } else {
+                    ActionMonitor.log("UI_ACTION", "清空输入确认无效", 0);
                     Toast.makeText(this, R.string.invalid_input, Toast.LENGTH_SHORT).show();
                 }
             })
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CANCEL", "取消清空输入确认", 0);
+            })
             .show();
     }
 

@@ -24,6 +24,7 @@ import java.util.Set;
 import me.huidoudour.event.MainActivity;
 import me.huidoudour.event.R;
 import me.huidoudour.event.data.Event;
+import me.huidoudour.event.util.ActionMonitor;
 
 public class EventTableFragment extends Fragment {
 
@@ -151,8 +152,10 @@ public class EventTableFragment extends Fragment {
                     long id = event.getId();
                     if (isChecked) {
                         selectedIds.add(id);
+                        ActionMonitor.log("MULTI_SELECT", "勾选表格行: " + event.getTitle(), id);
                     } else {
                         selectedIds.remove(id);
+                        ActionMonitor.log("MULTI_SELECT", "取消勾选表格行: " + event.getTitle(), id);
                     }
                     updateHeaderCheckboxState();
                     updateSelectionBar();
@@ -166,9 +169,11 @@ public class EventTableFragment extends Fragment {
                 cbSelect.setVisibility(View.GONE);
 
                 dataRow.setOnClickListener(v -> {
+                    ActionMonitor.log("ITEM_CLICK", "查看表格行事件详情: " + event.getTitle(), event.getId());
                     ((MainActivity) requireActivity()).showEventDetail(event);
                 });
                 dataRow.setOnLongClickListener(v -> {
+                    ActionMonitor.log("ITEM_LONG_CLICK", "长按表格行: " + event.getTitle(), event.getId());
                     ((MainActivity) requireActivity()).showLongClickMenu(event, v);
                     return true;
                 });
@@ -201,6 +206,7 @@ public class EventTableFragment extends Fragment {
     public void enterMultiSelectMode() {
         isMultiSelectMode = true;
         selectedIds.clear();
+        ActionMonitor.log("MULTI_SELECT", "进入表格多选模式", 0);
         ((MainActivity) requireActivity()).updateBatchActionContainerVisibility(true);
         renderTable(currentEvents);
     }
@@ -208,6 +214,7 @@ public class EventTableFragment extends Fragment {
     public void exitMultiSelectMode() {
         isMultiSelectMode = false;
         selectedIds.clear();
+        ActionMonitor.log("MULTI_SELECT", "退出表格多选模式", 0);
         ((MainActivity) requireActivity()).updateBatchActionContainerVisibility(false);
         renderTable(currentEvents);
     }
@@ -218,12 +225,14 @@ public class EventTableFragment extends Fragment {
                 selectedIds.add(event.getId());
             }
         }
+        ActionMonitor.log("MULTI_SELECT", "表格全选 " + (currentEvents != null ? currentEvents.size() : 0) + " 条", 0);
         renderTable(currentEvents);
         updateSelectionBar();
     }
 
     public void clearSelection() {
         selectedIds.clear();
+        ActionMonitor.log("MULTI_SELECT", "表格取消全选", 0);
         renderTable(currentEvents);
         updateSelectionBar();
     }

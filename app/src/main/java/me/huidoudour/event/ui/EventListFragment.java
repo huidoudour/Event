@@ -18,6 +18,7 @@ import java.util.Set;
 import me.huidoudour.event.MainActivity;
 import me.huidoudour.event.R;
 import me.huidoudour.event.data.Event;
+import me.huidoudour.event.util.ActionMonitor;
 import me.huidoudour.event.utils.LocaleHelper;
 
 public class EventListFragment extends Fragment {
@@ -84,12 +85,12 @@ public class EventListFragment extends Fragment {
     // ─────────────────────────────────────────────
 
     private void showEventDetail(Event event) {
-        // 使用现有的对话框显示事件详情
+        ActionMonitor.log("ITEM_CLICK", "查看事件详情: " + event.getTitle(), event.getId());
         ((MainActivity) requireActivity()).showEventDetail(event);
     }
 
     private void showLongClickMenu(Event event, View view) {
-        // 使用现有的长按菜单
+        ActionMonitor.log("ITEM_LONG_CLICK", "长按事件条目: " + event.getTitle(), event.getId());
         ((MainActivity) requireActivity()).showLongClickMenu(event, view);
     }
 
@@ -108,20 +109,24 @@ public class EventListFragment extends Fragment {
     public void enterMultiSelectMode() {
         isMultiSelectMode = true;
         adapter.enterMultiSelectMode();
+        ActionMonitor.log("MULTI_SELECT", "进入多选模式", 0);
         ((MainActivity) requireActivity()).updateBatchActionContainerVisibility(true);
     }
 
     public void exitMultiSelectMode() {
         isMultiSelectMode = false;
         adapter.exitMultiSelectMode();
+        ActionMonitor.log("MULTI_SELECT", "退出多选模式", 0);
         ((MainActivity) requireActivity()).updateBatchActionContainerVisibility(false);
     }
 
     public void selectAll() {
         if (adapter.getSelectedCount() == adapter.getItemCount()) {
             adapter.clearSelection();
+            ActionMonitor.log("MULTI_SELECT", "取消全选", 0);
         } else {
             adapter.selectAll();
+            ActionMonitor.log("MULTI_SELECT", "全选所有条目", 0);
         }
     }
 

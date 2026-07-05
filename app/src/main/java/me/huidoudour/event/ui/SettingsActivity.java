@@ -22,6 +22,7 @@ import me.huidoudour.event.MeActivity;
 import me.huidoudour.event.R;
 import me.huidoudour.event.data.DataImportExportHelper;
 import me.huidoudour.event.data.EventRepository;
+import me.huidoudour.event.util.ActionMonitor;
 import me.huidoudour.event.utils.BaseActivity;
 import me.huidoudour.event.utils.IconColorHelper;
 import me.huidoudour.event.utils.LocaleHelper;
@@ -46,6 +47,7 @@ public class SettingsActivity extends BaseActivity {
                         boolean success = dataHelper.exportDataToUri(repository, uri);
                         mainHandler.post(() -> {
                             if (success) {
+                                ActionMonitor.log("EXPORT", "导出数据成功", 0);
                                 Toast.makeText(this, R.string.export_success, Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(this, R.string.no_data_to_export, Toast.LENGTH_SHORT).show();
@@ -91,23 +93,28 @@ public class SettingsActivity extends BaseActivity {
     private void setupToolbar() {
         com.google.android.material.appbar.MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        toolbar.setNavigationOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "设置页返回", 0);
+            onBackPressed();
+        });
     }
 
     /** 导出数据 */
     private void setupExportData() {
         MaterialCardView cardExportData = findViewById(R.id.card_export_data);
-        cardExportData.setOnClickListener(v ->
-            exportFileLauncher.launch("events_backup_" + System.currentTimeMillis() + ".json")
-        );
+        cardExportData.setOnClickListener(v -> {
+            ActionMonitor.log("CARD_CLICK", "点击导出数据卡片", 0);
+            exportFileLauncher.launch("events_backup_" + System.currentTimeMillis() + ".json");
+        });
     }
 
     /** 导入数据 */
     private void setupImportData() {
         MaterialCardView cardImportData = findViewById(R.id.card_import_data);
-        cardImportData.setOnClickListener(v ->
-            importFileLauncher.launch("application/json")
-        );
+        cardImportData.setOnClickListener(v -> {
+            ActionMonitor.log("CARD_CLICK", "点击导入数据卡片", 0);
+            importFileLauncher.launch("application/json");
+        });
     }
 
     /** 显示导入确认对话框 */
@@ -120,6 +127,7 @@ public class SettingsActivity extends BaseActivity {
                     boolean success = dataHelper.importDataFromUri(repository, uri, true);
                     mainHandler.post(() -> {
                         if (success) {
+                            ActionMonitor.log("IMPORT", "导入数据成功", 0);
                             Toast.makeText(this, R.string.import_success, Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(this, R.string.import_failed, Toast.LENGTH_SHORT).show();
@@ -127,14 +135,19 @@ public class SettingsActivity extends BaseActivity {
                     });
                 });
             })
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CANCEL", "取消导入", 0);
+            })
             .show();
     }
 
     /** 语言设置 */
     private void setupLanguageSettings() {
         MaterialCardView cardLanguage = findViewById(R.id.card_language_settings);
-        cardLanguage.setOnClickListener(v -> showLanguageDialog());
+        cardLanguage.setOnClickListener(v -> {
+            ActionMonitor.log("CARD_CLICK", "点击语言设置卡片", 0);
+            showLanguageDialog();
+        });
     }
     
     /** 显示语言选择对话框 */
@@ -170,6 +183,10 @@ public class SettingsActivity extends BaseActivity {
                 
                 dialog.dismiss();
                 
+                // 记录日志
+                String langDisplay = languageNames[which];
+                ActionMonitor.log("SETTINGS_CHANGE", "切换语言: " + langDisplay, 0);
+                
                 // 显示Toast提示
                 Toast.makeText(this, R.string.language_changed, Toast.LENGTH_SHORT).show();
                 
@@ -178,14 +195,19 @@ public class SettingsActivity extends BaseActivity {
                     restartApp();
                 }, 300);
             })
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CANCEL", "取消语言设置", 0);
+            })
             .show();
     }
     
     /** 主题设置 */
     private void setupThemeSettings() {
         MaterialCardView cardTheme = findViewById(R.id.card_theme_settings);
-        cardTheme.setOnClickListener(v -> showThemeDialog());
+        cardTheme.setOnClickListener(v -> {
+            ActionMonitor.log("CARD_CLICK", "点击主题设置卡片", 0);
+            showThemeDialog();
+        });
     }
     
     /** 显示主题选择对话框 */
@@ -221,6 +243,10 @@ public class SettingsActivity extends BaseActivity {
                 
                 dialog.dismiss();
                 
+                // 记录日志
+                String themeDisplay = themeNames[which];
+                ActionMonitor.log("SETTINGS_CHANGE", "切换主题: " + themeDisplay, 0);
+                
                 // 显示Toast提示
                 Toast.makeText(this, R.string.theme_changed, Toast.LENGTH_SHORT).show();
                 
@@ -229,14 +255,19 @@ public class SettingsActivity extends BaseActivity {
                     restartApp();
                 }, 300);
             })
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CANCEL", "取消主题设置", 0);
+            })
             .show();
     }
 
     /** 主题色设置 */
     private void setupThemeColorSettings() {
         MaterialCardView cardThemeColor = findViewById(R.id.card_theme_color_settings);
-        cardThemeColor.setOnClickListener(v -> showThemeColorDialog());
+        cardThemeColor.setOnClickListener(v -> {
+            ActionMonitor.log("CARD_CLICK", "点击主题色设置卡片", 0);
+            showThemeColorDialog();
+        });
     }
     
     /** 显示主题色选择对话框 */
@@ -267,13 +298,19 @@ public class SettingsActivity extends BaseActivity {
                 ThemeHelper.setThemeColor(this, selectedColor);
                 dialog.dismiss();
                 
+                // 记录日志
+                String colorDisplay = colorNames[which];
+                ActionMonitor.log("SETTINGS_CHANGE", "切换主题色: " + colorDisplay, 0);
+                
                 Toast.makeText(this, R.string.theme_color_changed, Toast.LENGTH_SHORT).show();
                 
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
                     restartApp();
                 }, 300);
             })
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CANCEL", "取消主题色设置", 0);
+            })
             .show();
     }
 
@@ -281,7 +318,10 @@ public class SettingsActivity extends BaseActivity {
     private void setupDataDisplayMode() {
         MaterialCardView cardDataDisplayMode = findViewById(R.id.card_data_display_mode);
         
-        cardDataDisplayMode.setOnClickListener(v -> showViewModeDialog());
+        cardDataDisplayMode.setOnClickListener(v -> {
+            ActionMonitor.log("CARD_CLICK", "点击数据展示模式卡片", 0);
+            showViewModeDialog();
+        });
     }
     
     /** 显示视图模式选择对话框 */
@@ -320,17 +360,28 @@ public class SettingsActivity extends BaseActivity {
                 
                 dialog.dismiss();
                 
+                // 记录日志
+                String modeName = selectedMode == ViewModeHelper.VIEW_MODE_CARD
+                    ? getString(R.string.card_view)
+                    : getString(R.string.list_view);
+                ActionMonitor.log("MODE_CHANGE", "切换视图模式: " + modeName, 0);
+                
                 // 显示Toast提示
                 android.widget.Toast.makeText(this, R.string.view_mode_changed, android.widget.Toast.LENGTH_SHORT).show();
             })
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CANCEL", "取消视图模式设置", 0);
+            })
             .show();
     }
 
     /** 排序设置 */
     private void setupSortSettings() {
         MaterialCardView cardSortSettings = findViewById(R.id.card_sort_settings);
-        cardSortSettings.setOnClickListener(v -> showSortOrderDialog());
+        cardSortSettings.setOnClickListener(v -> {
+            ActionMonitor.log("CARD_CLICK", "点击排序设置卡片", 0);
+            showSortOrderDialog();
+        });
     }
     
     /** 显示排序顺序选择对话框 */
@@ -359,14 +410,33 @@ public class SettingsActivity extends BaseActivity {
                 
                 dialog.dismiss();
                 
-                // 显示Toast提示
+                // 记录日志
                 String sortOrder = selectedAscending
                     ? getString(R.string.sort_ascending)
                     : getString(R.string.sort_descending);
+                ActionMonitor.log("SORT", "切换排序: " + sortOrder, 0);
+                
+                // 显示Toast提示
                 Toast.makeText(this, sortOrder, Toast.LENGTH_SHORT).show();
             })
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CANCEL", "取消排序设置", 0);
+            })
             .show();
+    }
+
+    /**
+     * 尝试打开调试日志页面（仅 Debug 构建中存在 DebugLogActivity）。
+     * 使用反射避免 Release 构建时引用不存在的类导致崩溃。
+     */
+    private void openDebugLogActivity() {
+        try {
+            Class<?> clazz = Class.forName("me.huidoudour.event.debug.DebugLogActivity");
+            Intent intent = new Intent(this, clazz);
+            startActivity(intent);
+        } catch (ClassNotFoundException e) {
+            // DebugLogActivity 只存在于 Debug 构建中，Release 构建静默忽略
+        }
     }
 
     /** 关于开发者 */
@@ -380,8 +450,14 @@ public class SettingsActivity extends BaseActivity {
             return true;
         });
         
+        // 单击 "关于" 标题打开调试日志页面（仅 Debug 构建有效）
+        aboutTitle.setOnClickListener(v -> {
+            openDebugLogActivity();
+        });
+        
         MaterialCardView cardAbout = findViewById(R.id.card_about_developer);
         cardAbout.setOnClickListener(v -> {
+            ActionMonitor.log("CARD_CLICK", "点击关于开发者卡片", 0);
             Intent intent = new Intent(SettingsActivity.this, MeActivity.class);
             startActivity(intent);
         });
@@ -436,16 +512,22 @@ public class SettingsActivity extends BaseActivity {
                     return;
                 }
                 
-                // 保存并应用图标颜色
+                // 保存图标颜色
                 IconColorHelper.setIconColor(this, selectedColor);
                 IconColorHelper.applyIconColor(this, selectedColor);
                 
                 dialog.dismiss();
                 
+                // 记录日志
+                String iconDisplay = colorNames[which];
+                ActionMonitor.log("SETTINGS_CHANGE", "切换图标颜色: " + iconDisplay, 0);
+                
                 // 显示Toast提示
                 Toast.makeText(this, R.string.icon_color_changed, Toast.LENGTH_SHORT).show();
             })
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                ActionMonitor.log("DIALOG_CANCEL", "取消图标颜色设置", 0);
+            })
             .show();
     }
 }

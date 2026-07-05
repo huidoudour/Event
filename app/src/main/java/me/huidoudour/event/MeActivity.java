@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import androidx.core.view.WindowCompat;
 
+import me.huidoudour.event.util.ActionMonitor;
 import me.huidoudour.event.utils.BaseActivity;
 
 public class MeActivity extends BaseActivity {
@@ -22,6 +23,7 @@ public class MeActivity extends BaseActivity {
 
         Button btnWebsite = findViewById(R.id.btn_website);
         btnWebsite.setOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "点击访问GitHub按钮", 0);
             String url = "https://github.com/huidoudour";
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(intent);
