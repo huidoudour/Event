@@ -51,7 +51,6 @@
             android:targetActivity=".MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_red"
-            android:roundIcon="@mipmap/ic_launcher_round_red"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -65,7 +64,6 @@
             android:targetActivity=".MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_blue"
-            android:roundIcon="@mipmap/ic_launcher_round_blue"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -79,7 +77,6 @@
             android:targetActivity=".MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_yellow"
-            android:roundIcon="@mipmap/ic_launcher_round_yellow"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -93,7 +90,6 @@
             android:targetActivity=".MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_purple"
-            android:roundIcon="@mipmap/ic_launcher_round_purple"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -107,7 +103,6 @@
             android:targetActivity=".MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_orange"
-            android:roundIcon="@mipmap/ic_launcher_round_orange"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -121,7 +116,6 @@
             android:targetActivity=".MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_cyan"
-            android:roundIcon="@mipmap/ic_launcher_round_cyan"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -135,7 +129,6 @@
             android:targetActivity=".MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_pink"
-            android:roundIcon="@mipmap/ic_launcher_round_pink"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
