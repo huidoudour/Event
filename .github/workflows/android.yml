@@ -3,8 +3,13 @@ name: Android CI
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    paths:
+      - 'app/src/**'
+      - 'app/build.gradle.kts'
+      - 'app/proguard-rules.pro'
+      - 'gradle/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
