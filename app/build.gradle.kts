@@ -121,4 +121,9 @@ dependencies {
     if (localSqliteFile.exists()) {
         debugImplementation(files(localSqliteFile))
     }
+
+    // debugImplementation("io.reactivex.rxjava3:rxjava:3.1.5")
+    // debugImplementation("io.reactivex.rxjava3:rxandroid:3.0.2")
+    debugImplementation(libs.rxjava)
+    debugImplementation(libs.rxandroid)
 }
