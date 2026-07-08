@@ -143,6 +143,15 @@ public class ListViewActivity extends BaseActivity {
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
                 textTime.setText(dateFormat.format(new Date(event.getEventTime())));
+
+                // 列表视图条目点击 - 查看事件详情
+                itemView.setOnClickListener(v -> {
+                    ActionMonitor.log("ITEM_CLICK", "列表视图查看事件详情: " + event.getTitle(), event.getId());
+                    // 切换到条目视图模式查看详情
+                    ViewModeHelper.setViewMode(itemView.getContext(), ViewModeHelper.VIEW_MODE_CARD);
+                    Intent intent = new Intent(itemView.getContext(), MainActivity.class);
+                    itemView.getContext().startActivity(intent);
+                });
             }
         }
     }

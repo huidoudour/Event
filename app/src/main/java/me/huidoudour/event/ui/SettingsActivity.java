@@ -446,12 +446,14 @@ public class SettingsActivity extends BaseActivity {
         
         // 设置长按事件显示切换图标颜色对话框
         aboutTitle.setOnLongClickListener(v -> {
+            ActionMonitor.log("LONG_CLICK", "长按'关于'标题打开图标颜色对话框", 0);
             showIconColorDialog();
             return true;
         });
         
         // 单击 "关于" 标题打开调试日志页面（仅 Debug 构建有效）
         aboutTitle.setOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "点击'关于'标题打开调试日志", 0);
             openDebugLogActivity();
         });
         

@@ -156,10 +156,12 @@ public class EventAdapter extends ListAdapter<Event, EventAdapter.EventViewHolde
                         selectedIds.remove(id);
                         checkBox.setChecked(false);
                         cardView.setChecked(false);
+                        me.huidoudour.event.util.ActionMonitor.log("MULTI_SELECT", "取消选中条目: " + event.getTitle(), id);
                     } else {
                         selectedIds.add(id);
                         checkBox.setChecked(true);
                         cardView.setChecked(true);
+                        me.huidoudour.event.util.ActionMonitor.log("MULTI_SELECT", "选中条目: " + event.getTitle(), id);
                     }
                     notifySelectionChanged();
                 });

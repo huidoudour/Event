@@ -36,6 +36,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import me.huidoudour.event.R;
+import me.huidoudour.event.util.ActionMonitor;
 import me.huidoudour.event.utils.BaseActivity;
 
 public class DebugLogActivity extends BaseActivity {
@@ -92,7 +93,10 @@ public class DebugLogActivity extends BaseActivity {
     private void setupToolbar() {
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        toolbar.setNavigationOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "调试日志页返回", 0);
+            onBackPressed();
+        });
     }
 
     private void setupViews() {
@@ -109,12 +113,22 @@ public class DebugLogActivity extends BaseActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        btnSelectFolder.setOnClickListener(v -> openFolderPicker());
-        btnExportLogs.setOnClickListener(v -> exportLogsToFolder());
+        btnSelectFolder.setOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "调试日志页选择保存文件夹", 0);
+            openFolderPicker();
+        });
+        btnExportLogs.setOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "调试日志页导出日志", 0);
+            exportLogsToFolder();
+        });
         btnRefresh.setOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "调试日志页刷新", 0);
             if (viewModel != null) viewModel.refresh();
         });
-        btnClear.setOnClickListener(v -> clearAllLogs());
+        btnClear.setOnClickListener(v -> {
+            ActionMonitor.log("BTN_CLICK", "调试日志页打开清空确认", 0);
+            clearAllLogs();
+        });
     }
 
     private void setupViewModel() {
@@ -244,10 +258,13 @@ public class DebugLogActivity extends BaseActivity {
                 .setTitle("清空日志")
                 .setMessage("确定要清空所有调试操作日志吗？")
                 .setPositiveButton("清空", (dialog, which) -> {
+                    ActionMonitor.log("DIALOG_CONFIRM", "确认清空调试日志", 0);
                     executor.execute(() -> viewModel.deleteAll());
                     Toast.makeText(this, "日志已清空", Toast.LENGTH_SHORT).show();
                 })
-                .setNegativeButton("取消", null)
+                .setNegativeButton("取消", (dialog, which) -> {
+                    ActionMonitor.log("DIALOG_CANCEL", "取消清空调试日志", 0);
+                })
                 .show();
     }
 
