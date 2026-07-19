@@ -37,7 +37,7 @@ import java.util.concurrent.Executors;
 
 import me.huidoudour.event.R;
 import me.huidoudour.event.util.ActionMonitor;
-import me.huidoudour.event.utils.BaseActivity;
+import me.huidoudour.event.util.BaseActivity;
 
 public class DebugLogActivity extends BaseActivity {
 

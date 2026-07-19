@@ -7,10 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -33,9 +31,9 @@ import me.huidoudour.event.ui.EventTableFragment;
 import me.huidoudour.event.ui.EventViewModel;
 import me.huidoudour.event.ui.SettingsActivity;
 import me.huidoudour.event.util.ActionMonitor;
-import me.huidoudour.event.utils.BaseActivity;
-import me.huidoudour.event.utils.IconColorHelper;
-import me.huidoudour.event.utils.ViewModeHelper;
+import me.huidoudour.event.util.BaseActivity;
+import me.huidoudour.event.util.IconColorHelper;
+import me.huidoudour.event.util.ViewModeHelper;
 
 public class MainActivity extends BaseActivity {
 

@@ -1,4 +1,4 @@
-package me.huidoudour.event.utils;
+package me.huidoudour.event.util;
 
 import android.content.ComponentName;
 import android.content.Context;

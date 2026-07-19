@@ -10,7 +10,7 @@ import android.widget.Button;
 import androidx.core.view.WindowCompat;
 
 import me.huidoudour.event.util.ActionMonitor;
-import me.huidoudour.event.utils.BaseActivity;
+import me.huidoudour.event.util.BaseActivity;
 
 public class MeActivity extends BaseActivity {
 

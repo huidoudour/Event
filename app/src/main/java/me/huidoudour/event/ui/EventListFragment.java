@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -19,7 +18,7 @@ import me.huidoudour.event.MainActivity;
 import me.huidoudour.event.R;
 import me.huidoudour.event.data.Event;
 import me.huidoudour.event.util.ActionMonitor;
-import me.huidoudour.event.utils.LocaleHelper;
+import me.huidoudour.event.util.LocaleHelper;
 
 public class EventListFragment extends Fragment {
 

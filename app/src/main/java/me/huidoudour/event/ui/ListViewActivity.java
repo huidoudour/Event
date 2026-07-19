@@ -24,8 +24,8 @@ import me.huidoudour.event.MainActivity;
 import me.huidoudour.event.R;
 import me.huidoudour.event.data.Event;
 import me.huidoudour.event.util.ActionMonitor;
-import me.huidoudour.event.utils.BaseActivity;
-import me.huidoudour.event.utils.ViewModeHelper;
+import me.huidoudour.event.util.BaseActivity;
+import me.huidoudour.event.util.ViewModeHelper;
 
 public class ListViewActivity extends BaseActivity {
 

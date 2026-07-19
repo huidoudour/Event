@@ -23,11 +23,11 @@ import me.huidoudour.event.R;
 import me.huidoudour.event.data.DataImportExportHelper;
 import me.huidoudour.event.data.EventRepository;
 import me.huidoudour.event.util.ActionMonitor;
-import me.huidoudour.event.utils.BaseActivity;
-import me.huidoudour.event.utils.IconColorHelper;
-import me.huidoudour.event.utils.LocaleHelper;
-import me.huidoudour.event.utils.ThemeHelper;
-import me.huidoudour.event.utils.ViewModeHelper;
+import me.huidoudour.event.util.BaseActivity;
+import me.huidoudour.event.util.IconColorHelper;
+import me.huidoudour.event.util.LocaleHelper;
+import me.huidoudour.event.util.ThemeHelper;
+import me.huidoudour.event.util.ViewModeHelper;
 
 public class SettingsActivity extends BaseActivity {
 
