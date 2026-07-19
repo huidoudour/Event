@@ -5,7 +5,7 @@ plugins {
 android {
     namespace = "me.huidoudour.event"
     compileSdk {
-        version = release(36) {
+        version = release(37) {
             minorApiLevel = 1
         }
     }
@@ -102,6 +102,7 @@ dependencies {
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.livedata)
     implementation(libs.room.runtime)
+    implementation(libs.compose.ui.tooling)
     annotationProcessor(libs.room.compiler)
     
     // Fragment
@@ -122,8 +123,6 @@ dependencies {
         debugImplementation(files(localSqliteFile))
     }
 
-    // debugImplementation("io.reactivex.rxjava3:rxjava:3.1.5")
-    // debugImplementation("io.reactivex.rxjava3:rxandroid:3.0.2")
     debugImplementation(libs.rxjava)
     debugImplementation(libs.rxandroid)
 }
