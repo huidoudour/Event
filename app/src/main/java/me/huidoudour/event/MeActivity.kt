@@ -1,41 +1,34 @@
-package me.huidoudour.event;
+package me.huidoudour.event
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import me.huidoudour.event.ui.MeScreenContent
+import me.huidoudour.event.ui.theme.EventTheme
+import me.huidoudour.event.util.ThemeHelper
 
-import androidx.core.view.WindowCompat;
+class MeActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeHelper.initTheme(this)
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
 
-import me.huidoudour.event.util.ActionMonitor;
-import me.huidoudour.event.util.BaseActivity;
-
-public class MeActivity extends BaseActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_me);
-
-        setupStatusBar();
-
-        Button btnWebsite = findViewById(R.id.btn_website);
-        btnWebsite.setOnClickListener(v -> {
-            ActionMonitor.log("BTN_CLICK", "点击访问GitHub按钮", 0);
-            String url = "https://github.com/huidoudour";
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            startActivity(intent);
-        });
+        setContent {
+            EventTheme(
+                themeColor = ThemeHelper.getThemeColor(this),
+                darkTheme = ThemeHelper.getTheme(this) == ThemeHelper.THEME_DARK ||
+                        (ThemeHelper.getTheme(this) == ThemeHelper.THEME_SYSTEM &&
+                         isNightMode())
+            ) {
+                MeScreenContent(onBack = { finish() })
+            }
+        }
     }
 
-    private void setupStatusBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())
-                    .setAppearanceLightStatusBars(true);
-        } else {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        }
+    private fun isNightMode(): Boolean {
+        val mode = resources.configuration.uiMode and
+                android.content.res.Configuration.UI_MODE_NIGHT_MASK
+        return mode == android.content.res.Configuration.UI_MODE_NIGHT_YES
     }
 }

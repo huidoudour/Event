@@ -1,27 +1,24 @@
-package me.huidoudour.event.debug;
+package me.huidoudour.event.debug
 
-import androidx.lifecycle.LiveData;
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.Query;
-
-import java.util.List;
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
 
 @Dao
-public interface DebugLogDao {
+interface DebugLogDao {
+    @Query("SELECT * FROM debug_logs ORDER BY timestamp DESC")
+    fun getAllLogs(): LiveData<List<DebugLogEntry>>
 
     @Query("SELECT * FROM debug_logs ORDER BY timestamp DESC")
-    LiveData<List<DebugLogEntry>> getAllLogs();
-
-    @Query("SELECT * FROM debug_logs ORDER BY timestamp DESC")
-    List<DebugLogEntry> getAllLogsSync();
+    fun getAllLogsSync(): List<DebugLogEntry>
 
     @Insert
-    void insert(DebugLogEntry entry);
+    fun insert(entry: DebugLogEntry)
 
     @Query("DELETE FROM debug_logs")
-    void deleteAll();
+    fun deleteAll()
 
     @Query("SELECT COUNT(*) FROM debug_logs")
-    LiveData<Integer> getLogCount();
+    fun getLogCount(): LiveData<Int>
 }

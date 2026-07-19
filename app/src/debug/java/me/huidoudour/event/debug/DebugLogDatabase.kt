@@ -1,30 +1,26 @@
-package me.huidoudour.event.debug;
+package me.huidoudour.event.debug
 
-import android.content.Context;
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
 
-import androidx.room.Database;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
+@Database(entities = [DebugLogEntry::class], version = 2, exportSchema = false)
+abstract class DebugLogDatabase : RoomDatabase() {
+    abstract fun debugLogDao(): DebugLogDao
 
-@Database(entities = {DebugLogEntry.class}, version = 1, exportSchema = false)
-public abstract class DebugLogDatabase extends RoomDatabase {
+    companion object {
+        @Volatile
+        private var INSTANCE: DebugLogDatabase? = null
 
-    public abstract DebugLogDao debugLogDao();
-
-    private static volatile DebugLogDatabase INSTANCE;
-
-    public static DebugLogDatabase getDatabase(Context context) {
-        if (INSTANCE == null) {
-            synchronized (DebugLogDatabase.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(
-                            context.getApplicationContext(),
-                            DebugLogDatabase.class,
-                            "debug_log_database"
-                    ).build();
-                }
+        fun getDatabase(context: Context): DebugLogDatabase {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: Room.databaseBuilder(
+                    context.applicationContext,
+                    DebugLogDatabase::class.java,
+                    "debug_log_database"
+                ).fallbackToDestructiveMigration(false).build().also { INSTANCE = it }
             }
         }
-        return INSTANCE;
     }
 }

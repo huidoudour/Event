@@ -1,90 +1,40 @@
-package me.huidoudour.event.data;
+package me.huidoudour.event.data
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import java.util.Objects
 
 @Entity(tableName = "events")
-public class Event {
+data class Event(
     @PrimaryKey(autoGenerate = true)
-    private long id;
-    private String title;
-    private String description;
-    private long eventTime;
-    private long createdAt;
-    private long updatedAt;
+    var id: Long = 0,
+    var title: String,
+    var description: String?,
+    var eventTime: Long,
+    var createdAt: Long = System.currentTimeMillis(),
+    var updatedAt: Long = System.currentTimeMillis()
+) {
+    constructor(title: String, description: String?, eventTime: Long) : this(
+        title = title,
+        description = description,
+        eventTime = eventTime,
+        createdAt = System.currentTimeMillis(),
+        updatedAt = System.currentTimeMillis()
+    )
 
-    public Event(String title, String description, long eventTime) {
-        this.title = title;
-        this.description = description;
-        this.eventTime = eventTime;
-        this.createdAt = System.currentTimeMillis();
-        this.updatedAt = System.currentTimeMillis();
-    }
-
-    // Getters and Setters
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public long getEventTime() {
-        return eventTime;
-    }
-
-    public void setEventTime(long eventTime) {
-        this.eventTime = eventTime;
-    }
-
-    public long getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(long createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public long getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(long updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Event event = (Event) obj;
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
+        val event = other as Event
         return id == event.id &&
-               eventTime == event.eventTime &&
-               createdAt == event.createdAt &&
-               updatedAt == event.updatedAt &&
-               java.util.Objects.equals(title, event.title) &&
-               java.util.Objects.equals(description, event.description);
+                eventTime == event.eventTime &&
+                createdAt == event.createdAt &&
+                updatedAt == event.updatedAt &&
+                title == event.title &&
+                description == event.description
     }
 
-    @Override
-    public int hashCode() {
-        return java.util.Objects.hash(id, title, description, eventTime, createdAt, updatedAt);
+    override fun hashCode(): Int {
+        return Objects.hash(id, title, description, eventTime, createdAt, updatedAt)
     }
 }

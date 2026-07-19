@@ -1,111 +1,87 @@
-package me.huidoudour.event.ui;
+package me.huidoudour.event.ui
 
-import android.app.Application;
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import me.huidoudour.event.data.Event
+import me.huidoudour.event.data.EventDao
+import me.huidoudour.event.data.EventDatabase
+import me.huidoudour.event.data.EventRepository
+import me.huidoudour.event.util.ActionMonitor
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+class EventViewModel(application: Application) : AndroidViewModel(application) {
 
-import me.huidoudour.event.data.Event;
-import me.huidoudour.event.data.EventDao;
-import me.huidoudour.event.data.EventDatabase;
-import me.huidoudour.event.data.EventRepository;
-import me.huidoudour.event.util.ActionMonitor;
+    private val repository: EventRepository
+    val allEvents: LiveData<List<Event>>
+    private val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
-public class EventViewModel extends AndroidViewModel {
-    private final EventRepository repository;
-    private final LiveData<List<Event>> allEvents;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
-    public EventViewModel(@NonNull Application application) {
-        super(application);
-        EventDatabase database = EventDatabase.getDatabase(application);
-        EventDao eventDao = database.eventDao();
-        repository = new EventRepository(application, eventDao);
-        allEvents = repository.allEvents;
+    init {
+        val database = EventDatabase.getDatabase(application)
+        val eventDao = database.eventDao()
+        repository = EventRepository(application, eventDao)
+        allEvents = repository.allEvents
     }
 
-    public LiveData<List<Event>> getAllEvents() {
-        return allEvents;
-    }
+    fun getSortedEvents(): LiveData<List<Event>> = repository.getSortedEvents()
 
-    public LiveData<List<Event>> getSortedEvents() {
-        return repository.getSortedEvents();
-    }
+    fun toggleSortOrder() = repository.toggleSortOrder()
 
-    public void toggleSortOrder() {
-        repository.toggleSortOrder();
-    }
+    fun isAscending(): Boolean = repository.isAscending
 
-    public boolean isAscending() {
-        return repository.isAscending();
-    }
-
-    public void addEvent(String title, String description, long eventTime) {
-        executor.execute(() -> {
-            Event event = new Event(title, description, eventTime);
-            long id = repository.insert(event);
-            ActionMonitor.log("CREATE", "创建事件: " + title, id);
-        });
-    }
-
-    public void updateEvent(Event event) {
-        executor.execute(() -> {
-            repository.update(event);
-            ActionMonitor.log("UPDATE", "修改事件: " + event.getTitle(), event.getId());
-        });
-    }
-
-    public void deleteEvent(Event event) {
-        executor.execute(() -> {
-            ActionMonitor.log("DELETE", "删除事件: " + event.getTitle(), event.getId());
-            repository.delete(event);
-        });
-    }
-
-    public void deleteAllEvents() {
-        executor.execute(() -> {
-            ActionMonitor.log("DELETE_ALL", "清空所有事件", 0);
-            repository.deleteAll();
-        });
-    }
-
-    public void deleteEventsByIds(java.util.List<Long> ids) {
-        executor.execute(() -> {
-            ActionMonitor.log("DELETE_BATCH", "批量删除 " + ids.size() + " 个事件", 0);
-            repository.deleteByIds(ids);
-        });
-    }
-
-    public EventRepository getRepository() {
-        return repository;
-    }
-
-    public static class Factory implements ViewModelProvider.Factory {
-        private final Application application;
-
-        public Factory(Application application) {
-            this.application = application;
+    fun addEvent(title: String, description: String?, eventTime: Long) {
+        executor.execute {
+            val event = Event(title = title, description = description, eventTime = eventTime)
+            val id = repository.insert(event)
+            ActionMonitor.log("CREATE", "创建事件: $title", id)
         }
+    }
 
-        @NonNull
-        @Override
-        @SuppressWarnings("unchecked")
-        public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            if (modelClass.isAssignableFrom(EventViewModel.class)) {
-                return (T) new EventViewModel(application);
+    fun updateEvent(event: Event) {
+        executor.execute {
+            repository.update(event)
+            ActionMonitor.log("UPDATE", "修改事件: ${event.title}", event.id)
+        }
+    }
+
+    fun deleteEvent(event: Event) {
+        executor.execute {
+            ActionMonitor.log("DELETE", "删除事件: ${event.title}", event.id)
+            repository.delete(event)
+        }
+    }
+
+    fun deleteAllEvents() {
+        executor.execute {
+            ActionMonitor.log("DELETE_ALL", "清空所有事件", 0)
+            repository.deleteAll()
+        }
+    }
+
+    fun deleteEventsByIds(ids: List<Long>) {
+        executor.execute {
+            ActionMonitor.log("DELETE_BATCH", "批量删除 ${ids.size} 个事件", 0)
+            repository.deleteByIds(ids)
+        }
+    }
+
+    fun getRepository(): EventRepository = repository
+
+    class Factory(private val application: Application) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(EventViewModel::class.java)) {
+                return EventViewModel(application) as T
             }
-            throw new IllegalArgumentException("Unknown ViewModel class");
+            throw IllegalArgumentException("Unknown ViewModel class")
         }
-        
-        public EventRepository createRepository() {
-            EventDatabase database = EventDatabase.getDatabase(application);
-            return new EventRepository(application, database.eventDao());
+
+        fun createRepository(): EventRepository {
+            val database = EventDatabase.getDatabase(application)
+            return EventRepository(application, database.eventDao())
         }
     }
 }

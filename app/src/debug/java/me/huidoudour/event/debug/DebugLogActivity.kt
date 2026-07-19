@@ -1,318 +1,298 @@
-package me.huidoudour.event.debug;
+package me.huidoudour.event.debug
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.provider.DocumentsContract;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.provider.DocumentsContract
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageButton
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
+import me.huidoudour.event.R
+import me.huidoudour.event.util.ActionMonitor
+import me.huidoudour.event.util.BaseActivity
+import java.util.*
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.OutputStream
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.Executors
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+/**
+ * 调试日志页面。
+ * 仅在 Debug 构建中存在，通过反射由 SettingsActivity 启动。
+ */
+class DebugLogActivity : BaseActivity() {
 
-import com.google.android.material.appbar.MaterialToolbar;
+    private lateinit var viewModel: DebugLogViewModel
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var emptyView: TextView
+    private lateinit var tvLogCount: TextView
+    private lateinit var tvSelectedPath: TextView
+    private lateinit var btnSelectFolder: Button
+    private lateinit var btnExportLogs: Button
+    private lateinit var btnRefresh: ImageButton
+    private lateinit var btnClear: ImageButton
+    private lateinit var adapter: LogAdapter
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import me.huidoudour.event.R;
-import me.huidoudour.event.util.ActionMonitor;
-import me.huidoudour.event.util.BaseActivity;
-
-public class DebugLogActivity extends BaseActivity {
-
-    private static final String PREFS_NAME = "debug_log_prefs";
-    private static final String KEY_SAVE_FOLDER_URI = "save_folder_uri";
-
-    private DebugLogViewModel viewModel;
-    private RecyclerView recyclerView;
-    private TextView emptyView;
-    private TextView tvLogCount;
-    private TextView tvSelectedPath;
-    private Button btnSelectFolder, btnExportLogs;
-    private ImageButton btnRefresh, btnClear;
-    private LogAdapter adapter;
-
-    private Uri savedFolderUri;
-
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private var savedFolderUri: Uri? = null
+    private val executor = Executors.newSingleThreadExecutor()
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     // 文件夹选择器
-    private final ActivityResultLauncher<Uri> folderPickerLauncher =
-        registerForActivityResult(
-            new ActivityResultContracts.OpenDocumentTree(),
-            uri -> {
-                if (uri != null) {
-                    // 获取持久化读写权限
-                    final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
-                    getContentResolver().takePersistableUriPermission(uri, takeFlags);
+    private val folderPickerLauncher = registerForActivityResult(
+        ActivityResultContracts.OpenDocumentTree()
+    ) { uri ->
+        if (uri != null) {
+            val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            contentResolver.takePersistableUriPermission(uri, takeFlags)
 
-                    savedFolderUri = uri;
-                    saveFolderUri(uri);
-                    updatePathDisplay();
-                    Toast.makeText(this, "保存位置已设置", Toast.LENGTH_SHORT).show();
-                }
-            }
-        );
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_debug_log);
-
-        DebugLogInitializer.init(this);
-
-        setupToolbar();
-        setupViews();
-        setupViewModel();
-        loadSavedFolder();
+            savedFolderUri = uri
+            saveFolderUri(uri)
+            updatePathDisplay()
+            Toast.makeText(this, "保存位置已设置", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    private void setupToolbar() {
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(v -> {
-            ActionMonitor.log("BTN_CLICK", "调试日志页返回", 0);
-            onBackPressed();
-        });
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_debug_log)
+
+        DebugLogInitializer.init(this)
+
+        setupToolbar()
+        setupViews()
+        setupViewModel()
+        loadSavedFolder()
     }
 
-    private void setupViews() {
-        recyclerView = findViewById(R.id.recyclerViewLogs);
-        emptyView = findViewById(R.id.emptyView);
-        tvLogCount = findViewById(R.id.tvLogCount);
-        tvSelectedPath = findViewById(R.id.tvSelectedPath);
-        btnSelectFolder = findViewById(R.id.btnSelectFolder);
-        btnExportLogs = findViewById(R.id.btnExportLogs);
-        btnRefresh = findViewById(R.id.btnRefreshLogs);
-        btnClear = findViewById(R.id.btnClearLogs);
-
-        adapter = new LogAdapter();
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-
-        btnSelectFolder.setOnClickListener(v -> {
-            ActionMonitor.log("BTN_CLICK", "调试日志页选择保存文件夹", 0);
-            openFolderPicker();
-        });
-        btnExportLogs.setOnClickListener(v -> {
-            ActionMonitor.log("BTN_CLICK", "调试日志页导出日志", 0);
-            exportLogsToFolder();
-        });
-        btnRefresh.setOnClickListener(v -> {
-            ActionMonitor.log("BTN_CLICK", "调试日志页刷新", 0);
-            if (viewModel != null) viewModel.refresh();
-        });
-        btnClear.setOnClickListener(v -> {
-            ActionMonitor.log("BTN_CLICK", "调试日志页打开清空确认", 0);
-            clearAllLogs();
-        });
+    private fun setupToolbar() {
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        toolbar.setNavigationOnClickListener {
+            ActionMonitor.log("BTN_CLICK", "调试日志页返回", 0)
+            onBackPressedDispatcher.onBackPressed()
+        }
     }
 
-    private void setupViewModel() {
-        viewModel = new ViewModelProvider(this, new DebugLogViewModel.Factory(getApplication()))
-                .get(DebugLogViewModel.class);
+    private fun setupViews() {
+        recyclerView = findViewById(R.id.recyclerViewLogs)
+        emptyView = findViewById(R.id.emptyView)
+        tvLogCount = findViewById(R.id.tvLogCount)
+        tvSelectedPath = findViewById(R.id.tvSelectedPath)
+        btnSelectFolder = findViewById(R.id.btnSelectFolder)
+        btnExportLogs = findViewById(R.id.btnExportLogs)
+        btnRefresh = findViewById(R.id.btnRefreshLogs)
+        btnClear = findViewById(R.id.btnClearLogs)
 
-        viewModel.getAllLogs().observe(this, logs -> {
-            adapter.submitList(logs);
-            if (logs == null || logs.isEmpty()) {
-                recyclerView.setVisibility(View.GONE);
-                emptyView.setVisibility(View.VISIBLE);
+        adapter = LogAdapter()
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
+
+        btnSelectFolder.setOnClickListener {
+            ActionMonitor.log("BTN_CLICK", "调试日志页选择保存文件夹", 0)
+            openFolderPicker()
+        }
+        btnExportLogs.setOnClickListener {
+            ActionMonitor.log("BTN_CLICK", "调试日志页导出日志", 0)
+            exportLogsToFolder()
+        }
+        btnRefresh.setOnClickListener {
+            ActionMonitor.log("BTN_CLICK", "调试日志页刷新", 0)
+            if (::viewModel.isInitialized) viewModel.refresh()
+        }
+        btnClear.setOnClickListener {
+            ActionMonitor.log("BTN_CLICK", "调试日志页打开清空确认", 0)
+            clearAllLogs()
+        }
+    }
+
+    private fun setupViewModel() {
+        viewModel = androidx.lifecycle.ViewModelProvider(
+            this,
+            DebugLogViewModel.Factory(application)
+        )[DebugLogViewModel::class.java]
+
+        viewModel.allLogs.observe(this) { logs ->
+            adapter.submitList(logs)
+            if (logs.isNullOrEmpty()) {
+                recyclerView.visibility = View.GONE
+                emptyView.visibility = View.VISIBLE
             } else {
-                recyclerView.setVisibility(View.VISIBLE);
-                emptyView.setVisibility(View.GONE);
+                recyclerView.visibility = View.VISIBLE
+                emptyView.visibility = View.GONE
             }
-        });
+        }
 
-        viewModel.getLogCount().observe(this, count -> {
-            tvLogCount.setText("日志数：" + (count != null ? count : 0));
-        });
+        viewModel.logCount.observe(this) { count ->
+            tvLogCount.text = "日志数：${count ?: 0}"
+        }
     }
 
     // ── 文件夹选择与保存 ──
 
-    private void openFolderPicker() {
-        // 若有已保存的目录，以其作为初始目录，否则 null
-        folderPickerLauncher.launch(savedFolderUri);
+    private fun openFolderPicker() {
+        folderPickerLauncher.launch(savedFolderUri)
     }
 
-    private void loadSavedFolder() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        String uriStr = prefs.getString(KEY_SAVE_FOLDER_URI, "");
-        if (!uriStr.isEmpty()) {
-            savedFolderUri = Uri.parse(uriStr);
-            updatePathDisplay();
+    private fun loadSavedFolder() {
+        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+        val uriStr = prefs.getString(KEY_SAVE_FOLDER_URI, "") ?: ""
+        if (uriStr.isNotEmpty()) {
+            savedFolderUri = Uri.parse(uriStr)
+            updatePathDisplay()
         }
     }
 
-    private void saveFolderUri(Uri uri) {
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        prefs.edit().putString(KEY_SAVE_FOLDER_URI, uri.toString()).apply();
+    private fun saveFolderUri(uri: Uri) {
+        val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+        prefs.edit().putString(KEY_SAVE_FOLDER_URI, uri.toString()).apply()
     }
 
-    private void updatePathDisplay() {
-        if (savedFolderUri != null) {
-            // 显示 URI 的最后一段路径，更友好
-            String path = savedFolderUri.getLastPathSegment();
-            tvSelectedPath.setText(path != null ? path : savedFolderUri.toString());
-            tvSelectedPath.setTextColor(getColor(android.R.color.darker_gray));
+    private fun updatePathDisplay() {
+        val uri = savedFolderUri
+        if (uri != null) {
+            val path = uri.lastPathSegment
+            tvSelectedPath.text = path ?: uri.toString()
+            @Suppress("DEPRECATION")
+            tvSelectedPath.setTextColor(resources.getColor(android.R.color.darker_gray))
         } else {
-            tvSelectedPath.setText("未选择");
-            tvSelectedPath.setTextColor(
-                getResources().getColor(android.R.color.darker_gray));
+            tvSelectedPath.text = "未选择"
+            @Suppress("DEPRECATION")
+            tvSelectedPath.setTextColor(resources.getColor(android.R.color.darker_gray))
         }
     }
 
     // ── 导出日志 ──
 
-    /**
-     * 将全部日志导出为 JSON 文件，保存到用户通过 SAF 选择的目录中。
-     */
-    private void exportLogsToFolder() {
+    private fun exportLogsToFolder() {
         if (savedFolderUri == null) {
-            Toast.makeText(this, "请先选择保存文件夹", Toast.LENGTH_SHORT).show();
-            return;
+            Toast.makeText(this, "请先选择保存文件夹", Toast.LENGTH_SHORT).show()
+            return
         }
 
-        executor.execute(() -> {
+        val uri = savedFolderUri ?: return
+        executor.execute {
             try {
-                List<DebugLogEntry> logs = viewModel.getAllLogsSync();
-                if (logs == null || logs.isEmpty()) {
-                    mainHandler.post(() -> Toast.makeText(this, "暂无日志可导出", Toast.LENGTH_SHORT).show());
-                    return;
+                val logs = viewModel.getAllLogsSync()
+                if (logs.isEmpty()) {
+                    mainHandler.post {
+                        Toast.makeText(this, "暂无日志可导出", Toast.LENGTH_SHORT).show()
+                    }
+                    return@execute
                 }
 
                 // 构建 JSON
-                JSONArray jsonArray = new JSONArray();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault());
-                for (DebugLogEntry entry : logs) {
-                    JSONObject obj = new JSONObject();
-                    obj.put("id", entry.getId());
-                    obj.put("timestamp", sdf.format(new Date(entry.getTimestamp())));
-                    obj.put("operation", entry.getOperation());
-                    obj.put("detail", entry.getDetail());
-                    obj.put("entityId", entry.getEntityId());
-                    jsonArray.put(obj);
+                val jsonArray = JSONArray()
+                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault())
+                for (entry in logs) {
+                    val obj = JSONObject()
+                    obj.put("id", entry.id)
+                    obj.put("timestamp", sdf.format(Date(entry.timestamp)))
+                    obj.put("operation", entry.operation)
+                    obj.put("detail", entry.detail)
+                    obj.put("entityId", entry.entityId)
+                    jsonArray.put(obj)
                 }
 
                 // 文件名：debug_logs_20260705_183000.json
-                SimpleDateFormat fileSdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
-                String fileName = "debug_logs_" + fileSdf.format(new Date()) + ".json";
+                val fileSdf = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+                val fileName = "debug_logs_${fileSdf.format(Date())}.json"
 
-                // tree URI 转 document URI，再调用 createDocument
-                String treeDocId = DocumentsContract.getTreeDocumentId(savedFolderUri);
-                Uri dirDocUri = DocumentsContract.buildDocumentUriUsingTree(savedFolderUri, treeDocId);
-                Uri fileUri = DocumentsContract.createDocument(
-                        getContentResolver(), dirDocUri, "application/json", fileName);
+                // tree URI 转 document URI
+                val treeDocId = DocumentsContract.getTreeDocumentId(uri)
+                val dirDocUri = DocumentsContract.buildDocumentUriUsingTree(uri, treeDocId)
+                val fileUri = DocumentsContract.createDocument(
+                    contentResolver, dirDocUri, "application/json", fileName
+                )
 
-                boolean success;
-                try (OutputStream os = getContentResolver().openOutputStream(fileUri)) {
-                    if (os != null) {
-                        os.write(jsonArray.toString(2).getBytes("UTF-8"));
-                        success = true;
+                val success = contentResolver.openOutputStream(fileUri!!)?.use { os ->
+                    os.write(jsonArray.toString(2).toByteArray(Charsets.UTF_8))
+                    true
+                } ?: false
+
+                mainHandler.post {
+                    if (success) {
+                        Toast.makeText(this, "日志已导出为 $fileName", Toast.LENGTH_LONG).show()
                     } else {
-                        success = false;
+                        Toast.makeText(this, "导出失败，请检查目录权限", Toast.LENGTH_SHORT).show()
                     }
                 }
 
-                boolean finalSuccess = success;
-                mainHandler.post(() -> {
-                    if (finalSuccess) {
-                        Toast.makeText(this, "日志已导出为 " + fileName, Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(this, "导出失败，请检查目录权限", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                mainHandler.post(() -> Toast.makeText(this, "导出出错：" + e.getMessage(), Toast.LENGTH_SHORT).show());
+            } catch (e: Exception) {
+                e.printStackTrace()
+                mainHandler.post {
+                    Toast.makeText(this, "导出出错：${e.message}", Toast.LENGTH_SHORT).show()
+                }
             }
-        });
+        }
     }
 
-    private void clearAllLogs() {
-        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
-                .setTitle("清空日志")
-                .setMessage("确定要清空所有调试操作日志吗？")
-                .setPositiveButton("清空", (dialog, which) -> {
-                    ActionMonitor.log("DIALOG_CONFIRM", "确认清空调试日志", 0);
-                    executor.execute(() -> viewModel.deleteAll());
-                    Toast.makeText(this, "日志已清空", Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton("取消", (dialog, which) -> {
-                    ActionMonitor.log("DIALOG_CANCEL", "取消清空调试日志", 0);
-                })
-                .show();
+    private fun clearAllLogs() {
+        AlertDialog.Builder(this)
+            .setTitle("清空日志")
+            .setMessage("确定要清空所有调试操作日志吗？")
+            .setPositiveButton("清空") { _, _ ->
+                ActionMonitor.log("DIALOG_CONFIRM", "确认清空调试日志", 0)
+                executor.execute { viewModel.deleteAll() }
+                Toast.makeText(this, "日志已清空", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("取消") { _, _ ->
+                ActionMonitor.log("DIALOG_CANCEL", "取消清空调试日志", 0)
+            }
+            .show()
     }
 
     // ── RecyclerView 适配器 ──
 
-    private static class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
-        private List<DebugLogEntry> logs;
+    private class LogAdapter : RecyclerView.Adapter<LogAdapter.LogViewHolder>() {
+        private var logs: List<DebugLogEntry> = emptyList()
 
-        public void submitList(List<DebugLogEntry> list) {
-            this.logs = list;
-            notifyDataSetChanged();
+        fun submitList(list: List<DebugLogEntry>?) {
+            this.logs = list ?: emptyList()
+            notifyDataSetChanged()
         }
 
-        @NonNull
-        @Override
-        public LogViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(android.R.layout.simple_list_item_2, parent, false);
-            return new LogViewHolder(view);
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LogViewHolder {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(android.R.layout.simple_list_item_2, parent, false)
+            return LogViewHolder(view)
         }
 
-        @Override
-        public void onBindViewHolder(@NonNull LogViewHolder holder, int position) {
-            holder.bind(logs.get(position));
+        override fun onBindViewHolder(holder: LogViewHolder, position: Int) {
+            holder.bind(logs[position])
         }
 
-        @Override
-        public int getItemCount() {
-            return logs == null ? 0 : logs.size();
-        }
+        override fun getItemCount(): Int = logs.size
 
-        static class LogViewHolder extends RecyclerView.ViewHolder {
-            private final TextView text1;
-            private final TextView text2;
+        class LogViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            private val text1: TextView = itemView.findViewById(android.R.id.text1)
+            private val text2: TextView = itemView.findViewById(android.R.id.text2)
 
-            LogViewHolder(View itemView) {
-                super(itemView);
-                text1 = itemView.findViewById(android.R.id.text1);
-                text2 = itemView.findViewById(android.R.id.text2);
-            }
-
-            void bind(DebugLogEntry entry) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                String timestamp = sdf.format(new Date(entry.getTimestamp()));
-                String entityInfo = entry.getEntityId() > 0 ? " [ID:" + entry.getEntityId() + "]" : "";
-                text1.setText("[" + entry.getOperation() + "]" + entityInfo + "  " + timestamp);
-                text2.setText(entry.getDetail());
+            fun bind(entry: DebugLogEntry) {
+                val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                val timestamp = sdf.format(Date(entry.timestamp))
+                val entityInfo = if (entry.entityId > 0) " [ID:${entry.entityId}]" else ""
+                text1.text = "[${entry.operation}]$entityInfo  $timestamp"
+                text2.text = entry.detail
             }
         }
+    }
+
+    companion object {
+        private const val PREFS_NAME = "debug_log_prefs"
+        private const val KEY_SAVE_FOLDER_URI = "save_folder_uri"
     }
 }

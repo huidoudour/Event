@@ -1,93 +1,73 @@
-package me.huidoudour.event.data;
+package me.huidoudour.event.data
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import java.util.List;
+class EventRepository(context: Context, private val eventDao: EventDao) {
+    private val preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    val allEvents: LiveData<List<Event>> = eventDao.getAllEvents()
 
-public class EventRepository {
-    private static final String PREFS_NAME = "sort_prefs";
-    private static final String KEY_SORT_ASCENDING = "sort_ascending";
-    
-    private final EventDao eventDao;
-    private final SharedPreferences preferences;
-    public final LiveData<List<Event>> allEvents;
-    private final MediatorLiveData<List<Event>> sortedEvents = new MediatorLiveData<>();
-    private boolean isAscending;
-    private LiveData<List<Event>> currentSource;
+    private val sortedEvents = MediatorLiveData<List<Event>>()
+    private var currentSource: LiveData<List<Event>>? = null
 
-    public EventRepository(Context context, EventDao eventDao) {
-        this.eventDao = eventDao;
-        this.preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        this.allEvents = eventDao.getAllEvents();
-        // 从SharedPreferences读取排序状态，默认为倒序
-        this.isAscending = preferences.getBoolean(KEY_SORT_ASCENDING, false);
-        setSortOrder(isAscending);
+    var isAscending: Boolean = preferences.getBoolean(KEY_SORT_ASCENDING, false)
+        private set
+
+    init {
+        setSortOrder(isAscending)
     }
 
-    private void setSortOrder(boolean ascending) {
-        LiveData<List<Event>> newSource = ascending ? 
-            eventDao.getEventsByTimeAscending() : 
-            eventDao.getEventsByTimeDescending();
-        
-        if (currentSource != null) {
-            sortedEvents.removeSource(currentSource);
+    private fun setSortOrder(ascending: Boolean) {
+        val newSource = if (ascending) {
+            eventDao.getEventsByTimeAscending()
+        } else {
+            eventDao.getEventsByTimeDescending()
         }
-        currentSource = newSource;
-        sortedEvents.addSource(newSource, sortedEvents::postValue);
+        currentSource?.let { sortedEvents.removeSource(it) }
+        currentSource = newSource
+        sortedEvents.addSource(newSource, sortedEvents::postValue)
     }
 
-    public long insert(Event event) {
-        return eventDao.insert(event);
-    }
+    fun insert(event: Event): Long = eventDao.insert(event)
 
-    public void update(Event event) {
+    fun update(event: Event) {
         // 只在内容变化时更新时间戳
-        event.setUpdatedAt(System.currentTimeMillis());
-        eventDao.update(event);
+        event.updatedAt = System.currentTimeMillis()
+        eventDao.update(event)
     }
 
-    public void delete(Event event) {
-        eventDao.delete(event);
+    fun delete(event: Event) = eventDao.delete(event)
+
+    fun deleteAll() {
+        eventDao.deleteAll()
+        eventDao.resetAutoIncrement()
     }
 
-    public void deleteAll() {
-        eventDao.deleteAll();
-        eventDao.resetAutoIncrement();
-    }
-
-    public void deleteByIds(java.util.List<Long> ids) {
-        eventDao.deleteByIds(ids);
-    }
+    fun deleteByIds(ids: List<Long>) = eventDao.deleteByIds(ids)
 
     /** 同步查询所有事件，必须在后台线程调用 */
-    public List<Event> getAllEventsSync() {
-        return eventDao.getAllEventsSync();
+    fun getAllEventsSync(): List<Event> = eventDao.getAllEventsSync()
+
+    fun getSortedEvents(): LiveData<List<Event>> = sortedEvents
+
+    fun toggleSortOrder() {
+        isAscending = !isAscending
+        preferences.edit().putBoolean(KEY_SORT_ASCENDING, isAscending).apply()
+        setSortOrder(isAscending)
     }
 
-    public LiveData<List<Event>> getSortedEvents() {
-        return sortedEvents;
-    }
-
-    public boolean isAscending() {
-        return isAscending;
-    }
-
-    public void toggleSortOrder() {
-        isAscending = !isAscending;
-        // 保存排序状态到SharedPreferences
-        preferences.edit().putBoolean(KEY_SORT_ASCENDING, isAscending).apply();
-        setSortOrder(isAscending);
-    }
-    
     /** 同步排序状态（从SharedPreferences读取） */
-    public void syncSortOrder() {
-        boolean savedAscending = preferences.getBoolean(KEY_SORT_ASCENDING, false);
+    fun syncSortOrder() {
+        val savedAscending = preferences.getBoolean(KEY_SORT_ASCENDING, false)
         if (savedAscending != isAscending) {
-            isAscending = savedAscending;
-            setSortOrder(isAscending);
+            isAscending = savedAscending
+            setSortOrder(isAscending)
         }
+    }
+
+    companion object {
+        private const val PREFS_NAME = "sort_prefs"
+        private const val KEY_SORT_ASCENDING = "sort_ascending"
     }
 }

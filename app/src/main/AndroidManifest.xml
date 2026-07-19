@@ -15,7 +15,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="false"
-            android:enabled="true" />
+            android:enabled="true"
+            android:label="@string/dis_name" />
         
         <!-- 默认绿色图标 -->
         <activity-alias
@@ -144,11 +145,6 @@
             android:name=".MeActivity"
             android:exported="false"
             android:label="@string/about_developer" />
-
-        <activity
-            android:name=".ui.ListViewActivity"
-            android:exported="false"
-            android:label="@string/list_view" />
 
         <meta-data
             android:name="me.huidoudour.core"

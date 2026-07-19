@@ -1,5 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -88,8 +91,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+    
+    buildFeatures {
+        compose = true
     }
     
     // 配置 NDK 版本
@@ -97,16 +108,30 @@ android {
 }
 
 dependencies {
+    // Compose BOM
+    val composeBom = platform(libs.compose.bom)
+    implementation(composeBom)
+    
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.livedata)
     implementation(libs.room.runtime)
-    implementation(libs.compose.ui.tooling)
-    annotationProcessor(libs.room.compiler)
+    kapt("androidx.room:room-compiler:${libs.versions.room.get()}")
     
-    // Fragment
+    // Fragment (仅兼容过渡期使用)
     implementation(libs.fragment.ktx)
+    
+    // Compose
+    implementation(libs.activity.compose)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.runtime.livedata)
+    debugImplementation(libs.compose.ui.tooling)
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
