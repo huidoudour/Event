@@ -1,18 +1,36 @@
 package me.huidoudour.event.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
 import java.text.SimpleDateFormat
-import me.huidoudour.event.R
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 /**
  * 添加/编辑事件对话框 - 对齐 dialog_event.xml (TextInputLayout OutlinedBox)
@@ -22,12 +40,13 @@ fun AddEventDialog(
     onDismiss: () -> Unit,
     onConfirm: (title: String, description: String) -> Unit
 ) {
+    val context = LocalContext.current
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("添加事件") },
+        title = { Text(context.getString(R.string.add_event)) },
         text = {
             Column(
                 modifier = Modifier.padding(top = 8.dp),
@@ -36,14 +55,14 @@ fun AddEventDialog(
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("事件标题") },
+                    label = { Text(context.getString(R.string.event_title)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("事件描述") },
+                    label = { Text(context.getString(R.string.event_description)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(150.dp),
@@ -60,10 +79,10 @@ fun AddEventDialog(
                     }
                 },
                 enabled = title.isNotBlank()
-            ) { Text("保存") }
+            ) { Text(context.getString(R.string.save)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("取消") }
+            TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel)) }
         }
     )
 }
@@ -74,12 +93,13 @@ fun EditEventDialog(
     onDismiss: () -> Unit,
     onConfirm: (title: String, description: String) -> Unit
 ) {
+    val context = LocalContext.current
     var title by remember { mutableStateOf(event.title) }
     var description by remember { mutableStateOf(event.description ?: "") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("编辑事件") },
+        title = { Text(context.getString(R.string.edit) + "事件") },
         text = {
             Column(
                 modifier = Modifier.padding(top = 8.dp),
@@ -88,14 +108,14 @@ fun EditEventDialog(
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("事件标题") },
+                    label = { Text(context.getString(R.string.event_title)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("事件描述") },
+                    label = { Text(context.getString(R.string.event_description)) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(150.dp),
@@ -112,10 +132,10 @@ fun EditEventDialog(
                     }
                 },
                 enabled = title.isNotBlank()
-            ) { Text("保存") }
+            ) { Text(context.getString(R.string.save)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("取消") }
+            TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel)) }
         }
     )
 }
@@ -129,6 +149,7 @@ fun DeleteConfirmDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
+    val context = LocalContext.current
     var input by remember { mutableStateOf("") }
 
     AlertDialog(
@@ -149,7 +170,7 @@ fun DeleteConfirmDialog(
                 )
             }
         },
-        title = { Text("确认删除", style = MaterialTheme.typography.headlineSmall) },
+        title = { Text(context.getString(R.string.confirm_delete), style = MaterialTheme.typography.headlineSmall) },
         text = {
             Column {
                 Text(
@@ -161,7 +182,7 @@ fun DeleteConfirmDialog(
                 OutlinedTextField(
                     value = input,
                     onValueChange = { input = it },
-                    label = { Text("请输入 d") },
+                    label = { Text(context.getString(R.string.please_type_del)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -176,10 +197,10 @@ fun DeleteConfirmDialog(
                     }
                 },
                 enabled = input == "d"
-            ) { Text("删除") }
+            ) { Text(context.getString(R.string.delete)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("取消") }
+            TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel)) }
         }
     )
 }
@@ -192,6 +213,7 @@ fun EventDetailDialog(
     event: Event,
     onDismiss: () -> Unit
 ) {
+    val context = LocalContext.current
     val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()) }
 
     AlertDialog(
@@ -200,16 +222,17 @@ fun EventDetailDialog(
         text = {
             Column {
                 if (!event.description.isNullOrBlank()) {
-                    Text("描述：${event.description}")
+                    Text("${context.getString(R.string.event_description)}：${event.description}")
                     Spacer(Modifier.height(8.dp))
                 }
-                Text("时间：${dateFormat.format(Date(event.eventTime))}")
+                Text("${context.getString(R.string.event_time)}：${dateFormat.format(Date(event.eventTime))}")
                 Spacer(Modifier.height(4.dp))
+                // 创建时间保持硬编码格式，因其含变量拼接
                 Text("创建：${dateFormat.format(Date(event.createdAt))}")
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("关闭") }
+            TextButton(onClick = onDismiss) { Text(context.getString(R.string.close)) }
         }
     )
 }
@@ -225,6 +248,7 @@ fun EventLongClickMenu(
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
+    val context = LocalContext.current
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(event.title) },
@@ -233,20 +257,20 @@ fun EventLongClickMenu(
                 TextButton(
                     onClick = { onDismiss(); onChangeTime() },
                     modifier = Modifier.fillMaxWidth()
-                ) { Text("修改时间") }
+                ) { Text(context.getString(R.string.change_datetime)) }
                 TextButton(
                     onClick = { onDismiss(); onEdit() },
                     modifier = Modifier.fillMaxWidth()
-                ) { Text("编辑") }
+                ) { Text(context.getString(R.string.edit)) }
                 TextButton(
                     onClick = { onDismiss(); onDelete() },
                     modifier = Modifier.fillMaxWidth()
-                ) { Text("删除") }
+                ) { Text(context.getString(R.string.delete)) }
             }
         },
         confirmButton = {},
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("取消") }
+            TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel)) }
         }
     )
 }
@@ -259,6 +283,7 @@ fun ClearAllConfirmDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
+    val context = LocalContext.current
     var input by remember { mutableStateOf("") }
 
     AlertDialog(
@@ -280,12 +305,12 @@ fun ClearAllConfirmDialog(
             }
         },
         title = {
-            Text("清空所有事件", style = MaterialTheme.typography.headlineSmall)
+            Text(context.getString(R.string.confirm_clear), style = MaterialTheme.typography.headlineSmall)
         },
         text = {
             Column {
                 Text(
-                    "此操作将删除所有事件数据，且不可恢复。",
+                    context.getString(R.string.confirm_clear_all_message),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -293,7 +318,7 @@ fun ClearAllConfirmDialog(
                 OutlinedTextField(
                     value = input,
                     onValueChange = { input = it },
-                    label = { Text("请输入 clear") },
+                    label = { Text(context.getString(R.string.please_type_clear)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -308,10 +333,10 @@ fun ClearAllConfirmDialog(
                     }
                 },
                 enabled = input == "clear"
-            ) { Text("清空") }
+            ) { Text(context.getString(R.string.clear)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("取消") }
+            TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel)) }
         }
     )
 }
@@ -322,15 +347,16 @@ fun BatchDeleteConfirmDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
+    val context = LocalContext.current
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("批量删除") },
-        text = { Text("确定要删除已选的 $count 个事件吗？") },
+        title = { Text(context.getString(R.string.confirm_delete_selected)) },
+        text = { Text("${context.getString(R.string.delete_selected)} $count ?") },
         confirmButton = {
-            TextButton(onClick = { onConfirm(); onDismiss() }) { Text("删除") }
+            TextButton(onClick = { onConfirm(); onDismiss() }) { Text(context.getString(R.string.delete)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("取消") }
+            TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel)) }
         }
     )
 }

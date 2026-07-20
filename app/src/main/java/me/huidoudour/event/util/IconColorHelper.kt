@@ -11,24 +11,10 @@ object IconColorHelper {
     // 图标颜色常量
     const val COLOR_DEFAULT = 0     // 默认(绿色)
     const val COLOR_COLORFUL = 1    // 彩色
-    const val COLOR_RED = 2         // 红色
-    const val COLOR_BLUE = 3        // 蓝色
-    const val COLOR_YELLOW = 4      // 黄色
-    const val COLOR_PURPLE = 5      // 紫色
-    const val COLOR_ORANGE = 6      // 橙色
-    const val COLOR_CYAN = 7        // 青色
-    const val COLOR_PINK = 8        // 粉色
 
     private const val MAIN_ACTIVITY_CLASS = "me.huidoudour.event.MainActivity"
     private const val DEFAULT_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasDefault"
     private const val COLORFUL_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasColorful"
-    private const val RED_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasRed"
-    private const val BLUE_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasBlue"
-    private const val YELLOW_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasYellow"
-    private const val PURPLE_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasPurple"
-    private const val ORANGE_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasOrange"
-    private const val CYAN_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasCyan"
-    private const val PINK_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasPink"
 
     /**
      * 获取当前图标颜色
@@ -70,13 +56,6 @@ object IconColorHelper {
         return when (color) {
             COLOR_DEFAULT -> DEFAULT_ACTIVITY_ALIAS
             COLOR_COLORFUL -> COLORFUL_ACTIVITY_ALIAS
-            COLOR_RED -> RED_ACTIVITY_ALIAS
-            COLOR_BLUE -> BLUE_ACTIVITY_ALIAS
-            COLOR_YELLOW -> YELLOW_ACTIVITY_ALIAS
-            COLOR_PURPLE -> PURPLE_ACTIVITY_ALIAS
-            COLOR_ORANGE -> ORANGE_ACTIVITY_ALIAS
-            COLOR_CYAN -> CYAN_ACTIVITY_ALIAS
-            COLOR_PINK -> PINK_ACTIVITY_ALIAS
             else -> DEFAULT_ACTIVITY_ALIAS
         }
     }
@@ -84,14 +63,7 @@ object IconColorHelper {
     private fun disableAllAliases(pm: PackageManager, context: Context) {
         val aliases = arrayOf(
             DEFAULT_ACTIVITY_ALIAS,
-            COLORFUL_ACTIVITY_ALIAS,
-            RED_ACTIVITY_ALIAS,
-            BLUE_ACTIVITY_ALIAS,
-            YELLOW_ACTIVITY_ALIAS,
-            PURPLE_ACTIVITY_ALIAS,
-            ORANGE_ACTIVITY_ALIAS,
-            CYAN_ACTIVITY_ALIAS,
-            PINK_ACTIVITY_ALIAS
+            COLORFUL_ACTIVITY_ALIAS
         )
         for (alias in aliases) {
             pm.setComponentEnabledSetting(

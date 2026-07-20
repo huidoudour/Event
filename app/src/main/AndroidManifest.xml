@@ -46,96 +46,6 @@
             </intent-filter>
         </activity-alias>
         
-        <!-- 红色图标 -->
-        <activity-alias
-            android:name=".MainActivityAliasRed"
-            android:targetActivity=".MainActivity"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_red"
-            android:enabled="false">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        
-        <!-- 蓝色图标 -->
-        <activity-alias
-            android:name=".MainActivityAliasBlue"
-            android:targetActivity=".MainActivity"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_blue"
-            android:enabled="false">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        
-        <!-- 黄色图标 -->
-        <activity-alias
-            android:name=".MainActivityAliasYellow"
-            android:targetActivity=".MainActivity"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_yellow"
-            android:enabled="false">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        
-        <!-- 紫色图标 -->
-        <activity-alias
-            android:name=".MainActivityAliasPurple"
-            android:targetActivity=".MainActivity"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_purple"
-            android:enabled="false">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        
-        <!-- 橙色图标 -->
-        <activity-alias
-            android:name=".MainActivityAliasOrange"
-            android:targetActivity=".MainActivity"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_orange"
-            android:enabled="false">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        
-        <!-- 青色图标 -->
-        <activity-alias
-            android:name=".MainActivityAliasCyan"
-            android:targetActivity=".MainActivity"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_cyan"
-            android:enabled="false">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        
-        <!-- 粉色图标 -->
-        <activity-alias
-            android:name=".MainActivityAliasPink"
-            android:targetActivity=".MainActivity"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_pink"
-            android:enabled="false">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>        
         <activity
             android:name=".ui.SettingsActivity"
             android:exported="true"
@@ -146,9 +56,6 @@
             android:exported="false"
             android:label="@string/about_developer" />
 
-        <meta-data
-            android:name="me.huidoudour.core"
-            android:value="true" />
         <meta-data
             android:name="me.huidoudour.core.version"
             android:value="37" />

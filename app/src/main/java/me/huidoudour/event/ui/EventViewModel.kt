@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import me.huidoudour.event.data.Event
-import me.huidoudour.event.data.EventDao
 import me.huidoudour.event.data.EventDatabase
 import me.huidoudour.event.data.EventRepository
 import me.huidoudour.event.util.ActionMonitor

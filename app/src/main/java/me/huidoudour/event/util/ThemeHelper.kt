@@ -2,7 +2,6 @@ package me.huidoudour.event.util
 
 import android.app.Activity
 import android.content.Context
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 import me.huidoudour.event.R
 

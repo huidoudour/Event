@@ -2,20 +2,46 @@ package me.huidoudour.event
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import me.huidoudour.event.data.Event
-import me.huidoudour.event.ui.*
+import me.huidoudour.event.ui.AddEventDialog
+import me.huidoudour.event.ui.BatchDeleteConfirmDialog
+import me.huidoudour.event.ui.ClearAllConfirmDialog
+import me.huidoudour.event.ui.DeleteConfirmDialog
+import me.huidoudour.event.ui.EditEventDialog
+import me.huidoudour.event.ui.EventDetailDialog
+import me.huidoudour.event.ui.EventLongClickMenu
+import me.huidoudour.event.ui.EventViewModel
+import me.huidoudour.event.ui.MainScreenContent
+import me.huidoudour.event.ui.SettingsActivity
 import me.huidoudour.event.ui.theme.EventTheme
-import me.huidoudour.event.util.*
+import me.huidoudour.event.util.ActionMonitor
+import me.huidoudour.event.util.IconColorHelper
+import me.huidoudour.event.util.LocaleHelper
+import me.huidoudour.event.util.ThemeHelper
+import me.huidoudour.event.util.ViewModeHelper
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
@@ -32,6 +58,10 @@ class MainActivity : ComponentActivity() {
     private var showClearDialog = false
     private var showBatchDeleteDialog = false
     private var targetEvent: Event? = null
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // 应用主题和语言
@@ -76,7 +106,18 @@ class MainActivity : ComponentActivity() {
                 events.value = list
             }
         }
-        val viewMode = ViewModeHelper.getViewMode(this)
+        val context = this@MainActivity
+        var viewMode by remember { mutableIntStateOf(ViewModeHelper.getViewMode(context)) }
+        val lifecycleOwner = LocalLifecycleOwner.current
+        DisposableEffect(lifecycleOwner) {
+            val observer = LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME) {
+                    viewMode = ViewModeHelper.getViewMode(context)
+                }
+            }
+            lifecycleOwner.lifecycle.addObserver(observer)
+            onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+        }
 
         // 对话框状态
         var showAdd by remember { mutableStateOf(false) }

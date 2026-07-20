@@ -1,5 +1,8 @@
 package me.huidoudour.event.util
 
+import me.huidoudour.event.util.ActionMonitor.setMonitor
+
+
 /**
  * 操作行为监控桥接类。
  *

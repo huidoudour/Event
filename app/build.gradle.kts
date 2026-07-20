@@ -117,6 +117,7 @@ dependencies {
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.livedata)
     implementation(libs.room.runtime)
+    //noinspection KaptUsageInsteadOfKsp
     kapt("androidx.room:room-compiler:${libs.versions.room.get()}")
     
     // Fragment (仅兼容过渡期使用)

@@ -9,6 +9,7 @@
     <string name="event_time_millis">Timestamp (milliseconds)</string>
     <string name="now">Now</string>
     <string name="custom">Custom</string>
+    <string name="back">Back</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="edit">Edit</string>
@@ -115,13 +116,6 @@
     <string name="select_icon_color">Select Icon Color</string>
     <string name="default_icon">Default Icon</string>
     <string name="colorful_icon">Colorful Icon</string>
-    <string name="red_icon">Red Icon</string>
-    <string name="blue_icon">Blue Icon</string>
-    <string name="yellow_icon">Yellow Icon</string>
-    <string name="purple_icon">Purple Icon</string>
-    <string name="orange_icon">Orange Icon</string>
-    <string name="cyan_icon">Cyan Icon</string>
-    <string name="pink_icon">Pink Icon</string>
     <string name="icon_color_changed">Icon color changed</string>
 
     <!-- Clear Button Hint -->

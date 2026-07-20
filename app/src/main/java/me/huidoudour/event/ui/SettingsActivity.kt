@@ -1,6 +1,8 @@
 package me.huidoudour.event.ui
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
@@ -8,15 +10,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModelProvider
 import me.huidoudour.event.MeActivity
 import me.huidoudour.event.R
 import me.huidoudour.event.data.DataImportExportHelper
+import me.huidoudour.event.ui.theme.EventTheme
 import me.huidoudour.event.util.ActionMonitor
 import me.huidoudour.event.util.LocaleHelper
 import me.huidoudour.event.util.ThemeHelper
-import me.huidoudour.event.ui.theme.EventTheme
 import java.util.concurrent.Executors
 
 class SettingsActivity : ComponentActivity() {
@@ -52,6 +53,10 @@ class SettingsActivity : ComponentActivity() {
         }
     }
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeHelper.initTheme(this)
         enableEdgeToEdge()
@@ -83,6 +88,15 @@ class SettingsActivity : ComponentActivity() {
                     onImport = {
                         ActionMonitor.log("CARD_CLICK", "点击导入数据卡片", 0)
                         importFileLauncher.launch("application/json")
+                    },
+                    isAscending = getSortPrefs().getBoolean("sort_ascending", false),
+                    onSortOrderChanged = { ascending ->
+                        getSortPrefs().edit().putBoolean("sort_ascending", ascending).apply()
+                        ActionMonitor.log("SORT", if (ascending) "切换为升序" else "切换为降序", 0)
+                    },
+                    onSettingApplied = {
+                        Toast.makeText(this, R.string.settings_applied, Toast.LENGTH_SHORT).show()
+                        recreate()
                     }
                 )
             }
@@ -93,6 +107,10 @@ class SettingsActivity : ComponentActivity() {
         val mode = resources.configuration.uiMode and
                 android.content.res.Configuration.UI_MODE_NIGHT_MASK
         return mode == android.content.res.Configuration.UI_MODE_NIGHT_YES
+    }
+
+    private fun getSortPrefs(): SharedPreferences {
+        return getSharedPreferences("sort_prefs", Context.MODE_PRIVATE)
     }
 
     private fun showImportConfirmDialog(uri: Uri) {

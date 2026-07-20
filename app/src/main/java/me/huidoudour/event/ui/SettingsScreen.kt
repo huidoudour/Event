@@ -1,20 +1,47 @@
 package me.huidoudour.event.ui
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import me.huidoudour.event.R
-import me.huidoudour.event.util.*
+import me.huidoudour.event.util.IconColorHelper
+import me.huidoudour.event.util.LocaleHelper
+import me.huidoudour.event.util.ThemeHelper
+import me.huidoudour.event.util.ViewModeHelper
 
 /**
  * 设置页面 Compose 组件：对齐原 XML 布局 activity_settings.xml
@@ -25,15 +52,19 @@ fun SettingsScreenContent(
     onBack: () -> Unit,
     onAboutDeveloper: () -> Unit,
     onExport: () -> Unit,
-    onImport: () -> Unit
+    onImport: () -> Unit,
+    isAscending: Boolean = true,
+    onSortOrderChanged: (Boolean) -> Unit = {},
+    onSettingApplied: () -> Unit = {}
 ) {
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("设置") },
+                title = { Text(context.getString(R.string.settings)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(painterResource(R.drawable.ic_back), contentDescription = "返回")
+                        Icon(painterResource(R.drawable.ic_back), contentDescription = context.getString(R.string.back))
                     }
                 }
             )
@@ -49,7 +80,6 @@ fun SettingsScreenContent(
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
-            val context = LocalContext.current
 
             // ==================== 数据管理 ====================
             SectionHeader(titleRes = R.string.data_management)
@@ -69,11 +99,9 @@ fun SettingsScreenContent(
             // 数据展示模式（XML：在数据分区下，无独立分区标题）
             var showViewModeDialog by remember { mutableStateOf(false) }
             val currentMode = ViewModeHelper.getViewMode(context)
-            val modeDisplay = ViewModeHelper.getViewModeDisplayName(context, currentMode)
             SettingsCard(
                 icon = { Icon(painterResource(R.drawable.ic_list), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
                 titleRes = R.string.data_display_mode,
-                subtitle = modeDisplay,
                 onClick = { showViewModeDialog = true }
             )
             if (showViewModeDialog) {
@@ -96,6 +124,10 @@ fun SettingsScreenContent(
             }
             // 排序设置（XML：在数据分区下，marginBottom=16dp）
             var showSortDialog by remember { mutableStateOf(false) }
+            val sortOptions = arrayOf(
+                context.getString(R.string.sort_ascending),
+                context.getString(R.string.sort_descending)
+            )
             SettingsCard(
                 icon = { Icon(painterResource(R.drawable.ic_sort), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
                 titleRes = R.string.sort_order_settings,
@@ -103,16 +135,19 @@ fun SettingsScreenContent(
                 bottomSpacing = 16
             )
             if (showSortDialog) {
-                val sortOptions = arrayOf(
-                    context.getString(R.string.sort_ascending),
-                    context.getString(R.string.sort_descending)
-                )
+                val checkedIdx = if (isAscending) 0 else 1
                 SingleChoiceDialog(
                     title = context.getString(R.string.sort_order_settings),
                     items = sortOptions,
-                    checkedIndex = 1,
+                    checkedIndex = checkedIdx,
                     onDismiss = { showSortDialog = false },
-                    onConfirm = { showSortDialog = false }
+                    onConfirm = { idx ->
+                        val newAscending = idx == 0
+                        if (newAscending != isAscending) {
+                            onSortOrderChanged(newAscending)
+                        }
+                        showSortDialog = false
+                    }
                 )
             }
 
@@ -123,11 +158,9 @@ fun SettingsScreenContent(
             var showLangDialog by remember { mutableStateOf(false) }
             val languages = LocaleHelper.getSupportedLanguages()
             val currentLang = LocaleHelper.getLanguage(context)
-            val currentLangName = getLanguageDisplayNameForRes(context, currentLang)
             SettingsCard(
                 icon = { Icon(painterResource(R.drawable.ic_language), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
                 titleRes = R.string.language_settings,
-                subtitle = currentLangName,
                 onClick = { showLangDialog = true }
             )
             if (showLangDialog) {
@@ -143,6 +176,7 @@ fun SettingsScreenContent(
                     onConfirm = { idx ->
                         if (languages[idx] != currentLang) {
                             LocaleHelper.setLanguage(context, languages[idx])
+                            onSettingApplied()
                         }
                         showLangDialog = false
                     }
@@ -156,7 +190,6 @@ fun SettingsScreenContent(
             SettingsCard(
                 icon = { Icon(painterResource(R.drawable.ic_panel_hollow), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
                 titleRes = R.string.theme_settings,
-                subtitle = ThemeHelper.getThemeDisplayName(context, currentTheme),
                 onClick = { showThemeDialog = true }
             )
             if (showThemeDialog) {
@@ -170,6 +203,7 @@ fun SettingsScreenContent(
                     onConfirm = { idx ->
                         if (themes[idx] != currentTheme) {
                             ThemeHelper.setTheme(context, themes[idx])
+                            onSettingApplied()
                         }
                         showThemeDialog = false
                     }
@@ -183,7 +217,6 @@ fun SettingsScreenContent(
             SettingsCard(
                 icon = { Icon(painterResource(R.drawable.ic_panel_solid), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
                 titleRes = R.string.theme_color_settings,
-                subtitle = ThemeHelper.getThemeColorDisplayName(context, currentColor),
                 onClick = { showColorDialog = true },
                 bottomSpacing = 16
             )
@@ -198,8 +231,39 @@ fun SettingsScreenContent(
                     onConfirm = { idx ->
                         if (colors[idx] != currentColor) {
                             ThemeHelper.setThemeColor(context, colors[idx])
+                            onSettingApplied()
                         }
                         showColorDialog = false
+                    }
+                )
+            }
+
+            // 图标颜色设置（切换默认/彩色启动图标）
+            var showIconColorDialog by remember { mutableStateOf(false) }
+            val currentIconColor = IconColorHelper.getIconColor(context)
+            SettingsCard(
+                icon = { Icon(painterResource(R.drawable.ic_launcher_foreground), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
+                titleRes = R.string.select_icon_color,
+                onClick = { showIconColorDialog = true },
+                bottomSpacing = 16
+            )
+            if (showIconColorDialog) {
+                val iconColorNames = arrayOf(
+                    context.getString(R.string.default_icon),
+                    context.getString(R.string.colorful_icon)
+                )
+                SingleChoiceDialog(
+                    title = context.getString(R.string.select_icon_color),
+                    items = iconColorNames,
+                    checkedIndex = currentIconColor.coerceIn(0, 1),
+                    onDismiss = { showIconColorDialog = false },
+                    onConfirm = { idx ->
+                        if (idx != currentIconColor) {
+                            IconColorHelper.setIconColor(context, idx)
+                            IconColorHelper.applyIconColor(context, idx)
+                            onSettingApplied()
+                        }
+                        showIconColorDialog = false
                     }
                 )
             }
@@ -226,7 +290,7 @@ private fun SectionHeader(titleRes: Int) {
         text = context.getString(titleRes),
         style = MaterialTheme.typography.titleSmall,
         color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(start = 32.dp, top = 16.dp, bottom = 8.dp)
+        modifier = Modifier.padding(start = 32.dp, top = 8.dp, bottom = 8.dp)
     )
 }
 

@@ -9,6 +9,7 @@
     <string name="event_time_millis">時間戳（毫秒）</string>
     <string name="now">現在</string>
     <string name="custom">自定義</string>
+    <string name="back">返回</string>
     <string name="save">保存</string>
     <string name="cancel">取消</string>
     <string name="edit">編輯</string>
@@ -115,13 +116,6 @@
     <string name="select_icon_color">選擇圖標顏色</string>
     <string name="default_icon">預設圖標</string>
     <string name="colorful_icon">彩色圖標</string>
-    <string name="red_icon">紅色圖標</string>
-    <string name="blue_icon">藍色圖標</string>
-    <string name="yellow_icon">黃色圖標</string>
-    <string name="purple_icon">紫色圖標</string>
-    <string name="orange_icon">橙色圖標</string>
-    <string name="cyan_icon">青色圖標</string>
-    <string name="pink_icon">粉色圖標</string>
     <string name="icon_color_changed">圖標顏色已更改</string>
 
     <!-- 清除按钮提示 -->

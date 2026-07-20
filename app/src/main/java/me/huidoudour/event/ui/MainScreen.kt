@@ -3,22 +3,49 @@ package me.huidoudour.event.ui
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import me.huidoudour.event.R
 import androidx.compose.ui.unit.dp
+import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
 import me.huidoudour.event.util.ActionMonitor
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 /**
  * 主界面 Compose 组件：对齐原 XML 布局 activity_main.xml
@@ -42,20 +69,22 @@ fun MainScreenContent(
     onEventLongClick: (Event) -> Unit,
     onToggleSelection: (Long) -> Unit
 ) {
+    val context = LocalContext.current
     Scaffold(
         topBar = {
-            // ── Toolbar ── 对齐 XML：btnSettings, btnRefresh, btnClearAll, btnMultiSelect
+            // ── Toolbar ── 对齐 XML：btnMultiSelect, btnClearAll, btnRefresh, btnSettings
+            // actions 从左到右排列，顺序：多选 → 清空 → 刷新 → 设置
             TopAppBar(
                 title = { Text("Event") },
                 actions = {
-                    // 多选按钮（最左）
+                    // 多选按钮（最左）— 对齐XML：btnMultiSelect（最后一个ImageButton，最左）
                     IconButton(onClick = {
                         ActionMonitor.log("BTN_CLICK", "点击多选按钮", 0)
                         onToggleMultiSelect()
                     }) {
                         Icon(
                             painterResource(R.drawable.ic_multi_select),
-                            contentDescription = "多选"
+                            contentDescription = context.getString(R.string.multi_select)
                         )
                     }
                     // 清空按钮
@@ -63,21 +92,21 @@ fun MainScreenContent(
                         ActionMonitor.log("BTN_CLICK", "长按清空按钮", 0)
                         onClearAll()
                     }) {
-                        Icon(painterResource(R.drawable.ic_delete), contentDescription = "清空")
+                        Icon(painterResource(R.drawable.ic_delete), contentDescription = context.getString(R.string.clear_all))
                     }
                     // 刷新按钮
                     IconButton(onClick = {
                         ActionMonitor.log("BTN_CLICK", "点击刷新按钮", 0)
                         onRefresh()
                     }) {
-                        Icon(painterResource(R.drawable.ic_refresh), contentDescription = "刷新")
+                        Icon(painterResource(R.drawable.ic_refresh), contentDescription = context.getString(R.string.refresh))
                     }
-                    // 设置按钮（最右）
+                    // 设置按钮（最右）— 对齐XML：btnSettings（第一个ImageButton，最右）
                     IconButton(onClick = {
                         ActionMonitor.log("BTN_CLICK", "点击设置按钮", 0)
                         onSettings()
                     }) {
-                        Icon(painterResource(R.drawable.ic_settings), contentDescription = "设置")
+                        Icon(painterResource(R.drawable.ic_settings), contentDescription = context.getString(R.string.settings))
                     }
                 }
             )
@@ -85,11 +114,15 @@ fun MainScreenContent(
         floatingActionButton = {
             // ── FAB ──
             if (!isMultiSelectMode) {
-                FloatingActionButton(onClick = {
-                    ActionMonitor.log("UI_ACTION", "点击FAB打开添加事件对话框", 0)
-                    onAddEvent()
-                }) {
-                    Icon(painterResource(R.drawable.ic_add), contentDescription = "添加事件")
+                FloatingActionButton(
+                    onClick = {
+                        ActionMonitor.log("UI_ACTION", "点击FAB打开添加事件对话框", 0)
+                        onAddEvent()
+                    },
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ) {
+                    Icon(painterResource(R.drawable.ic_add), contentDescription = context.getString(R.string.add_event))
                 }
             }
         }
@@ -181,7 +214,7 @@ fun MainScreenContent(
                     ) {
                         Icon(
                             painterResource(R.drawable.ic_check),
-                            contentDescription = "全选/取消"
+                            contentDescription = context.getString(R.string.select_all)
                         )
                     }
                     // 删除所选按钮 - 56dp 圆形，错误颜色
@@ -195,7 +228,7 @@ fun MainScreenContent(
                         contentColor = MaterialTheme.colorScheme.onErrorContainer,
                         elevation = FloatingActionButtonDefaults.elevation(0.dp)
                     ) {
-                        Icon(painterResource(R.drawable.ic_delete), contentDescription = "删除选中")
+                        Icon(painterResource(R.drawable.ic_delete), contentDescription = context.getString(R.string.delete_selected))
                     }
                 }
             }
