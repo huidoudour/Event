@@ -15,7 +15,6 @@ import me.huidoudour.event.MeActivity
 import me.huidoudour.event.R
 import me.huidoudour.event.data.DataImportExportHelper
 import me.huidoudour.event.ui.theme.EventTheme
-import me.huidoudour.event.util.ActionMonitor
 import me.huidoudour.event.util.LocaleHelper
 import me.huidoudour.event.util.ThemeHelper
 import java.util.concurrent.Executors
@@ -35,7 +34,6 @@ class SettingsActivity : ComponentActivity() {
                 val success = dataHelper.exportDataToUri(repo, uri)
                 runOnUiThread {
                     if (success) {
-                        ActionMonitor.log("EXPORT", "导出数据成功", 0)
                         Toast.makeText(this, R.string.export_success, Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(this, R.string.no_data_to_export, Toast.LENGTH_SHORT).show()
@@ -78,21 +76,17 @@ class SettingsActivity : ComponentActivity() {
                 SettingsScreenContent(
                     onBack = { finish() },
                     onAboutDeveloper = {
-                        ActionMonitor.log("CARD_CLICK", "点击关于开发者卡片", 0)
                         startActivity(Intent(this, MeActivity::class.java))
                     },
                     onExport = {
-                        ActionMonitor.log("CARD_CLICK", "点击导出数据卡片", 0)
                         exportFileLauncher.launch("events_backup_${System.currentTimeMillis()}.json")
                     },
                     onImport = {
-                        ActionMonitor.log("CARD_CLICK", "点击导入数据卡片", 0)
                         importFileLauncher.launch("application/json")
                     },
                     isAscending = getSortPrefs().getBoolean("sort_ascending", false),
                     onSortOrderChanged = { ascending ->
                         getSortPrefs().edit().putBoolean("sort_ascending", ascending).apply()
-                        ActionMonitor.log("SORT", if (ascending) "切换为升序" else "切换为降序", 0)
                     },
                     onSettingApplied = {
                         Toast.makeText(this, R.string.settings_applied, Toast.LENGTH_SHORT).show()
@@ -123,7 +117,6 @@ class SettingsActivity : ComponentActivity() {
                     val success = dataHelper.importDataFromUri(repo, uri, true)
                     runOnUiThread {
                         if (success) {
-                            ActionMonitor.log("IMPORT", "导入数据成功", 0)
                             Toast.makeText(this, R.string.import_success, Toast.LENGTH_SHORT).show()
                         } else {
                             Toast.makeText(this, R.string.import_failed, Toast.LENGTH_SHORT).show()

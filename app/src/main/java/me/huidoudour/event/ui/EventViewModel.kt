@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import me.huidoudour.event.data.Event
 import me.huidoudour.event.data.EventDatabase
 import me.huidoudour.event.data.EventRepository
-import me.huidoudour.event.util.ActionMonitor
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -34,35 +33,30 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
     fun addEvent(title: String, description: String?, eventTime: Long) {
         executor.execute {
             val event = Event(title = title, description = description, eventTime = eventTime)
-            val id = repository.insert(event)
-            ActionMonitor.log("CREATE", "创建事件: $title", id)
+            repository.insert(event)
         }
     }
 
     fun updateEvent(event: Event) {
         executor.execute {
             repository.update(event)
-            ActionMonitor.log("UPDATE", "修改事件: ${event.title}", event.id)
         }
     }
 
     fun deleteEvent(event: Event) {
         executor.execute {
-            ActionMonitor.log("DELETE", "删除事件: ${event.title}", event.id)
             repository.delete(event)
         }
     }
 
     fun deleteAllEvents() {
         executor.execute {
-            ActionMonitor.log("DELETE_ALL", "清空所有事件", 0)
             repository.deleteAll()
         }
     }
 
     fun deleteEventsByIds(ids: List<Long>) {
         executor.execute {
-            ActionMonitor.log("DELETE_BATCH", "批量删除 ${ids.size} 个事件", 0)
             repository.deleteByIds(ids)
         }
     }

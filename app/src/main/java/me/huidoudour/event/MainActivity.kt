@@ -33,7 +33,6 @@ import me.huidoudour.event.ui.EventViewModel
 import me.huidoudour.event.ui.MainScreenContent
 import me.huidoudour.event.ui.SettingsActivity
 import me.huidoudour.event.ui.theme.EventTheme
-import me.huidoudour.event.util.ActionMonitor
 import me.huidoudour.event.util.IconColorHelper
 import me.huidoudour.event.util.LocaleHelper
 import me.huidoudour.event.util.ThemeHelper
@@ -140,11 +139,6 @@ class MainActivity : ComponentActivity() {
             onToggleMultiSelect = {
                 multiSelect = !multiSelect
                 if (!multiSelect) selIds = emptySet()
-                if (multiSelect) {
-                    ActionMonitor.log("MULTI_SELECT", "进入多选模式", 0)
-                } else {
-                    ActionMonitor.log("MULTI_SELECT", "退出多选模式", 0)
-                }
             },
             onSelectAll = {
                 selIds = if (selIds.size == events.value.size) emptySet()
@@ -158,19 +152,16 @@ class MainActivity : ComponentActivity() {
                 }
             },
             onAddEvent = {
-                ActionMonitor.log("UI_ACTION", "点击FAB打开添加事件对话框", 0)
                 showAdd = true
             },
             onEventClick = { event ->
                 if (multiSelect) {
                     selIds = if (event.id in selIds) selIds - event.id else selIds + event.id
                 } else {
-                    ActionMonitor.log("ITEM_CLICK", "查看事件详情: ${event.title}", event.id)
                     showDetail = event
                 }
             },
             onEventLongClick = { event ->
-                ActionMonitor.log("ITEM_LONG_CLICK", "长按事件条目: ${event.title}", event.id)
                 showMenu = event
             },
             onToggleSelection = { id ->
@@ -180,11 +171,9 @@ class MainActivity : ComponentActivity() {
                 Toast.makeText(this, R.string.refreshed, Toast.LENGTH_SHORT).show()
             },
             onClearAll = {
-                ActionMonitor.log("BTN_CLICK", "长按清空按钮", 0)
                 showClear = true
             },
             onSettings = {
-                ActionMonitor.log("BTN_CLICK", "点击设置按钮", 0)
                 startActivity(Intent(this, SettingsActivity::class.java))
             }
         )
@@ -194,7 +183,6 @@ class MainActivity : ComponentActivity() {
             AddEventDialog(
                 onDismiss = { showAdd = false },
                 onConfirm = { title, desc ->
-                    ActionMonitor.log("DIALOG_CONFIRM", "确认添加事件: $title", 0)
                     viewModel.addEvent(title, desc, System.currentTimeMillis())
                     Toast.makeText(this, R.string.event_saved, Toast.LENGTH_SHORT).show()
                 }
@@ -206,7 +194,6 @@ class MainActivity : ComponentActivity() {
                 event = event,
                 onDismiss = { showEdit = null },
                 onConfirm = { title, desc ->
-                    ActionMonitor.log("DIALOG_CONFIRM", "确认编辑事件: $title", event.id)
                     event.title = title
                     event.description = desc
                     viewModel.updateEvent(event)
@@ -220,7 +207,6 @@ class MainActivity : ComponentActivity() {
                 eventTitle = event.title,
                 onDismiss = { showDelete = null },
                 onConfirm = {
-                    ActionMonitor.log("DIALOG_CONFIRM", "确认删除事件", event.id)
                     viewModel.deleteEvent(event)
                     Toast.makeText(this, R.string.event_deleted, Toast.LENGTH_SHORT).show()
                 }
@@ -263,8 +249,6 @@ class MainActivity : ComponentActivity() {
                         event.eventTime = cal.timeInMillis
                         viewModel.updateEvent(event)
                         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-                        ActionMonitor.log("DIALOG_CONFIRM",
-                            "确认修改时间: ${sdf.format(Date(event.eventTime))}", event.id)
                         Toast.makeText(this,
                             "${getString(R.string.event_datetime_changed)}: ${
                                 sdf.format(Date(event.eventTime))}",
@@ -281,7 +265,6 @@ class MainActivity : ComponentActivity() {
             ClearAllConfirmDialog(
                 onDismiss = { showClear = false },
                 onConfirm = {
-                    ActionMonitor.log("DIALOG_CONFIRM", "确认清空所有事件", 0)
                     viewModel.deleteAllEvents()
                     Toast.makeText(this, R.string.all_events_cleared, Toast.LENGTH_SHORT).show()
                 }
@@ -293,7 +276,6 @@ class MainActivity : ComponentActivity() {
                 count = selIds.size,
                 onDismiss = { showBatchDelete = false },
                 onConfirm = {
-                    ActionMonitor.log("DIALOG_CONFIRM", "确认批量删除 ${selIds.size} 条", 0)
                     viewModel.deleteEventsByIds(selIds.toList())
                     Toast.makeText(this, R.string.deleted_selected, Toast.LENGTH_SHORT).show()
                     multiSelect = false

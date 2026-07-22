@@ -1,8 +1,11 @@
 package me.huidoudour.event.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -32,17 +36,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
-import me.huidoudour.event.util.ActionMonitor
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -79,7 +85,6 @@ fun MainScreenContent(
                 actions = {
                     // 多选按钮（最左）— 对齐XML：btnMultiSelect（最后一个ImageButton，最左）
                     IconButton(onClick = {
-                        ActionMonitor.log("BTN_CLICK", "点击多选按钮", 0)
                         onToggleMultiSelect()
                     }) {
                         Icon(
@@ -89,21 +94,18 @@ fun MainScreenContent(
                     }
                     // 清空按钮
                     IconButton(onClick = {
-                        ActionMonitor.log("BTN_CLICK", "长按清空按钮", 0)
                         onClearAll()
                     }) {
                         Icon(painterResource(R.drawable.ic_delete), contentDescription = context.getString(R.string.clear_all))
                     }
                     // 刷新按钮
                     IconButton(onClick = {
-                        ActionMonitor.log("BTN_CLICK", "点击刷新按钮", 0)
                         onRefresh()
                     }) {
                         Icon(painterResource(R.drawable.ic_refresh), contentDescription = context.getString(R.string.refresh))
                     }
                     // 设置按钮（最右）— 对齐XML：btnSettings（第一个ImageButton，最右）
                     IconButton(onClick = {
-                        ActionMonitor.log("BTN_CLICK", "点击设置按钮", 0)
                         onSettings()
                     }) {
                         Icon(painterResource(R.drawable.ic_settings), contentDescription = context.getString(R.string.settings))
@@ -116,7 +118,6 @@ fun MainScreenContent(
             if (!isMultiSelectMode) {
                 FloatingActionButton(
                     onClick = {
-                        ActionMonitor.log("UI_ACTION", "点击FAB打开添加事件对话框", 0)
                         onAddEvent()
                     },
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -153,39 +154,57 @@ fun MainScreenContent(
                         }
                     }
                 } else {
-                    // ── 表格视图 ── 对齐 fragment_event_table.xml: ScrollView + HorizontalScrollView
+                    // ── 表格视图 ── 对齐 fragment_event_table.xml (TableLayout + table_border)
                     val scrollState = rememberScrollState()
-                    Column(
+                    // 外层 Card：对齐 table_border.xml — 圆角8dp + 1dp colorOutline 边框 + surface 背景
+                    Card(
                         modifier = Modifier
                             .fillMaxSize()
-                            .horizontalScroll(scrollState)
+                            .padding(16.dp),
+                        shape = RoundedCornerShape(8.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                     ) {
-                        // 表头
-                        TableHeaderRow(
-                            isMultiSelectMode = isMultiSelectMode,
-                            isAllSelected = selectedIds.size == events.size && events.isNotEmpty(),
-                            onToggleSelectAll = {
-                                onSelectAll()
-                            }
-                        )
-                        HorizontalDivider(modifier = Modifier.fillMaxWidth())
-                        // 数据行
-                        LazyColumn {
-                            items(events, key = { it.id }) { event ->
-                                TableRow(
-                                    event = event,
-                                    isMultiSelectMode = isMultiSelectMode,
-                                    isSelected = selectedIds.contains(event.id),
-                                    onClick = {
-                                        if (isMultiSelectMode) onToggleSelection(event.id)
-                                        else onEventClick(event)
-                                    },
-                                    onLongClick = { onEventLongClick(event) }
-                                )
-                                HorizontalDivider(
-                                    color = MaterialTheme.colorScheme.outlineVariant,
-                                    thickness = 0.5.dp
-                                )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .horizontalScroll(scrollState)
+                        ) {
+                            // 表头
+                            TableHeaderRow(
+                                isMultiSelectMode = isMultiSelectMode,
+                                isAllSelected = selectedIds.size == events.size && events.isNotEmpty(),
+                                onToggleSelectAll = {
+                                    onSelectAll()
+                                }
+                            )
+                            // 表头与数据之间的分隔线 — 对齐 XML: 1dp colorPrimary
+                            HorizontalDivider(
+                                modifier = Modifier.fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.primary,
+                                thickness = 1.dp
+                            )
+                            // 数据行
+                            LazyColumn {
+                                items(events, key = { it.id }) { event ->
+                                    TableRow(
+                                        event = event,
+                                        isMultiSelectMode = isMultiSelectMode,
+                                        isSelected = selectedIds.contains(event.id),
+                                        onClick = {
+                                            if (isMultiSelectMode) onToggleSelection(event.id)
+                                            else onEventClick(event)
+                                        },
+                                        onLongClick = { onEventLongClick(event) }
+                                    )
+                                    // 行间分隔线 — 对齐 XML: showDividers="middle", dividerPadding="4dp"
+                                    HorizontalDivider(
+                                        modifier = Modifier.padding(horizontal = 4.dp),
+                                        color = MaterialTheme.colorScheme.outlineVariant,
+                                        thickness = 1.dp
+                                    )
+                                }
                             }
                         }
                     }
@@ -204,7 +223,6 @@ fun MainScreenContent(
                     // 全选按钮 - 56dp 圆形
                     FloatingActionButton(
                         onClick = {
-                            ActionMonitor.log("BTN_CLICK", "点击全选按钮", 0)
                             onSelectAll()
                         },
                         modifier = Modifier.size(56.dp),
@@ -220,7 +238,6 @@ fun MainScreenContent(
                     // 删除所选按钮 - 56dp 圆形，错误颜色
                     FloatingActionButton(
                         onClick = {
-                            ActionMonitor.log("BTN_CLICK", "点击删除选中按钮", 0)
                             onDeleteSelected()
                         },
                         modifier = Modifier.size(56.dp),
@@ -316,7 +333,7 @@ private fun EventCard(
 }
 
 // ═══════════════════════════════════════════════════
-// 表格表头 - 对齐 item_list_view.xml + activity_list_view.xml
+// 表格表头 - 对齐 activity_list_view.xml 表头
 // ═══════════════════════════════════════════════════
 
 @Composable
@@ -339,33 +356,49 @@ private fun TableHeaderRow(
                 Checkbox(
                     checked = isAllSelected,
                     onCheckedChange = { onToggleSelectAll() },
-                    modifier = Modifier.width(48.dp)
+                    modifier = Modifier.padding(0.dp)
                 )
             }
-            // ID: 80dp
-            Text("ID", Modifier.width(80.dp),
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
-            // 标题: 200dp
-            Text("标题", Modifier.width(200.dp),
+            // ID: 80dp，居中 — 对齐 XML: width="80dp", gravity="center"
+            Text(
+                text = "ID",
+                modifier = Modifier.width(80.dp).padding(8.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                maxLines = 1, overflow = TextOverflow.Ellipsis)
-            // 描述: 250dp
-            Text("描述", Modifier.width(250.dp),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+            // 标题: 200dp — 对齐 XML: width="200dp", gravity="start|center_vertical"
+            Text(
+                text = stringResource(R.string.event_title),
+                modifier = Modifier.width(200.dp).padding(8.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                maxLines = 1, overflow = TextOverflow.Ellipsis)
-            // 时间: 180dp
-            Text("时间", Modifier.width(180.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            // 描述: 250dp — 对齐 XML: width="250dp", gravity="start|center_vertical"
+            Text(
+                text = stringResource(R.string.event_description),
+                modifier = Modifier.width(250.dp).padding(8.dp),
                 style = MaterialTheme.typography.bodyMedium,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            // 时间: 180dp，居中 — 对齐 XML: width="180dp", gravity="center"
+            Text(
+                text = stringResource(R.string.event_time),
+                modifier = Modifier.width(180.dp).padding(8.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
         }
     }
 }
 
 // ═══════════════════════════════════════════════════
-// 表格行 - 对齐 item_list_view.xml + item_table_row.xml
+// 表格行 - 对齐 item_list_view.xml
 // ═══════════════════════════════════════════════════
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -378,50 +411,66 @@ private fun TableRow(
     onLongClick: () -> Unit
 ) {
     val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()) }
+    val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .combinedClickable(
+                interactionSource = interactionSource,
+                indication = androidx.compose.material3.ripple(),
                 onClick = onClick,
                 onLongClick = onLongClick
             ),
-        color = if (isSelected)
-            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-        else
-            MaterialTheme.colorScheme.surface
+        color = when {
+            isSelected -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+            isPressed -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+            else -> MaterialTheme.colorScheme.surface
+        }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 6.dp),
+                .padding(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (isMultiSelectMode) {
                 Checkbox(
                     checked = isSelected,
                     onCheckedChange = { onClick() },
-                    modifier = Modifier.width(48.dp)
+                    modifier = Modifier.padding(0.dp)
                 )
             }
-            // ID: 80dp
-            Text("#${event.id}", Modifier.width(80.dp),
-                style = MaterialTheme.typography.bodySmall)
-            // 标题: 200dp
-            Text(event.title, Modifier.width(200.dp),
-                style = MaterialTheme.typography.bodySmall,
-                maxLines = 2, overflow = TextOverflow.Ellipsis)
-            // 描述: 250dp
+            // ID: 80dp，居中 — 对齐 XML: width="80dp", gravity="center"
             Text(
-                event.description?.takeIf { it.isNotBlank() } ?: "-",
-                Modifier.width(250.dp),
+                text = "#${event.id}",
+                modifier = Modifier.width(80.dp).padding(8.dp),
                 style = MaterialTheme.typography.bodySmall,
-                maxLines = 2, overflow = TextOverflow.Ellipsis
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
-            // 时间: 180dp
+            // 标题: 200dp — 对齐 XML: width="200dp", maxLines=2, ellipsize=end
             Text(
-                dateFormat.format(Date(event.eventTime)),
-                Modifier.width(180.dp),
-                style = MaterialTheme.typography.bodySmall
+                text = event.title,
+                modifier = Modifier.width(200.dp).padding(8.dp),
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+            // 描述: 250dp — 对齐 XML: width="250dp", maxLines=2, ellipsize=end
+            Text(
+                text = event.description?.takeIf { it.isNotBlank() } ?: "-",
+                modifier = Modifier.width(250.dp).padding(8.dp),
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+            // 时间: 180dp，居中 — 对齐 XML: width="180dp", gravity="center"
+            Text(
+                text = dateFormat.format(Date(event.eventTime)),
+                modifier = Modifier.width(180.dp).padding(8.dp),
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
         }
     }
