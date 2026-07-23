@@ -104,7 +104,7 @@
     <string name="theme_color_settings">Theme Color</string>
     <string name="select_theme_color">Select Theme Color</string>
     <string name="theme_color_changed">Theme color changed</string>
-    <string name="default_color">Default</string>
+    <string name="default_color">System Dynamic</string>
     <string name="pink_color">Pink</string>
     <string name="blue_color">Blue</string>
     <string name="green_color">Green</string>

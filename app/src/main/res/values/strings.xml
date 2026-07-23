@@ -113,7 +113,7 @@
     <string name="select_theme_color">选择主题色</string>
     <string name="theme_color_changed">主题色已更改</string>
     <string name="settings_applied">设置已应用</string>
-    <string name="default_color">默认</string>
+    <string name="default_color">跟随系统色</string>
     <string name="pink_color">粉色</string>
     <string name="blue_color">蓝色</string>
     <string name="green_color">绿色</string>

@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,6 +29,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -55,6 +55,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.widget.Toast
@@ -173,7 +175,9 @@ fun MainScreenContent(
                         }
                     }
                 } else {
-                    // ── 表格视图 ── 横向可滑动，列宽自适应内容
+                    // ── 表格视图 ── 横向可滑动，按数据内容统一列宽
+                    val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()) }
+                    val colWidths = remember(events) { calculateColumnWidths(events, dateFormat) }
                     val horizontalScrollState = rememberScrollState()
                     Box(
                         modifier = Modifier
@@ -195,11 +199,12 @@ fun MainScreenContent(
                                     .fillMaxHeight()
                                     .clip(RoundedCornerShape(12.dp))
                             ) {
-                                // 表头 — primaryContainer 背景，圆角顶边
+                                // 表头 — primary 背景，跟随主题色
                                 TableHeaderRow(
                                     isMultiSelectMode = isMultiSelectMode,
                                     isAllSelected = selectedIds.size == events.size && events.isNotEmpty(),
-                                    onToggleSelectAll = { onSelectAll() }
+                                    onToggleSelectAll = { onSelectAll() },
+                                    colWidths = colWidths
                                 )
                                 // 数据行 — 交替背景
                                 LazyColumn(modifier = Modifier.fillMaxHeight()) {
@@ -214,7 +219,9 @@ fun MainScreenContent(
                                                 if (isMultiSelectMode) onToggleSelection(event.id)
                                                 else onEventClick(event)
                                             },
-                                            onLongClick = { onEventLongClick(event) }
+                                            onLongClick = { onEventLongClick(event) },
+                                            colWidths = colWidths,
+                                            dateFormat = dateFormat
                                         )
                                     }
                                 }
@@ -346,78 +353,87 @@ private fun EventCard(
 }
 
 // ═══════════════════════════════════════════════════
-// 表格表头 — 列宽 min 约束，内容自适应
+// 表格表头 — 使用 primary 背景 + 统一列宽
 // ═══════════════════════════════════════════════════
 
 @Composable
 private fun TableHeaderRow(
     isMultiSelectMode: Boolean,
     isAllSelected: Boolean,
-    onToggleSelectAll: () -> Unit
+    onToggleSelectAll: () -> Unit,
+    colWidths: TableColumnWidths
 ) {
-    Row(
-        modifier = Modifier
-            .wrapContentWidth()
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+    val headerBg = MaterialTheme.colorScheme.primaryContainer
+    val headerFg = MaterialTheme.colorScheme.onPrimaryContainer
+    Surface(
+        color = headerBg,
+        modifier = Modifier.wrapContentWidth()
     ) {
-        if (isMultiSelectMode) {
-            Checkbox(
-                checked = isAllSelected,
-                onCheckedChange = { onToggleSelectAll() },
-                modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+        Row(
+            modifier = Modifier.padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (isMultiSelectMode) {
+                Checkbox(
+                    checked = isAllSelected,
+                    onCheckedChange = { onToggleSelectAll() },
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                    colors = CheckboxDefaults.colors(
+                        checkmarkColor = headerFg,
+                        uncheckedColor = headerFg.copy(alpha = 0.7f)
+                    )
+                )
+            }
+            // ID
+            Text(
+                text = stringResource(R.string.table_id),
+                modifier = Modifier
+                    .width(colWidths.id)
+                    .padding(start = 12.dp, end = 12.dp),
+                textAlign = TextAlign.Center,
+                color = headerFg,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp
+            )
+            // 标题
+            Text(
+                text = stringResource(R.string.event_title),
+                modifier = Modifier
+                    .width(colWidths.title)
+                    .padding(start = 12.dp, end = 12.dp),
+                textAlign = TextAlign.Center,
+                color = headerFg,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp
+            )
+            // 描述
+            Text(
+                text = stringResource(R.string.event_description),
+                modifier = Modifier
+                    .width(colWidths.desc)
+                    .padding(start = 12.dp, end = 12.dp),
+                textAlign = TextAlign.Center,
+                color = headerFg,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp
+            )
+            // 时间
+            Text(
+                text = stringResource(R.string.event_time),
+                modifier = Modifier
+                    .width(colWidths.time)
+                    .padding(start = 12.dp, end = 12.dp),
+                textAlign = TextAlign.Center,
+                color = headerFg,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp
             )
         }
-        // ID
-        Text(
-            text = stringResource(R.string.table_id),
-            modifier = Modifier
-                .widthIn(min = 60.dp)
-                .padding(start = 12.dp, end = 12.dp),
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp
-        )
-        // 标题（事件标题字段）
-        Text(
-            text = stringResource(R.string.event_title),
-            modifier = Modifier
-                .widthIn(min = 140.dp)
-                .padding(start = 12.dp, end = 12.dp),
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp
-        )
-        // 描述
-        Text(
-            text = stringResource(R.string.event_description),
-            modifier = Modifier
-                .widthIn(min = 120.dp)
-                .padding(start = 12.dp, end = 12.dp),
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp
-        )
-        // 时间
-        Text(
-            text = stringResource(R.string.event_time),
-            modifier = Modifier
-                .widthIn(min = 150.dp)
-                .padding(start = 12.dp, end = 12.dp),
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp
-        )
     }
 }
 
 // ═══════════════════════════════════════════════════
-// 表格行 — 列宽 min 约束，内容自适应
+// 表格行 — 统一列宽，分号内容换行
 // ═══════════════════════════════════════════════════
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -428,9 +444,10 @@ private fun TableRow(
     isSelected: Boolean,
     isEvenRow: Boolean,
     onClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
+    colWidths: TableColumnWidths,
+    dateFormat: SimpleDateFormat
 ) {
-    val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()) }
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
@@ -469,39 +486,35 @@ private fun TableRow(
             Text(
                 text = "${event.id}",
                 modifier = Modifier
-                    .widthIn(min = 60.dp)
+                    .width(colWidths.id)
                     .padding(start = 12.dp, end = 12.dp),
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center
             )
-            // 标题 — 左对齐
-            Text(
+            // 标题 — 含"；"则允许换行
+            EventTableCell(
                 text = event.title,
                 modifier = Modifier
-                    .widthIn(min = 140.dp)
+                    .width(colWidths.title)
                     .padding(start = 12.dp, end = 12.dp),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
             )
-            // 描述 — 左对齐，次要色
-            Text(
+            // 描述 — 含"；"则允许换行
+            EventTableCell(
                 text = event.description?.takeIf { it.isNotBlank() } ?: "-",
                 modifier = Modifier
-                    .widthIn(min = 120.dp)
+                    .width(colWidths.desc)
                     .padding(start = 12.dp, end = 12.dp),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
             )
-            // 时间 — 居中对齐，次要色
+            // 时间 — 居中对齐
             Text(
                 text = dateFormat.format(Date(event.eventTime)),
                 modifier = Modifier
-                    .widthIn(min = 150.dp)
+                    .width(colWidths.time)
                     .padding(start = 12.dp, end = 12.dp),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -509,6 +522,47 @@ private fun TableRow(
             )
         }
     }
+}
+
+/** 表格数据单元格：含中文分号"；"则允许多行换行，否则限制 2 行省略 */
+@Composable
+private fun EventTableCell(
+    text: String,
+    modifier: Modifier,
+    style: TextStyle,
+    color: Color,
+) {
+    val hasSemicolon = text.contains("；")
+    Text(
+        text = text,
+        modifier = modifier,
+        style = style,
+        color = color,
+        maxLines = if (hasSemicolon) Int.MAX_VALUE else 2,
+        overflow = if (hasSemicolon) TextOverflow.Clip else TextOverflow.Ellipsis,
+    )
+}
+
+/** 表格统一列宽 */
+data class TableColumnWidths(
+    val id: Dp,
+    val title: Dp,
+    val desc: Dp,
+    val time: Dp,
+)
+
+/** 根据数据内容计算各列宽度（每字符 ≈8dp，取 min 下限 + 数据最长值） */
+private fun calculateColumnWidths(events: List<Event>, dateFormat: SimpleDateFormat): TableColumnWidths {
+    fun maxLen(selector: (Event) -> String): Int =
+        if (events.isEmpty()) 1 else events.maxOf { selector(it).length }
+    fun toDp(n: Int): Dp = (n * 8).coerceAtLeast(0).dp
+
+    return TableColumnWidths(
+        id    = maxOf(60.dp,  toDp(maxLen { "${it.id}" })),
+        title = maxOf(140.dp, toDp(maxLen { it.title })),
+        desc  = maxOf(120.dp, toDp(maxLen { it.description?.takeIf { d -> d.isNotBlank() } ?: "-" })),
+        time  = maxOf(150.dp, toDp(maxLen { dateFormat.format(Date(it.eventTime)) })),
+    )
 }
 
 // ═══════════════════════════════════════════════════

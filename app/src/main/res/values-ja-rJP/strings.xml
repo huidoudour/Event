@@ -104,7 +104,7 @@
     <string name="theme_color_settings">テーマ色</string>
     <string name="select_theme_color">テーマ色を選択</string>
     <string name="theme_color_changed">テーマ色を変更しました</string>
-    <string name="default_color">デフォルト</string>
+    <string name="default_color">システム連動</string>
     <string name="pink_color">ピンク</string>
     <string name="blue_color">青</string>
     <string name="green_color">緑</string>

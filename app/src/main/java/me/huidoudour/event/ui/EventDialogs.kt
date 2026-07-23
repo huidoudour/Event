@@ -63,9 +63,8 @@ fun AddEventDialog(
                     value = description,
                     onValueChange = { description = it },
                     label = { Text(context.getString(R.string.event_description)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 1,
                     maxLines = 10
                 )
             }
@@ -116,9 +115,8 @@ fun EditEventDialog(
                     value = description,
                     onValueChange = { description = it },
                     label = { Text(context.getString(R.string.event_description)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                    minLines = 1,
                     maxLines = 10
                 )
             }

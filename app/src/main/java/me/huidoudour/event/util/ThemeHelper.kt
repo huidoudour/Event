@@ -20,7 +20,7 @@ object ThemeHelper {
     const val THEME_DARK = 2        // 深色主题
 
     // 支持的主题色
-    const val COLOR_DEFAULT = 0     // 默认紫色
+    const val COLOR_DEFAULT = 0     // 跟随系统色 (Material You)
     const val COLOR_PINK = 1        // 粉色
     const val COLOR_BLUE = 2        // 蓝色
     const val COLOR_GREEN = 3       // 绿色

@@ -10,11 +10,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelProvider
 import me.huidoudour.event.MeActivity
 import me.huidoudour.event.R
 import me.huidoudour.event.data.DataImportExportHelper
 import me.huidoudour.event.ui.theme.EventTheme
+import me.huidoudour.event.util.IconColorHelper
 import me.huidoudour.event.util.LocaleHelper
 import me.huidoudour.event.util.ThemeHelper
 import java.util.concurrent.Executors
@@ -24,6 +28,11 @@ class SettingsActivity : ComponentActivity() {
     private lateinit var viewModel: EventViewModel
     private lateinit var dataHelper: DataImportExportHelper
     private val executor = Executors.newSingleThreadExecutor()
+
+    // 使用 mutableStateOf 驱动 Compose 重组，避免不必要的 recreate() 导致 UI 抖动
+    private var isDarkTheme by mutableStateOf(false)
+    private var themeColor by mutableStateOf(ThemeHelper.COLOR_DEFAULT)
+    private var isAscending by mutableStateOf(false)
 
     private val exportFileLauncher = registerForActivityResult(
         ActivityResultContracts.CreateDocument("application/json")
@@ -66,12 +75,16 @@ class SettingsActivity : ComponentActivity() {
         )[EventViewModel::class.java]
         dataHelper = DataImportExportHelper(this)
 
+        // 初始化状态
+        isDarkTheme = ThemeHelper.getTheme(this) == ThemeHelper.THEME_DARK ||
+                (ThemeHelper.getTheme(this) == ThemeHelper.THEME_SYSTEM && isNightMode())
+        themeColor = ThemeHelper.getThemeColor(this)
+        isAscending = getSortPrefs().getBoolean("sort_ascending", false)
+
         setContent {
             EventTheme(
-                themeColor = ThemeHelper.getThemeColor(this),
-                darkTheme = ThemeHelper.getTheme(this) == ThemeHelper.THEME_DARK ||
-                        (ThemeHelper.getTheme(this) == ThemeHelper.THEME_SYSTEM &&
-                         isNightMode())
+                themeColor = themeColor,
+                darkTheme = isDarkTheme
             ) {
                 SettingsScreenContent(
                     onBack = { finish() },
@@ -84,11 +97,21 @@ class SettingsActivity : ComponentActivity() {
                     onImport = {
                         importFileLauncher.launch("application/json")
                     },
-                    isAscending = getSortPrefs().getBoolean("sort_ascending", false),
+                    isAscending = isAscending,
                     onSortOrderChanged = { ascending ->
+                        isAscending = ascending
                         getSortPrefs().edit().putBoolean("sort_ascending", ascending).apply()
                     },
-                    onSettingApplied = {
+                    onThemeChanged = { theme ->
+                        ThemeHelper.setTheme(this@SettingsActivity, theme)
+                        isDarkTheme = theme == ThemeHelper.THEME_DARK ||
+                                (theme == ThemeHelper.THEME_SYSTEM && isNightMode())
+                    },
+                    onThemeColorChanged = { color ->
+                        ThemeHelper.setThemeColor(this@SettingsActivity, color)
+                        themeColor = color
+                    },
+                    onNeedsRecreate = {
                         Toast.makeText(this, R.string.settings_applied, Toast.LENGTH_SHORT).show()
                         recreate()
                     }

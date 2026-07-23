@@ -60,7 +60,9 @@ fun SettingsScreenContent(
     onImport: () -> Unit,
     isAscending: Boolean = true,
     onSortOrderChanged: (Boolean) -> Unit = {},
-    onSettingApplied: () -> Unit = {}
+    onThemeChanged: (Int) -> Unit = {},
+    onThemeColorChanged: (Int) -> Unit = {},
+    onNeedsRecreate: () -> Unit = {}
 ) {
     val context = LocalContext.current
     Scaffold(
@@ -181,7 +183,7 @@ fun SettingsScreenContent(
                     onConfirm = { idx ->
                         if (languages[idx] != currentLang) {
                             LocaleHelper.setLanguage(context, languages[idx])
-                            onSettingApplied()
+                            onNeedsRecreate()
                         }
                         showLangDialog = false
                     }
@@ -208,7 +210,7 @@ fun SettingsScreenContent(
                     onConfirm = { idx ->
                         if (themes[idx] != currentTheme) {
                             ThemeHelper.setTheme(context, themes[idx])
-                            onSettingApplied()
+                            onThemeChanged(themes[idx])
                         }
                         showThemeDialog = false
                     }
@@ -236,7 +238,7 @@ fun SettingsScreenContent(
                     onConfirm = { idx ->
                         if (colors[idx] != currentColor) {
                             ThemeHelper.setThemeColor(context, colors[idx])
-                            onSettingApplied()
+                            onThemeColorChanged(colors[idx])
                         }
                         showColorDialog = false
                     }
@@ -264,7 +266,7 @@ fun SettingsScreenContent(
                         if (idx != currentIconColor) {
                             IconColorHelper.setIconColor(context, idx)
                             IconColorHelper.applyIconColor(context, idx)
-                            onSettingApplied()
+                            onNeedsRecreate()
                         }
                         showIconColorDialog = false
                     }

@@ -13,6 +13,7 @@
         
         <!-- 主Activity - 不直接显示在桌面，通过alias控制入口 -->
         <activity
+
             android:name=".MainActivity"
             android:exported="false"
             android:enabled="true"
