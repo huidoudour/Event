@@ -116,6 +116,13 @@
     <string name="select_icon_color">Выберите цвет иконки</string>
     <string name="default_icon">Стандартная иконка</string>
     <string name="colorful_icon">Цветная иконка</string>
+    <string name="red_icon">Красная иконка</string>
+    <string name="blue_icon">Синяя иконка</string>
+    <string name="yellow_icon">Жёлтая иконка</string>
+    <string name="purple_icon">Фиолетовая иконка</string>
+    <string name="orange_icon">Оранжевая иконка</string>
+    <string name="cyan_icon">Голубая иконка</string>
+    <string name="pink_icon">Розовая иконка</string>
     <string name="icon_color_changed">Цвет иконки изменён</string>
 
     <!-- Подсказка кнопки очистки -->

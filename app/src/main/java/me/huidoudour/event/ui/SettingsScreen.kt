@@ -1,6 +1,9 @@
 package me.huidoudour.event.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -238,14 +243,12 @@ fun SettingsScreenContent(
                 )
             }
 
-            // 图标颜色设置（切换默认/彩色启动图标）
+            // ==================== 关于 ====================
             var showIconColorDialog by remember { mutableStateOf(false) }
             val currentIconColor = IconColorHelper.getIconColor(context)
-            SettingsCard(
-                icon = { Icon(painterResource(R.drawable.ic_launcher_foreground), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
-                titleRes = R.string.select_icon_color,
-                onClick = { showIconColorDialog = true },
-                bottomSpacing = 16
+            SectionHeader(
+                titleRes = R.string.about,
+                onLongClick = { showIconColorDialog = true }
             )
             if (showIconColorDialog) {
                 val iconColorNames = arrayOf(
@@ -268,9 +271,6 @@ fun SettingsScreenContent(
                 )
             }
 
-            // ==================== 关于 ====================
-            SectionHeader(titleRes = R.string.about)
-
             // 关于应用（XML使用ic_version，文字为about_app）
             SettingsCard(
                 icon = { Icon(painterResource(R.drawable.ic_version), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
@@ -283,14 +283,30 @@ fun SettingsScreenContent(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun SectionHeader(titleRes: Int) {
+private fun SectionHeader(
+    titleRes: Int,
+    onLongClick: (() -> Unit)? = null
+) {
     val context = LocalContext.current
+    val modifier = if (onLongClick != null) {
+        Modifier
+            .padding(start = 32.dp, top = 8.dp, bottom = 8.dp)
+            .combinedClickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = {},
+                onLongClick = onLongClick
+            )
+    } else {
+        Modifier.padding(start = 32.dp, top = 8.dp, bottom = 8.dp)
+    }
     Text(
         text = context.getString(titleRes),
         style = MaterialTheme.typography.titleSmall,
         color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(start = 32.dp, top = 8.dp, bottom = 8.dp)
+        modifier = modifier
     )
 }
 
@@ -307,24 +323,25 @@ private fun SettingsCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(bottom = bottomSpacing.dp)
-            .clickable(onClick = onClick),
-        shape = MaterialTheme.shapes.medium,
+            .padding(bottom = bottomSpacing.dp),
+        shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
         )
     ) {
+        // 对齐 XML: selectableItemBackground 放在内层布局上
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(16.dp)
+                .clickable(onClick = onClick),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 40dp 圆形图标容器
+            // 40dp 圆形图标容器 — 对齐 XML: cardCornerRadius="20dp"
             Surface(
                 modifier = Modifier.size(40.dp),
-                shape = MaterialTheme.shapes.extraLarge,
+                shape = CircleShape,
                 color = MaterialTheme.colorScheme.secondaryContainer
             ) {
                 icon()

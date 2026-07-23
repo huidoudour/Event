@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Event</string>
-    <string name="dis_name">事件列表</string>
+    <string name="dis_name" translatable="false">事件列表</string>
     <string name="add_event">添加事件</string>
     <string name="no_events">暂无事件</string>
     <string name="event_title">事件标题</string>
@@ -125,6 +125,13 @@
     <string name="select_icon_color">选择图标颜色</string>
     <string name="default_icon">默认图标</string>
     <string name="colorful_icon">彩色图标</string>
+    <string name="red_icon">红色图标</string>
+    <string name="blue_icon">蓝色图标</string>
+    <string name="yellow_icon">黄色图标</string>
+    <string name="purple_icon">紫色图标</string>
+    <string name="orange_icon">橙色图标</string>
+    <string name="cyan_icon">青色图标</string>
+    <string name="pink_icon">粉色图标</string>
     <string name="icon_color_changed">图标颜色已更改</string>
 
     <!-- 数据展示视图 -->

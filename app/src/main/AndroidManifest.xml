@@ -54,7 +54,7 @@
         <activity
             android:name=".MeActivity"
             android:exported="false"
-            android:label="@string/about_developer" />
+            android:label="@string/about" />
 
         <meta-data
             android:name="me.huidoudour.core.version"

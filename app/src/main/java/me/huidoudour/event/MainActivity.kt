@@ -45,18 +45,6 @@ import java.util.Locale
 class MainActivity : ComponentActivity() {
 
     private lateinit var viewModel: EventViewModel
-    private var isMultiSelectMode = false
-    private val selectedIds = mutableSetOf<Long>()
-
-    // 对话框状态
-    private var showAddDialog = false
-    private var showEditDialog = false
-    private var showDeleteDialog = false
-    private var showDetailDialog = false
-    private var showMenuDialog = false
-    private var showClearDialog = false
-    private var showBatchDeleteDialog = false
-    private var targetEvent: Event? = null
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.applyLanguage(newBase))
@@ -138,7 +126,7 @@ class MainActivity : ComponentActivity() {
             viewMode = viewMode,
             onToggleMultiSelect = {
                 multiSelect = !multiSelect
-                if (!multiSelect) selIds = emptySet()
+                selIds = emptySet()
             },
             onSelectAll = {
                 selIds = if (selIds.size == events.value.size) emptySet()

@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -95,16 +95,16 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-    
     buildFeatures {
         compose = true
     }
     
     // 配置 NDK 版本
     ndkVersion = "27.0.12077973" // 使用与 AGP 9.0.1 兼容的 NDK 版本
+}
+
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
@@ -117,8 +117,8 @@ dependencies {
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.livedata)
     implementation(libs.room.runtime)
-    //noinspection KaptUsageInsteadOfKsp
-    kapt("androidx.room:room-compiler:${libs.versions.room.get()}")
+    //noinspection KspUsageInsteadOfKapt
+    ksp("androidx.room:room-compiler:${libs.versions.room.get()}")
     
     // Fragment (仅兼容过渡期使用)
     implementation(libs.fragment.ktx)

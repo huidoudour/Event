@@ -116,6 +116,13 @@
     <string name="select_icon_color">アイコンの色を選択</string>
     <string name="default_icon">デフォルトアイコン</string>
     <string name="colorful_icon">カラフルアイコン</string>
+    <string name="red_icon">赤いアイコン</string>
+    <string name="blue_icon">青いアイコン</string>
+    <string name="yellow_icon">黄色のアイコン</string>
+    <string name="purple_icon">紫のアイコン</string>
+    <string name="orange_icon">オレンジのアイコン</string>
+    <string name="cyan_icon">シアンのアイコン</string>
+    <string name="pink_icon">ピンクのアイコン</string>
     <string name="icon_color_changed">アイコンの色を変更しました</string>
 
     <!-- クリアボタンのヒント -->
