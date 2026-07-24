@@ -19,7 +19,7 @@ android {
         //noinspection OldTargetApi
         targetSdk = 36
         versionCode = 72
-        versionName = "0.72"
+        versionName = "0.77-alpha-compose"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         

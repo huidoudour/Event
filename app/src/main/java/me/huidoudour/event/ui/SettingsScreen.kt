@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import me.huidoudour.event.R
 import me.huidoudour.event.util.IconColorHelper
@@ -69,10 +70,10 @@ fun SettingsScreenContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(context.getString(R.string.settings)) },
+                title = { Text(stringResource(R.string.settings)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(painterResource(R.drawable.ic_back), contentDescription = context.getString(R.string.back))
+                        Icon(painterResource(R.drawable.ic_back), contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -114,11 +115,11 @@ fun SettingsScreenContent(
             )
             if (showViewModeDialog) {
                 val modeNames = listOf(
-                    context.getString(R.string.card_view),
-                    context.getString(R.string.list_view)
+                    stringResource(R.string.card_view),
+                    stringResource(R.string.list_view)
                 ).toTypedArray()
                 SingleChoiceDialog(
-                    title = context.getString(R.string.data_display_mode),
+                    title = stringResource(R.string.data_display_mode),
                     items = modeNames,
                     checkedIndex = currentMode,
                     onDismiss = { showViewModeDialog = false },
@@ -133,8 +134,8 @@ fun SettingsScreenContent(
             // 排序设置（XML：在数据分区下，marginBottom=16dp）
             var showSortDialog by remember { mutableStateOf(false) }
             val sortOptions = arrayOf(
-                context.getString(R.string.sort_ascending),
-                context.getString(R.string.sort_descending)
+                stringResource(R.string.sort_ascending),
+                stringResource(R.string.sort_descending)
             )
             SettingsCard(
                 icon = { Icon(painterResource(R.drawable.ic_sort), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
@@ -145,7 +146,7 @@ fun SettingsScreenContent(
             if (showSortDialog) {
                 val checkedIdx = if (isAscending) 0 else 1
                 SingleChoiceDialog(
-                    title = context.getString(R.string.sort_order_settings),
+                    title = stringResource(R.string.sort_order_settings),
                     items = sortOptions,
                     checkedIndex = checkedIdx,
                     onDismiss = { showSortDialog = false },
@@ -177,7 +178,7 @@ fun SettingsScreenContent(
                 }.toTypedArray()
                 val checkedIdx = languages.indexOfFirst { it == currentLang }.coerceAtLeast(0)
                 SingleChoiceDialog(
-                    title = context.getString(R.string.select_language),
+                    title = stringResource(R.string.select_language),
                     items = langNames,
                     checkedIndex = checkedIdx,
                     onDismiss = { showLangDialog = false },
@@ -204,7 +205,7 @@ fun SettingsScreenContent(
                 val themeNames = themes.map { ThemeHelper.getThemeDisplayName(context, it) }.toTypedArray()
                 val checkedIdx = themes.indexOfFirst { it == currentTheme }.coerceAtLeast(0)
                 SingleChoiceDialog(
-                    title = context.getString(R.string.select_theme),
+                    title = stringResource(R.string.select_theme),
                     items = themeNames,
                     checkedIndex = checkedIdx,
                     onDismiss = { showThemeDialog = false },
@@ -232,7 +233,7 @@ fun SettingsScreenContent(
                 val colorNames = colors.map { ThemeHelper.getThemeColorDisplayName(context, it) }.toTypedArray()
                 val checkedIdx = colors.indexOfFirst { it == currentColor }.coerceAtLeast(0)
                 SingleChoiceDialog(
-                    title = context.getString(R.string.select_theme_color),
+                    title = stringResource(R.string.select_theme_color),
                     items = colorNames,
                     checkedIndex = checkedIdx,
                     onDismiss = { showColorDialog = false },
@@ -255,11 +256,11 @@ fun SettingsScreenContent(
             )
             if (showIconColorDialog) {
                 val iconColorNames = arrayOf(
-                    context.getString(R.string.default_icon),
-                    context.getString(R.string.colorful_icon)
+                    stringResource(R.string.default_icon),
+                    stringResource(R.string.colorful_icon)
                 )
                 SingleChoiceDialog(
-                    title = context.getString(R.string.select_icon_color),
+                    title = stringResource(R.string.select_icon_color),
                     items = iconColorNames,
                     checkedIndex = currentIconColor.coerceIn(0, 1),
                     onDismiss = { showIconColorDialog = false },
@@ -292,7 +293,6 @@ private fun SectionHeader(
     titleRes: Int,
     onLongClick: (() -> Unit)? = null
 ) {
-    val context = LocalContext.current
     val modifier = if (onLongClick != null) {
         Modifier
             .padding(start = 32.dp, top = 8.dp, bottom = 8.dp)
@@ -306,7 +306,7 @@ private fun SectionHeader(
         Modifier.padding(start = 32.dp, top = 8.dp, bottom = 8.dp)
     }
     Text(
-        text = context.getString(titleRes),
+        text = stringResource(titleRes),
         style = MaterialTheme.typography.titleSmall,
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier
@@ -321,7 +321,6 @@ private fun SettingsCard(
     onClick: () -> Unit,
     bottomSpacing: Int = 4
 ) {
-    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -352,7 +351,7 @@ private fun SettingsCard(
             Spacer(Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = context.getString(titleRes),
+                    text = stringResource(titleRes),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
