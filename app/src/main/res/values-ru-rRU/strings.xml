@@ -63,6 +63,8 @@
     <string name="export_failed">Ошибка экспорта</string>
     <string name="import_failed">Ошибка импорта</string>
     <string name="no_data_to_export">Нет данных для экспорта</string>
+    <string name="confirm_export">Подтвердить экспорт</string>
+    <string name="export_warning">Экспортировать данные?</string>
     <string name="confirm_import">Подтвердить импорт</string>
     <string name="import_warning">Импорт данных перезапишет текущие данные. Продолжить?</string>
     <string name="about">О приложении</string>

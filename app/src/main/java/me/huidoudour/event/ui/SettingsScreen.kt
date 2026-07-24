@@ -20,12 +20,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -94,17 +97,65 @@ fun SettingsScreenContent(
             SectionHeader(titleRes = R.string.data_management)
 
             // 导出数据
+            var showExportConfirm by remember { mutableStateOf(false) }
             SettingsCard(
                 icon = { Icon(painterResource(R.drawable.ic_export), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
                 titleRes = R.string.export_data,
-                onClick = onExport
+                onClick = { showExportConfirm = true }
             )
+            if (showExportConfirm) {
+                AlertDialog(
+                    onDismissRequest = { showExportConfirm = false },
+                    title = { Text(stringResource(R.string.confirm_export)) },
+                    text = { Text(stringResource(R.string.export_warning)) },
+                    confirmButton = {
+                        Button(
+                            onClick = { showExportConfirm = false; onExport() },
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(stringResource(R.string.ok))
+                        }
+                    },
+                    dismissButton = {
+                        OutlinedButton(
+                            onClick = { showExportConfirm = false },
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(stringResource(R.string.cancel))
+                        }
+                    }
+                )
+            }
             // 导入数据
+            var showImportConfirm by remember { mutableStateOf(false) }
             SettingsCard(
                 icon = { Icon(painterResource(R.drawable.ic_import), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
                 titleRes = R.string.import_data,
-                onClick = onImport
+                onClick = { showImportConfirm = true }
             )
+            if (showImportConfirm) {
+                AlertDialog(
+                    onDismissRequest = { showImportConfirm = false },
+                    title = { Text(stringResource(R.string.confirm_import)) },
+                    text = { Text(stringResource(R.string.import_warning)) },
+                    confirmButton = {
+                        Button(
+                            onClick = { showImportConfirm = false; onImport() },
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(stringResource(R.string.ok))
+                        }
+                    },
+                    dismissButton = {
+                        OutlinedButton(
+                            onClick = { showImportConfirm = false },
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(stringResource(R.string.cancel))
+                        }
+                    }
+                )
+            }
             // 数据展示模式（XML：在数据分区下，无独立分区标题）
             var showViewModeDialog by remember { mutableStateOf(false) }
             val currentMode = ViewModeHelper.getViewMode(context)
@@ -390,18 +441,17 @@ private fun SingleChoiceDialog(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
                             .clickable {
                                 selected = index
-                                onConfirm(index)
                             }
-                            .padding(vertical = 8.dp),
+                            .padding(vertical = 12.dp, horizontal = 12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
                             selected = index == selected,
                             onClick = {
                                 selected = index
-                                onConfirm(index)
                             }
                         )
                         Spacer(Modifier.width(8.dp))
@@ -411,7 +461,18 @@ private fun SingleChoiceDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("取消") }
+            Button(
+                onClick = { onConfirm(selected) },
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(stringResource(R.string.ok))
+            }
+        },
+        dismissButton = {
+            OutlinedButton(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(12.dp)
+            ) { Text(stringResource(R.string.cancel)) }
         }
     )
 }

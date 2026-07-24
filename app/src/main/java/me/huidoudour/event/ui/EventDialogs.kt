@@ -9,9 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -70,18 +74,22 @@ fun AddEventDialog(
             }
         },
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = {
                     if (title.isNotBlank()) {
                         onConfirm(title, description)
                         onDismiss()
                     }
                 },
-                enabled = title.isNotBlank()
+                enabled = title.isNotBlank(),
+                shape = RoundedCornerShape(12.dp)
             ) { Text(context.getString(R.string.save)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel)) }
+            OutlinedButton(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(12.dp)
+            ) { Text(context.getString(R.string.cancel)) }
         }
     )
 }
@@ -122,18 +130,22 @@ fun EditEventDialog(
             }
         },
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = {
                     if (title.isNotBlank()) {
                         onConfirm(title, description)
                         onDismiss()
                     }
                 },
-                enabled = title.isNotBlank()
+                enabled = title.isNotBlank(),
+                shape = RoundedCornerShape(12.dp)
             ) { Text(context.getString(R.string.save)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel)) }
+            OutlinedButton(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(12.dp)
+            ) { Text(context.getString(R.string.cancel)) }
         }
     )
 }
@@ -187,18 +199,25 @@ fun DeleteConfirmDialog(
             }
         },
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = {
                     if (input == "d") {
                         onConfirm()
                         onDismiss()
                     }
                 },
-                enabled = input == "d"
+                enabled = input == "d",
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
             ) { Text(context.getString(R.string.delete)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel)) }
+            OutlinedButton(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(12.dp)
+            ) { Text(context.getString(R.string.cancel)) }
         }
     )
 }
@@ -230,7 +249,10 @@ fun EventDetailDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text(context.getString(R.string.close)) }
+            OutlinedButton(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(12.dp)
+            ) { Text(context.getString(R.string.close)) }
         }
     )
 }
@@ -268,7 +290,10 @@ fun EventLongClickMenu(
         },
         confirmButton = {},
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel)) }
+            OutlinedButton(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(12.dp)
+            ) { Text(context.getString(R.string.cancel)) }
         }
     )
 }
@@ -323,18 +348,25 @@ fun ClearAllConfirmDialog(
             }
         },
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = {
                     if (input == "clear") {
                         onConfirm()
                         onDismiss()
                     }
                 },
-                enabled = input == "clear"
+                enabled = input == "clear",
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
             ) { Text(context.getString(R.string.clear)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel)) }
+            OutlinedButton(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(12.dp)
+            ) { Text(context.getString(R.string.cancel)) }
         }
     )
 }
@@ -351,10 +383,19 @@ fun BatchDeleteConfirmDialog(
         title = { Text(context.getString(R.string.confirm_delete_selected)) },
         text = { Text("${context.getString(R.string.delete_selected)} $count ?") },
         confirmButton = {
-            TextButton(onClick = { onConfirm(); onDismiss() }) { Text(context.getString(R.string.delete)) }
+            Button(
+                onClick = { onConfirm(); onDismiss() },
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
+            ) { Text(context.getString(R.string.delete)) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(context.getString(R.string.cancel)) }
+            OutlinedButton(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(12.dp)
+            ) { Text(context.getString(R.string.cancel)) }
         }
     )
 }

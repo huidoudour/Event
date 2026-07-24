@@ -63,6 +63,8 @@
     <string name="export_failed">Export failed</string>
     <string name="import_failed">Import failed</string>
     <string name="no_data_to_export">No data to export</string>
+    <string name="confirm_export">Confirm Export</string>
+    <string name="export_warning">Confirm data export?</string>
     <string name="confirm_import">Confirm Import</string>
     <string name="import_warning">Importing data will overwrite current data. Continue?</string>
     <string name="about">About</string>

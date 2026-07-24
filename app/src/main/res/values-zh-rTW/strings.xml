@@ -63,6 +63,8 @@
     <string name="export_failed">導出失敗</string>
     <string name="import_failed">導入失敗</string>
     <string name="no_data_to_export">沒有可導出的數據</string>
+    <string name="confirm_export">確認導出</string>
+    <string name="export_warning">確認導出數據？</string>
     <string name="confirm_import">確認導入</string>
     <string name="import_warning">導入數據將覆蓋當前數據，是否繼續？</string>
     <string name="about">關於</string>

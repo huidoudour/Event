@@ -63,6 +63,8 @@
     <string name="export_failed">エクスポート失敗</string>
     <string name="import_failed">インポート失敗</string>
     <string name="no_data_to_export">エクスポートするデータがありません</string>
+    <string name="confirm_export">エクスポートの確認</string>
+    <string name="export_warning">データをエクスポートしますか？</string>
     <string name="confirm_import">インポートの確認</string>
     <string name="import_warning">データをインポートすると現在のデータが上書きされます。続行しますか？</string>
     <string name="about">について</string>

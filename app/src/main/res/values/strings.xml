@@ -65,6 +65,8 @@
     <string name="export_failed">导出失败</string>
     <string name="import_failed">导入失败</string>
     <string name="no_data_to_export">没有可导出的数据</string>
+    <string name="confirm_export">确认导出</string>
+    <string name="export_warning">确认导出数据？</string>
     <string name="confirm_import">确认导入</string>
     <string name="import_warning">导入数据将覆盖当前数据，是否继续？</string>
     <string name="about">关于</string>
