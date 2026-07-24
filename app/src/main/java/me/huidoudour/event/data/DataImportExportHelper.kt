@@ -23,7 +23,7 @@ class DataImportExportHelper(private val context: Context) {
         for (event in events) {
             val obj = JSONObject()
             try {
-                obj.put(KEY_TITLE, event.title ?: "")
+                obj.put(KEY_TITLE, event.title)
                 obj.put(KEY_DETAIL, event.description ?: "")
                 obj.put(KEY_TIME, DATE_FORMAT.format(Date(event.eventTime)))
                 // 保存 createdAt 和 updatedAt 以保持原始时间戳

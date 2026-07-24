@@ -18,7 +18,6 @@ import me.huidoudour.event.MeActivity
 import me.huidoudour.event.R
 import me.huidoudour.event.data.DataImportExportHelper
 import me.huidoudour.event.ui.theme.EventTheme
-import me.huidoudour.event.util.IconColorHelper
 import me.huidoudour.event.util.LocaleHelper
 import me.huidoudour.event.util.ThemeHelper
 import java.util.concurrent.Executors

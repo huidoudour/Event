@@ -39,6 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -325,19 +326,19 @@ private fun SettingsCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .padding(bottom = bottomSpacing.dp),
+            .padding(bottom = bottomSpacing.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
         )
     ) {
-        // 对齐 XML: selectableItemBackground 放在内层布局上
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-                .clickable(onClick = onClick),
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // 40dp 圆形图标容器 — 对齐 XML: cardCornerRadius="20dp"
