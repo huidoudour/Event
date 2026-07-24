@@ -1,10 +1,15 @@
 package me.huidoudour.event.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +30,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -43,15 +49,39 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import me.huidoudour.event.R
 import me.huidoudour.event.util.IconColorHelper
 import me.huidoudour.event.util.LocaleHelper
 import me.huidoudour.event.util.ThemeHelper
 import me.huidoudour.event.util.ViewModeHelper
+
+// ═══════════════════════════════════════════════════
+// 分段圆角形状 — 参考 Installer 项目
+// ═══════════════════════════════════════════════════
+private val SegCornerRadius = 16.dp
+private val SegConnectionRadius = 5.dp
+private val SegTopShape = RoundedCornerShape(SegCornerRadius, SegCornerRadius, SegConnectionRadius, SegConnectionRadius)
+private val SegMiddleShape = RoundedCornerShape(SegConnectionRadius)
+private val SegBottomShape = RoundedCornerShape(SegConnectionRadius, SegConnectionRadius, SegCornerRadius, SegCornerRadius)
+private val SegSingleShape = RoundedCornerShape(SegCornerRadius)
+private val SegGap: Dp = 4.dp
+private val CardCorner = 28.dp
+private val CardShape = RoundedCornerShape(CardCorner)
+private val SmallShape = RoundedCornerShape(12.dp)
+
+@Composable
+private fun segmentedShape(index: Int, total: Int): androidx.compose.ui.graphics.Shape = when {
+    total == 1 -> SegSingleShape
+    index == 0 -> SegTopShape
+    index == total - 1 -> SegBottomShape
+    else -> SegMiddleShape
+}
 
 /**
  * 设置页面 Compose 组件：对齐原 XML 布局 activity_settings.xml
@@ -94,106 +124,104 @@ fun SettingsScreenContent(
         ) {
 
             // ==================== 数据管理 ====================
-            SectionHeader(titleRes = R.string.data_management)
-
             // 导出数据
             var showExportConfirm by remember { mutableStateOf(false) }
-            SettingsCard(
-                icon = { Icon(painterResource(R.drawable.ic_export), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
-                titleRes = R.string.export_data,
-                onClick = { showExportConfirm = true }
+            // 导入数据
+            var showImportConfirm by remember { mutableStateOf(false) }
+            // 数据展示模式
+            var showViewModeDialog by remember { mutableStateOf(false) }
+            val currentMode = ViewModeHelper.getViewMode(context)
+            // 排序设置
+            var showSortDialog by remember { mutableStateOf(false) }
+            val sortOptions = arrayOf(
+                stringResource(R.string.sort_ascending),
+                stringResource(R.string.sort_descending)
             )
+
+            SettingGroup(titleRes = R.string.data_management) {
+                SettingsCard(
+                    icon = { Icon(painterResource(R.drawable.ic_export), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    titleRes = R.string.export_data,
+                    onClick = { showExportConfirm = true },
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    shape = segmentedShape(0, 4)
+                )
+                Spacer(Modifier.height(SegGap))
+                SettingsCard(
+                    icon = { Icon(painterResource(R.drawable.ic_import), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    titleRes = R.string.import_data,
+                    onClick = { showImportConfirm = true },
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    shape = segmentedShape(1, 4)
+                )
+                Spacer(Modifier.height(SegGap))
+                SettingsCard(
+                    icon = { Icon(painterResource(R.drawable.ic_list), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    titleRes = R.string.data_display_mode,
+                    onClick = { showViewModeDialog = true },
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    shape = segmentedShape(2, 4)
+                )
+                Spacer(Modifier.height(SegGap))
+                SettingsCard(
+                    icon = { Icon(painterResource(R.drawable.ic_sort), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    titleRes = R.string.sort_order_settings,
+                    onClick = { showSortDialog = true },
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    shape = segmentedShape(3, 4)
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            // ── 数据管理对话框 ──
             if (showExportConfirm) {
                 AlertDialog(
                     onDismissRequest = { showExportConfirm = false },
                     title = { Text(stringResource(R.string.confirm_export)) },
                     text = { Text(stringResource(R.string.export_warning)) },
                     confirmButton = {
-                        Button(
-                            onClick = { showExportConfirm = false; onExport() },
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
+                        Button(onClick = { showExportConfirm = false; onExport() }, shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)) {
                             Text(stringResource(R.string.ok))
                         }
                     },
                     dismissButton = {
-                        OutlinedButton(
-                            onClick = { showExportConfirm = false },
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
+                        OutlinedButton(onClick = { showExportConfirm = false }, shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)) {
                             Text(stringResource(R.string.cancel))
                         }
                     }
                 )
             }
-            // 导入数据
-            var showImportConfirm by remember { mutableStateOf(false) }
-            SettingsCard(
-                icon = { Icon(painterResource(R.drawable.ic_import), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
-                titleRes = R.string.import_data,
-                onClick = { showImportConfirm = true }
-            )
             if (showImportConfirm) {
                 AlertDialog(
                     onDismissRequest = { showImportConfirm = false },
                     title = { Text(stringResource(R.string.confirm_import)) },
                     text = { Text(stringResource(R.string.import_warning)) },
                     confirmButton = {
-                        Button(
-                            onClick = { showImportConfirm = false; onImport() },
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
+                        Button(onClick = { showImportConfirm = false; onImport() }, shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)) {
                             Text(stringResource(R.string.ok))
                         }
                     },
                     dismissButton = {
-                        OutlinedButton(
-                            onClick = { showImportConfirm = false },
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
+                        OutlinedButton(onClick = { showImportConfirm = false }, shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)) {
                             Text(stringResource(R.string.cancel))
                         }
                     }
                 )
             }
-            // 数据展示模式（XML：在数据分区下，无独立分区标题）
-            var showViewModeDialog by remember { mutableStateOf(false) }
-            val currentMode = ViewModeHelper.getViewMode(context)
-            SettingsCard(
-                icon = { Icon(painterResource(R.drawable.ic_list), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
-                titleRes = R.string.data_display_mode,
-                onClick = { showViewModeDialog = true }
-            )
             if (showViewModeDialog) {
-                val modeNames = listOf(
-                    stringResource(R.string.card_view),
-                    stringResource(R.string.list_view)
-                ).toTypedArray()
+                val modeNames = listOf(stringResource(R.string.card_view), stringResource(R.string.list_view)).toTypedArray()
                 SingleChoiceDialog(
                     title = stringResource(R.string.data_display_mode),
                     items = modeNames,
                     checkedIndex = currentMode,
                     onDismiss = { showViewModeDialog = false },
                     onConfirm = { idx ->
-                        if (idx != currentMode) {
-                            ViewModeHelper.setViewMode(context, idx)
-                        }
+                        if (idx != currentMode) ViewModeHelper.setViewMode(context, idx)
                         showViewModeDialog = false
                     }
                 )
             }
-            // 排序设置（XML：在数据分区下，marginBottom=16dp）
-            var showSortDialog by remember { mutableStateOf(false) }
-            val sortOptions = arrayOf(
-                stringResource(R.string.sort_ascending),
-                stringResource(R.string.sort_descending)
-            )
-            SettingsCard(
-                icon = { Icon(painterResource(R.drawable.ic_sort), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
-                titleRes = R.string.sort_order_settings,
-                onClick = { showSortDialog = true },
-                bottomSpacing = 16
-            )
             if (showSortDialog) {
                 val checkedIdx = if (isAscending) 0 else 1
                 SingleChoiceDialog(
@@ -203,30 +231,54 @@ fun SettingsScreenContent(
                     onDismiss = { showSortDialog = false },
                     onConfirm = { idx ->
                         val newAscending = idx == 0
-                        if (newAscending != isAscending) {
-                            onSortOrderChanged(newAscending)
-                        }
+                        if (newAscending != isAscending) onSortOrderChanged(newAscending)
                         showSortDialog = false
                     }
                 )
             }
 
             // ==================== 设置 ====================
-            SectionHeader(titleRes = R.string.settings)
-
-            // 语言设置
             var showLangDialog by remember { mutableStateOf(false) }
             val languages = LocaleHelper.getSupportedLanguages()
             val currentLang = LocaleHelper.getLanguage(context)
-            SettingsCard(
-                icon = { Icon(painterResource(R.drawable.ic_language), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
-                titleRes = R.string.language_settings,
-                onClick = { showLangDialog = true }
-            )
+            var showThemeDialog by remember { mutableStateOf(false) }
+            val themes = ThemeHelper.getSupportedThemes()
+            val currentTheme = ThemeHelper.getTheme(context)
+            var showColorDialog by remember { mutableStateOf(false) }
+            val colors = ThemeHelper.getSupportedThemeColors()
+            val currentColor = ThemeHelper.getThemeColor(context)
+
+            SettingGroup(titleRes = R.string.settings) {
+                SettingsCard(
+                    icon = { Icon(painterResource(R.drawable.ic_language), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    titleRes = R.string.language_settings,
+                    onClick = { showLangDialog = true },
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    shape = segmentedShape(0, 3)
+                )
+                Spacer(Modifier.height(SegGap))
+                SettingsCard(
+                    icon = { Icon(painterResource(R.drawable.ic_panel_hollow), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    titleRes = R.string.theme_settings,
+                    onClick = { showThemeDialog = true },
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    shape = segmentedShape(1, 3)
+                )
+                Spacer(Modifier.height(SegGap))
+                SettingsCard(
+                    icon = { Icon(painterResource(R.drawable.ic_panel_solid), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    titleRes = R.string.theme_color_settings,
+                    onClick = { showColorDialog = true },
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    shape = segmentedShape(2, 3)
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            // ── 设置对话框 ──
             if (showLangDialog) {
-                val langNames = languages.map {
-                    LocaleHelper.getLanguageDisplayName(context, it)
-                }.toTypedArray()
+                val langNames = languages.map { LocaleHelper.getLanguageDisplayName(context, it) }.toTypedArray()
                 val checkedIdx = languages.indexOfFirst { it == currentLang }.coerceAtLeast(0)
                 SingleChoiceDialog(
                     title = stringResource(R.string.select_language),
@@ -234,24 +286,11 @@ fun SettingsScreenContent(
                     checkedIndex = checkedIdx,
                     onDismiss = { showLangDialog = false },
                     onConfirm = { idx ->
-                        if (languages[idx] != currentLang) {
-                            LocaleHelper.setLanguage(context, languages[idx])
-                            onNeedsRecreate()
-                        }
+                        if (languages[idx] != currentLang) { LocaleHelper.setLanguage(context, languages[idx]); onNeedsRecreate() }
                         showLangDialog = false
                     }
                 )
             }
-
-            // 主题设置（XML使用ic_panel_hollow）
-            var showThemeDialog by remember { mutableStateOf(false) }
-            val themes = ThemeHelper.getSupportedThemes()
-            val currentTheme = ThemeHelper.getTheme(context)
-            SettingsCard(
-                icon = { Icon(painterResource(R.drawable.ic_panel_hollow), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
-                titleRes = R.string.theme_settings,
-                onClick = { showThemeDialog = true }
-            )
             if (showThemeDialog) {
                 val themeNames = themes.map { ThemeHelper.getThemeDisplayName(context, it) }.toTypedArray()
                 val checkedIdx = themes.indexOfFirst { it == currentTheme }.coerceAtLeast(0)
@@ -261,25 +300,11 @@ fun SettingsScreenContent(
                     checkedIndex = checkedIdx,
                     onDismiss = { showThemeDialog = false },
                     onConfirm = { idx ->
-                        if (themes[idx] != currentTheme) {
-                            ThemeHelper.setTheme(context, themes[idx])
-                            onThemeChanged(themes[idx])
-                        }
+                        if (themes[idx] != currentTheme) { ThemeHelper.setTheme(context, themes[idx]); onThemeChanged(themes[idx]) }
                         showThemeDialog = false
                     }
                 )
             }
-
-            // 主题色设置（XML使用ic_panel_solid，marginBottom=16dp）
-            var showColorDialog by remember { mutableStateOf(false) }
-            val colors = ThemeHelper.getSupportedThemeColors()
-            val currentColor = ThemeHelper.getThemeColor(context)
-            SettingsCard(
-                icon = { Icon(painterResource(R.drawable.ic_panel_solid), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
-                titleRes = R.string.theme_color_settings,
-                onClick = { showColorDialog = true },
-                bottomSpacing = 16
-            )
             if (showColorDialog) {
                 val colorNames = colors.map { ThemeHelper.getThemeColorDisplayName(context, it) }.toTypedArray()
                 val checkedIdx = colors.indexOfFirst { it == currentColor }.coerceAtLeast(0)
@@ -289,10 +314,7 @@ fun SettingsScreenContent(
                     checkedIndex = checkedIdx,
                     onDismiss = { showColorDialog = false },
                     onConfirm = { idx ->
-                        if (colors[idx] != currentColor) {
-                            ThemeHelper.setThemeColor(context, colors[idx])
-                            onThemeColorChanged(colors[idx])
-                        }
+                        if (colors[idx] != currentColor) { ThemeHelper.setThemeColor(context, colors[idx]); onThemeColorChanged(colors[idx]) }
                         showColorDialog = false
                     }
                 )
@@ -326,12 +348,15 @@ fun SettingsScreenContent(
                 )
             }
 
-            // 关于应用（XML使用ic_version，文字为about_app）
-            SettingsCard(
-                icon = { Icon(painterResource(R.drawable.ic_version), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSecondaryContainer) },
-                titleRes = R.string.about_app,
-                onClick = onAboutDeveloper
-            )
+            SettingGroup(titleRes = R.string.about, showTitle = false) {
+                SettingsCard(
+                    icon = { Icon(painterResource(R.drawable.ic_version), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    titleRes = R.string.about_app,
+                    onClick = onAboutDeveloper,
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    shape = segmentedShape(0, 1)
+                )
+            }
 
             Spacer(Modifier.height(32.dp))
         }
@@ -370,19 +395,19 @@ private fun SettingsCard(
     titleRes: Int,
     subtitle: String? = null,
     onClick: () -> Unit,
-    bottomSpacing: Int = 4
+    modifier: Modifier = Modifier,
+    shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(12.dp)
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(bottom = bottomSpacing.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(shape)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
+        shape = shape,
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
+            containerColor = Color.Transparent
         )
     ) {
         Row(
@@ -391,11 +416,10 @@ private fun SettingsCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 40dp 圆形图标容器 — 对齐 XML: cardCornerRadius="20dp"
             Surface(
                 modifier = Modifier.size(40.dp),
                 shape = CircleShape,
-                color = MaterialTheme.colorScheme.secondaryContainer
+                color = Color.Transparent
             ) {
                 icon()
             }
@@ -423,6 +447,41 @@ private fun SettingsCard(
     }
 }
 
+/**
+ * 分段设置组 — 参照 Installer 应用设置区样式
+ * 顶部和底部 item 用大圆角，中间 item 用小圆角连接
+ */
+@Composable
+private fun SettingGroup(
+    titleRes: Int,
+    showTitle: Boolean = true,
+    items: @Composable () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        if (showTitle) {
+            Text(
+                text = stringResource(titleRes),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
+            )
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(CardShape)
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                .padding(top = 8.dp, bottom = 12.dp)
+        ) {
+            items()
+        }
+    }
+}
+
 @Composable
 private fun SingleChoiceDialog(
     title: String,
@@ -436,26 +495,51 @@ private fun SingleChoiceDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },
         text = {
-            Column {
-                items.forEachIndexed { index, name ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .clickable {
-                                selected = index
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                color = Color.Transparent
+            ) {
+                Column {
+                    items.forEachIndexed { index, name ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { selected = index }
+                                .padding(horizontal = 14.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            val isSelected = selected == index
+                            Box(
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clip(CircleShape)
+                                    .background(if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent)
+                                    .then(
+                                        if (!isSelected) Modifier.border(1.5.dp, MaterialTheme.colorScheme.outline, CircleShape)
+                                        else Modifier
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (isSelected) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(10.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.onPrimary)
+                                    )
+                                }
                             }
-                            .padding(vertical = 12.dp, horizontal = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(
-                            selected = index == selected,
-                            onClick = {
-                                selected = index
-                            }
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(name)
+                            Spacer(Modifier.width(12.dp))
+                            Text(name)
+                        }
+                        if (index < items.lastIndex) {
+                            HorizontalDivider(
+                                thickness = 1.dp,
+                                color = MaterialTheme.colorScheme.outline
+                            )
+                        }
                     }
                 }
             }
@@ -463,7 +547,8 @@ private fun SingleChoiceDialog(
         confirmButton = {
             Button(
                 onClick = { onConfirm(selected) },
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
             ) {
                 Text(stringResource(R.string.ok))
             }
@@ -471,7 +556,8 @@ private fun SingleChoiceDialog(
         dismissButton = {
             OutlinedButton(
                 onClick = onDismiss,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
             ) { Text(stringResource(R.string.cancel)) }
         }
     )
