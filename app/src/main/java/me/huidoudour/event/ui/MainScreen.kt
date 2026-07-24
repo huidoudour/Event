@@ -289,7 +289,6 @@ private fun EventCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(MaterialTheme.shapes.medium)
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick

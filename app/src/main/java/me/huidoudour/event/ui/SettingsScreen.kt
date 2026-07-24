@@ -384,7 +384,6 @@ private fun SectionHeader(
     Text(
         text = stringResource(titleRes),
         style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.primary,
         modifier = modifier
     )
 }
@@ -466,7 +465,6 @@ private fun SettingGroup(
             Text(
                 text = stringResource(titleRes),
                 style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
             )
         }

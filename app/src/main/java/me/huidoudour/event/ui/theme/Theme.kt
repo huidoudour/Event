@@ -10,6 +10,8 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -36,6 +38,7 @@ fun eventColorScheme(
     }
     // 手工主题色（含 API<31 的回退）
     val tokens = themeTokens(themeColor, darkTheme)
+    val seed = themeSeedColor(themeColor)
     return if (darkTheme) {
         darkColorScheme(
             primary = tokens.primary,
@@ -50,6 +53,13 @@ fun eventColorScheme(
             onTertiary = tokens.onTertiary,
             tertiaryContainer = tokens.tertiaryContainer,
             onTertiaryContainer = tokens.onTertiaryContainer,
+            surface = lerp(Color(0xFF1C1B1F), seed, 0.08f),
+            surfaceContainerLowest = lerp(Color(0xFF1C1B1F), seed, 0.06f),
+            surfaceContainerLow = lerp(Color(0xFF1C1B1F), seed, 0.12f),
+            surfaceContainer = lerp(Color(0xFF1C1B1F), seed, 0.15f),
+            surfaceContainerHigh = lerp(Color(0xFF1C1B1F), seed, 0.18f),
+            surfaceContainerHighest = lerp(Color(0xFF1C1B1F), seed, 0.22f),
+            background = lerp(Color(0xFF1C1B1F), seed, 0.06f),
         )
     } else {
         lightColorScheme(
@@ -65,6 +75,13 @@ fun eventColorScheme(
             onTertiary = tokens.onTertiary,
             tertiaryContainer = tokens.tertiaryContainer,
             onTertiaryContainer = tokens.onTertiaryContainer,
+            surface = lerp(Color.White, seed, 0.10f),
+            surfaceContainerLowest = lerp(Color.White, seed, 0.08f),
+            surfaceContainerLow = lerp(Color.White, seed, 0.15f),
+            surfaceContainer = lerp(Color.White, seed, 0.18f),
+            surfaceContainerHigh = lerp(Color.White, seed, 0.22f),
+            surfaceContainerHighest = lerp(Color.White, seed, 0.26f),
+            background = lerp(Color.White, seed, 0.08f),
         )
     }
 }
