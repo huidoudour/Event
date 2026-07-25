@@ -3,6 +3,7 @@ package me.huidoudour.event
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -17,6 +18,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ViewModelProvider
@@ -239,6 +242,13 @@ class MainActivity : ComponentActivity() {
         }
 
         showDateTime?.let { event ->
+            // 系统日期/时间选择器按钮颜色取自 ROM 的 colorAccent，不跟随 Compose 主题，
+            // 这里弹出后强制设为当前主题的 primary 色
+            val pickerAccent = MaterialTheme.colorScheme.primary.toArgb()
+            fun android.app.AlertDialog.tintButtons() {
+                getButton(DialogInterface.BUTTON_POSITIVE)?.setTextColor(pickerAccent)
+                getButton(DialogInterface.BUTTON_NEGATIVE)?.setTextColor(pickerAccent)
+            }
             val cal = Calendar.getInstance()
             cal.timeInMillis = event.eventTime
             val datePicker = DatePickerDialog(
@@ -247,7 +257,7 @@ class MainActivity : ComponentActivity() {
                     cal.set(Calendar.YEAR, y)
                     cal.set(Calendar.MONTH, m)
                     cal.set(Calendar.DAY_OF_MONTH, d)
-                    TimePickerDialog(this, { _, h, mi ->
+                    val timePicker = TimePickerDialog(this, { _, h, mi ->
                         cal.set(Calendar.HOUR_OF_DAY, h)
                         cal.set(Calendar.MINUTE, mi)
                         cal.set(Calendar.SECOND, 0)
@@ -258,12 +268,15 @@ class MainActivity : ComponentActivity() {
                             "${getString(R.string.event_datetime_changed)}: ${
                                 sdf.format(Date(event.eventTime))}",
                             Toast.LENGTH_LONG).show()
-                    }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
+                    }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true)
+                    timePicker.show()
+                    timePicker.tintButtons()
                 },
                 cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)
             )
             datePicker.setOnDismissListener { showDateTime = null }
             datePicker.show()
+            datePicker.tintButtons()
         }
 
         if (showClear) {

@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -30,7 +32,7 @@ val appVersionName = "0.77-compose.${gitHash()}"
 // 构建结束后打印版本号（assemble/bundle 任务完成时输出）
 tasks.matching { it.name.startsWith("assemble") || it.name.startsWith("bundle") }.configureEach {
     doLast {
-        println("构建完成 [$name] versionName=$appVersionName, versionCode=$appVersionCode")
+        println("[$name]:BuildSuccessful | versionName=$appVersionName | versionCode=$appVersionCode")
     }
 }
 
@@ -55,7 +57,7 @@ android {
         // 指定要包含的 ABI 架构（所有架构）
         ndk {
             // 包含所有支持的架构：armeabi-v7a, arm64-v8a, x86, x86_64
-            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            abiFilters += listOf("arm64-v8a" , "x86_64")
         }
     }
 

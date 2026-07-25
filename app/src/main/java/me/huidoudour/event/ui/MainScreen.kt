@@ -26,6 +26,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.SelectAll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -134,16 +136,18 @@ fun MainScreenContent(
             )
         },
         floatingActionButton = {
-            // ── FAB ──
-            if (!isMultiSelectMode) {
-                FloatingActionButton(
-                    onClick = {
+            // ── FAB ── 多选模式下不隐藏、外观不变，点击提示退出批量管理
+            FloatingActionButton(
+                onClick = {
+                    if (isMultiSelectMode) {
+                        Toast.makeText(context, R.string.exit_multi_select_first, Toast.LENGTH_SHORT).show()
+                    } else {
                         onAddEvent()
-                    },
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                ) {
-                    Icon(painterResource(R.drawable.ic_add), contentDescription = context.getString(R.string.add_event), tint = Color.Unspecified)
-                }
+                    }
+                },
+                containerColor = MaterialTheme.colorScheme.primaryContainer
+            ) {
+                Icon(painterResource(R.drawable.ic_add), contentDescription = context.getString(R.string.add_event), tint = Color.Unspecified)
             }
         }
     ) { padding ->
@@ -249,7 +253,7 @@ fun MainScreenContent(
                         elevation = FloatingActionButtonDefaults.elevation(0.dp)
                     ) {
                         Icon(
-                            painterResource(R.drawable.ic_check),
+                            Icons.Outlined.SelectAll,
                             contentDescription = context.getString(R.string.select_all)
                         )
                     }
