@@ -361,7 +361,7 @@ private fun TableHeaderRow(
     onToggleSelectAll: () -> Unit,
     colWidths: TableColumnWidths
 ) {
-    val headerBg = MaterialTheme.colorScheme.primaryContainer
+    val headerBg = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
     val headerFg = MaterialTheme.colorScheme.onPrimaryContainer
     Surface(
         color = headerBg,
@@ -375,7 +375,7 @@ private fun TableHeaderRow(
                 Checkbox(
                     checked = isAllSelected,
                     onCheckedChange = { onToggleSelectAll() },
-                    modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                    modifier = Modifier.size(18.dp).padding(start = 12.dp, end = 8.dp),
                     colors = CheckboxDefaults.colors(
                         checkmarkColor = headerFg,
                         uncheckedColor = headerFg.copy(alpha = 0.7f)
@@ -477,7 +477,7 @@ private fun TableRow(
                 Checkbox(
                     checked = isSelected,
                     onCheckedChange = { onClick() },
-                    modifier = Modifier.padding(start = 8.dp, end = 8.dp)
+                    modifier = Modifier.size(18.dp).padding(start = 8.dp, end = 8.dp)
                 )
             }
             // ID — 居中对齐

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
@@ -235,25 +237,41 @@ fun EventDetailDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(event.title) },
+        title = {
+            Text(
+                text = event.title,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+        },
         text = {
             Column {
                 if (!event.description.isNullOrBlank()) {
-                    Text("${stringResource(R.string.event_description)}：${event.description}")
-                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = event.description!!,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
-                Text("${stringResource(R.string.event_time)}：${dateFormat.format(Date(event.eventTime))}")
-                Spacer(Modifier.height(4.dp))
-                // 创建时间保持硬编码格式，因其含变量拼接
-                Text("创建：${dateFormat.format(Date(event.createdAt))}")
             }
         },
         confirmButton = {
-            OutlinedButton(
-                onClick = onDismiss,
-                shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
-            ) { Text(stringResource(R.string.close)) }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = dateFormat.format(Date(event.eventTime)),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
+                OutlinedButton(
+                    onClick = onDismiss,
+                    shape = RoundedCornerShape(12.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                ) { Text(stringResource(R.string.close)) }
+            }
         }
     )
 }

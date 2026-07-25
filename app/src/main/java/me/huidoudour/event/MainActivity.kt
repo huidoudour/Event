@@ -45,6 +45,8 @@ import java.util.Locale
 class MainActivity : ComponentActivity() {
 
     private lateinit var viewModel: EventViewModel
+    private var lastThemeMode = 0
+    private var lastThemeColor = 0
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LocaleHelper.applyLanguage(newBase))
@@ -55,12 +57,15 @@ class MainActivity : ComponentActivity() {
         ThemeHelper.initTheme(this)
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        IconColorHelper.applyIconColor(this, IconColorHelper.getIconColor(this))
 
         viewModel = ViewModelProvider(
             this,
             EventViewModel.Factory(application)
         )[EventViewModel::class.java]
+
+        // 记录当前主题状态，用于 onResume 检测变化
+        lastThemeMode = ThemeHelper.getTheme(this)
+        lastThemeColor = ThemeHelper.getThemeColor(this)
 
         setContent {
             EventTheme(
@@ -72,6 +77,11 @@ class MainActivity : ComponentActivity() {
                 MainScreen(viewModel = viewModel)
             }
         }
+
+        // 图标状态同步 — 延迟到首帧后执行，不阻塞启动
+        window.decorView.post {
+            IconColorHelper.ensureIconColor(this)
+        }
     }
 
     private fun isNightMode(): Boolean {
@@ -82,6 +92,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        // 检测主题变化，若从设置页回来则重建界面以应用新主题
+        val currentMode = ThemeHelper.getTheme(this)
+        val currentColor = ThemeHelper.getThemeColor(this)
+        if (currentMode != lastThemeMode || currentColor != lastThemeColor) {
+            recreate()
+            return
+        }
         viewModel.getRepository().syncSortOrder()
     }
 

@@ -33,7 +33,25 @@ object IconColorHelper {
     }
 
     /**
-     * 应用图标颜色更改
+     * 启动时同步图标状态（仅在状态不一致时才执行 IPC）
+     */
+    fun ensureIconColor(context: Context) {
+        val color = getIconColor(context)
+        val targetAlias = getAliasForColor(color) ?: return
+        val pm = context.packageManager
+
+        // 检查目标 alias 是否已启用，已启用则跳过
+        val state = pm.getComponentEnabledSetting(ComponentName(context, targetAlias))
+        if (state == PackageManager.COMPONENT_ENABLED_STATE_ENABLED ||
+            state == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT && isDefaultEnabled(color)) {
+            return
+        }
+        // 状态不一致，后台修复
+        applyIconColor(context, color)
+    }
+
+    /**
+     * 应用图标颜色更改（仅在用户主动切换时调用）
      */
     fun applyIconColor(context: Context, color: Int) {
         val pm = context.packageManager
@@ -51,6 +69,8 @@ object IconColorHelper {
             )
         }
     }
+
+    private fun isDefaultEnabled(color: Int): Boolean = color == COLOR_DEFAULT
 
     private fun getAliasForColor(color: Int): String? {
         return when (color) {

@@ -16,6 +16,7 @@ mtDataFilesProvider = "v1.0.0"
 rxandroid = "3.0.2"
 rxjava = "3.1.12"
 sqliteAndroid = "3.49.0"
+materialkolor = "2.1.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -42,6 +43,7 @@ mt-data-files-provider = { group = "com.github.L-JINBIN", name = "MTDataFilesPro
 rxandroid = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxandroid" }
 rxjava = { module = "io.reactivex.rxjava3:rxjava", version.ref = "rxjava" }
 sqlite-android = { group = "com.github.requery", name = "sqlite-android", version.ref = "sqliteAndroid" }
+materialkolor = { group = "com.materialkolor", name = "material-kolor", version.ref = "materialkolor" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

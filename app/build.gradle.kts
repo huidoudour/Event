@@ -143,6 +143,10 @@ dependencies {
 
     // SQLite Android - 增强版 SQLite 库
     implementation(libs.sqlite.android)
+
+    // MaterialKolor - 动态取色
+    implementation(libs.materialkolor)
+
     // 本地依赖，仅用于调试（仅在文件存在时添加）
     val localSqliteFile = file("libs/android.aar")
     if (localSqliteFile.exists()) {
