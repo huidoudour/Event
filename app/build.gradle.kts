@@ -1,3 +1,6 @@
+import java.text.SimpleDateFormat
+import java.util.Date
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -15,7 +18,10 @@ fun Project.gitCommitCount(): Int = try {
 fun Project.gitHash(): String = try {
     providers.exec { commandLine("git", "rev-parse", "--short=7", "HEAD") }
         .standardOutput.asText.get().trim()
-} catch (_: Exception) { "unknown" }
+} catch (_: Exception) {
+    // 获取失败时回退为构建时的日期+时间，如 07252332（月日时分）
+    SimpleDateFormat("MMddHHmm").format(Date())
+}
 
 android {
     namespace = "me.huidoudour.event"
