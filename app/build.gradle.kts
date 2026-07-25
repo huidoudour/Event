@@ -23,6 +23,17 @@ fun Project.gitHash(): String = try {
     SimpleDateFormat("MMddHHmm").format(Date())
 }
 
+// 统一计算版本信息，供 defaultConfig 与构建结束打印共用
+val appVersionCode = gitCommitCount()
+val appVersionName = "0.77-compose.${gitHash()}"
+
+// 构建结束后打印版本号（assemble/bundle 任务完成时输出）
+tasks.matching { it.name.startsWith("assemble") || it.name.startsWith("bundle") }.configureEach {
+    doLast {
+        println("构建完成 [$name] versionName=$appVersionName, versionCode=$appVersionCode")
+    }
+}
+
 android {
     namespace = "me.huidoudour.event"
     compileSdk {
@@ -36,8 +47,8 @@ android {
         minSdk = 28
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = gitCommitCount()
-        versionName = "0.77-compose.${gitHash()}"
+        versionCode = appVersionCode
+        versionName = appVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
