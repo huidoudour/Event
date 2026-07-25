@@ -5,6 +5,18 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+// ── Git 版本控制 ──
+val VERSION_OFFSET = 10 // 补偿历史差值，确保 versionCode 不回退
+fun Project.gitCommitCount(): Int = try {
+    providers.exec { commandLine("git", "rev-list", "--count", "HEAD") }
+        .standardOutput.asText.get().trim().toInt() + VERSION_OFFSET
+} catch (_: Exception) { 72 }
+
+fun Project.gitHash(): String = try {
+    providers.exec { commandLine("git", "rev-parse", "--short=7", "HEAD") }
+        .standardOutput.asText.get().trim()
+} catch (_: Exception) { "unknown" }
+
 android {
     namespace = "me.huidoudour.event"
     compileSdk {
@@ -18,8 +30,8 @@ android {
         minSdk = 28
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 72
-        versionName = "0.77-alpha-compose"
+        versionCode = gitCommitCount()
+        versionName = "0.77-compose.${gitHash()}"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
