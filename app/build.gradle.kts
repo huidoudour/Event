@@ -6,10 +6,10 @@ plugins {
 }
 
 // ── Git 版本控制 ──
-val VERSION_OFFSET = 10 // 补偿历史差值，确保 versionCode 不回退
+val versionRecoup = 10 // 版本补偿值 = 10
 fun Project.gitCommitCount(): Int = try {
     providers.exec { commandLine("git", "rev-list", "--count", "HEAD") }
-        .standardOutput.asText.get().trim().toInt() + VERSION_OFFSET
+        .standardOutput.asText.get().trim().toInt() + versionRecoup
 } catch (_: Exception) { 72 }
 
 fun Project.gitHash(): String = try {
