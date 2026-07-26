@@ -2,6 +2,8 @@ package me.huidoudour.event.util
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
+import android.view.ContextThemeWrapper
 import androidx.core.content.edit
 import androidx.appcompat.app.AppCompatDelegate
 import me.huidoudour.event.R
@@ -65,6 +67,45 @@ object ThemeHelper {
     fun initTheme(context: Context) {
         val themeMode = getTheme(context)
         applyTheme(themeMode)
+    }
+
+    /**
+     * 将保存的主题模式覆盖到 Context 的 uiMode 配置上。
+     *
+     * AppCompatDelegate.setDefaultNightMode 只对 AppCompatActivity 生效，
+     * ComponentActivity 必须在 attachBaseContext 中调用本方法，
+     * XML 主题（values-night）、原生日期/时间选择器和 AlertDialog 等
+     * 非 Compose 元素才能正确跟随应用内的深色模式设置。
+     */
+    fun applyNightMode(context: Context): Context {
+        val nightFlag = when (getTheme(context)) {
+            THEME_LIGHT -> Configuration.UI_MODE_NIGHT_NO
+            THEME_DARK -> Configuration.UI_MODE_NIGHT_YES
+            else -> return context // 跟随系统，无需覆盖
+        }
+        val config = Configuration(context.resources.configuration)
+        config.uiMode = nightFlag or (config.uiMode and Configuration.UI_MODE_NIGHT_MASK.inv())
+        return context.createConfigurationContext(config)
+    }
+
+    /**
+     * 基于 Activity 创建跟随当前深色模式设置的对话框 Context。
+     *
+     * 设置页实时切换主题后 Activity 不会重建，此时弹出的原生对话框
+     * 需要用本方法包装的 Context 才能显示正确的深浅配色。
+     * 使用 ContextThemeWrapper 保留 Activity 的窗口 token，Dialog 可正常弹出。
+     */
+    fun createNightAwareContext(activity: Activity): Context {
+        val nightFlag = when (getTheme(activity)) {
+            THEME_LIGHT -> Configuration.UI_MODE_NIGHT_NO
+            THEME_DARK -> Configuration.UI_MODE_NIGHT_YES
+            else -> return activity
+        }
+        val config = Configuration(activity.resources.configuration)
+        config.uiMode = nightFlag or (config.uiMode and Configuration.UI_MODE_NIGHT_MASK.inv())
+        val wrapper = ContextThemeWrapper(activity, R.style.Theme_Event)
+        wrapper.applyOverrideConfiguration(config)
+        return wrapper
     }
 
     /**

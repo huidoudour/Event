@@ -62,7 +62,7 @@ class SettingsActivity : ComponentActivity() {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(LocaleHelper.applyLanguage(newBase))
+        super.attachBaseContext(ThemeHelper.applyNightMode(LocaleHelper.applyLanguage(newBase)))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -132,7 +132,8 @@ class SettingsActivity : ComponentActivity() {
     }
 
     private fun showImportConfirmDialog(uri: Uri) {
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        // 主题实时切换后 Activity 不重建，需要包装 Context 保证对话框深浅配色正确
+        androidx.appcompat.app.AlertDialog.Builder(ThemeHelper.createNightAwareContext(this))
             .setTitle(R.string.confirm_import)
             .setMessage(R.string.import_warning)
             .setPositiveButton(R.string.ok) { _, _ ->

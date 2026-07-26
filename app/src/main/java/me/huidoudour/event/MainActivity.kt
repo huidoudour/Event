@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
     private var lastThemeColor = 0
 
     override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(LocaleHelper.applyLanguage(newBase))
+        super.attachBaseContext(ThemeHelper.applyNightMode(LocaleHelper.applyLanguage(newBase)))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
