@@ -1,6 +1,7 @@
 package me.huidoudour.event.ui
 
 import android.widget.Toast
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -50,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -62,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
+import me.huidoudour.event.util.ViewModeHelper
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -75,7 +78,6 @@ fun MainScreenContent(
     events: List<Event>,
     isMultiSelectMode: Boolean,
     selectedIds: Set<Long>,
-    isAscending: Boolean,
     viewMode: Int,
     onSettings: () -> Unit,
     onRefresh: () -> Unit,
@@ -102,7 +104,7 @@ fun MainScreenContent(
                     }) {
                         Icon(
                             painterResource(R.drawable.ic_multi_select),
-                            contentDescription = context.getString(R.string.multi_select)
+                            contentDescription = stringResource(R.string.multi_select)
                         )
                     }
                     // 清空按钮（长按触发）— 对齐XML：btnClearAll（Clear All Button Long Press）
@@ -118,19 +120,19 @@ fun MainScreenContent(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(painterResource(R.drawable.ic_delete), contentDescription = context.getString(R.string.clear_all))
+                        Icon(painterResource(R.drawable.ic_delete), contentDescription = stringResource(R.string.clear_all))
                     }
                     // 刷新按钮
                     IconButton(onClick = {
                         onRefresh()
                     }) {
-                        Icon(painterResource(R.drawable.ic_refresh), contentDescription = context.getString(R.string.refresh))
+                        Icon(painterResource(R.drawable.ic_refresh), contentDescription = stringResource(R.string.refresh))
                     }
                     // 设置按钮（最右）— 对齐XML：btnSettings（第一个ImageButton，最右）
                     IconButton(onClick = {
                         onSettings()
                     }) {
-                        Icon(painterResource(R.drawable.ic_settings), contentDescription = context.getString(R.string.settings))
+                        Icon(painterResource(R.drawable.ic_settings), contentDescription = stringResource(R.string.settings))
                     }
                 }
             )
@@ -147,7 +149,7 @@ fun MainScreenContent(
                 },
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ) {
-                Icon(painterResource(R.drawable.ic_add), contentDescription = context.getString(R.string.add_event), tint = Color.Unspecified)
+                Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(R.string.add_event), tint = Color.Unspecified)
             }
         }
     ) { padding ->
@@ -156,7 +158,7 @@ fun MainScreenContent(
             if (events.isEmpty()) {
                 EmptyView(modifier = Modifier.fillMaxSize())
             } else {
-                if (viewMode == 0) {
+                if (viewMode == ViewModeHelper.VIEW_MODE_CARD) {
                     // ── 卡片视图 ── 对齐 fragment_event_list.xml padding
                     LazyColumn(
                         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 88.dp),
@@ -254,7 +256,7 @@ fun MainScreenContent(
                     ) {
                         Icon(
                             Icons.Outlined.SelectAll,
-                            contentDescription = context.getString(R.string.select_all)
+                            contentDescription = stringResource(R.string.select_all)
                         )
                     }
                     // 删除所选按钮 - 56dp 圆形，错误颜色
@@ -267,7 +269,7 @@ fun MainScreenContent(
                         contentColor = MaterialTheme.colorScheme.onErrorContainer,
                         elevation = FloatingActionButtonDefaults.elevation(0.dp)
                     ) {
-                        Icon(painterResource(R.drawable.ic_delete), contentDescription = context.getString(R.string.delete_selected))
+                        Icon(painterResource(R.drawable.ic_delete), contentDescription = stringResource(R.string.delete_selected))
                     }
                 }
             }
@@ -290,6 +292,16 @@ private fun EventCard(
 ) {
     val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()) }
 
+    // 选中时：用不透明的混合色填充（半透明色会透出卡片阴影，在边缘形成一圈深色"粗框"）
+    val surface = MaterialTheme.colorScheme.surface
+    val containerColor by animateColorAsState(
+        targetValue = if (isSelected)
+            lerp(surface, MaterialTheme.colorScheme.primaryContainer, 0.5f)
+        else
+            surface,
+        label = "eventCardColor"
+    )
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -299,15 +311,8 @@ private fun EventCard(
             ),
         shape = MaterialTheme.shapes.medium, // 12dp
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected)
-                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-            else
-                MaterialTheme.colorScheme.surface
-        ),
-        border = CardDefaults.outlinedCardBorder().copy(
-            width = 1.dp
-        )
+        colors = CardDefaults.cardColors(containerColor = containerColor),
+        border = if (isSelected) null else CardDefaults.outlinedCardBorder().copy(width = 1.dp)
     ) {
         Row(
             modifier = Modifier

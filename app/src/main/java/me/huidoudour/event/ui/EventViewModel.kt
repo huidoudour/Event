@@ -26,8 +26,7 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getSortedEvents(): LiveData<List<Event>> = repository.getSortedEvents()
 
-    fun toggleSortOrder() = repository.toggleSortOrder()
-
+    @Suppress("unused")
     fun isAscending(): Boolean = repository.isAscending
 
     fun addEvent(title: String, description: String?, eventTime: Long) {
@@ -70,11 +69,6 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
                 return EventViewModel(application) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
-        }
-
-        fun createRepository(): EventRepository {
-            val database = EventDatabase.getDatabase(application)
-            return EventRepository(application, database.eventDao())
         }
     }
 }

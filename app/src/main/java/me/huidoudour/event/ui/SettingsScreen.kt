@@ -1,5 +1,6 @@
 package me.huidoudour.event.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -26,7 +27,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,14 +35,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -73,7 +72,6 @@ private val SegSingleShape = RoundedCornerShape(SegCornerRadius)
 private val SegGap: Dp = 4.dp
 private val CardCorner = 28.dp
 private val CardShape = RoundedCornerShape(CardCorner)
-private val SmallShape = RoundedCornerShape(12.dp)
 
 @Composable
 private fun segmentedShape(index: Int, total: Int): androidx.compose.ui.graphics.Shape = when {
@@ -211,19 +209,25 @@ fun SettingsScreenContent(
             }
             if (showViewModeDialog) {
                 val modeNames = listOf(stringResource(R.string.card_view), stringResource(R.string.list_view)).toTypedArray()
+                val viewModeChangedText = stringResource(R.string.view_mode_changed)
                 SingleChoiceDialog(
                     title = stringResource(R.string.data_display_mode),
                     items = modeNames,
                     checkedIndex = currentMode,
                     onDismiss = { showViewModeDialog = false },
                     onConfirm = { idx ->
-                        if (idx != currentMode) ViewModeHelper.setViewMode(context, idx)
+                        if (idx != currentMode) {
+                            val mode = if (idx == 0) ViewModeHelper.VIEW_MODE_CARD else ViewModeHelper.VIEW_MODE_LIST
+                            ViewModeHelper.setViewMode(context, mode)
+                            Toast.makeText(context, viewModeChangedText + ": " + modeNames[idx], Toast.LENGTH_SHORT).show()
+                        }
                         showViewModeDialog = false
                     }
                 )
             }
             if (showSortDialog) {
                 val checkedIdx = if (isAscending) 0 else 1
+                val sortOrderChangedText = stringResource(R.string.sort_order_changed)
                 SingleChoiceDialog(
                     title = stringResource(R.string.sort_order_settings),
                     items = sortOptions,
@@ -231,7 +235,10 @@ fun SettingsScreenContent(
                     onDismiss = { showSortDialog = false },
                     onConfirm = { idx ->
                         val newAscending = idx == 0
-                        if (newAscending != isAscending) onSortOrderChanged(newAscending)
+                        if (newAscending != isAscending) {
+                            onSortOrderChanged(newAscending)
+                            Toast.makeText(context, sortOrderChangedText + ": " + sortOptions[idx], Toast.LENGTH_SHORT).show()
+                        }
                         showSortDialog = false
                     }
                 )
@@ -294,13 +301,18 @@ fun SettingsScreenContent(
             if (showThemeDialog) {
                 val themeNames = themes.map { ThemeHelper.getThemeDisplayName(context, it) }.toTypedArray()
                 val checkedIdx = themes.indexOfFirst { it == currentTheme }.coerceAtLeast(0)
+                val themeChangedText = stringResource(R.string.theme_changed)
                 SingleChoiceDialog(
                     title = stringResource(R.string.select_theme),
                     items = themeNames,
                     checkedIndex = checkedIdx,
                     onDismiss = { showThemeDialog = false },
                     onConfirm = { idx ->
-                        if (themes[idx] != currentTheme) { ThemeHelper.setTheme(context, themes[idx]); onThemeChanged(themes[idx]) }
+                        if (themes[idx] != currentTheme) {
+                            ThemeHelper.setTheme(context, themes[idx])
+                            onThemeChanged(themes[idx])
+                            Toast.makeText(context, themeChangedText + ": " + themeNames[idx], Toast.LENGTH_SHORT).show()
+                        }
                         showThemeDialog = false
                     }
                 )
@@ -308,13 +320,18 @@ fun SettingsScreenContent(
             if (showColorDialog) {
                 val colorNames = colors.map { ThemeHelper.getThemeColorDisplayName(context, it) }.toTypedArray()
                 val checkedIdx = colors.indexOfFirst { it == currentColor }.coerceAtLeast(0)
+                val themeColorChangedText = stringResource(R.string.theme_color_changed)
                 SingleChoiceDialog(
                     title = stringResource(R.string.select_theme_color),
                     items = colorNames,
                     checkedIndex = checkedIdx,
                     onDismiss = { showColorDialog = false },
                     onConfirm = { idx ->
-                        if (colors[idx] != currentColor) { ThemeHelper.setThemeColor(context, colors[idx]); onThemeColorChanged(colors[idx]) }
+                        if (colors[idx] != currentColor) {
+                            ThemeHelper.setThemeColor(context, colors[idx])
+                            onThemeColorChanged(colors[idx])
+                            Toast.makeText(context, themeColorChangedText + ": " + colorNames[idx], Toast.LENGTH_SHORT).show()
+                        }
                         showColorDialog = false
                     }
                 )
@@ -392,9 +409,9 @@ private fun SectionHeader(
 private fun SettingsCard(
     icon: @Composable () -> Unit,
     titleRes: Int,
-    subtitle: String? = null,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    subtitle: String? = null,
     shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(12.dp)
 ) {
     Card(
@@ -488,7 +505,7 @@ private fun SingleChoiceDialog(
     onDismiss: () -> Unit,
     onConfirm: (Int) -> Unit
 ) {
-    var selected by remember { mutableStateOf(checkedIndex) }
+    var selected by remember { mutableIntStateOf(checkedIndex) }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },
@@ -559,16 +576,4 @@ private fun SingleChoiceDialog(
             ) { Text(stringResource(R.string.cancel)) }
         }
     )
-}
-
-private fun getLanguageDisplayNameForRes(context: android.content.Context, lang: String): String {
-    return when (lang) {
-        "system" -> "跟随系统"
-        "zh-rCN" -> "简体中文"
-        "zh-rTW" -> "繁体中文"
-        "en-rUS" -> "English"
-        "ru-rRU" -> "Русский"
-        "ja-rJP" -> "日本語"
-        else -> lang
-    }
 }

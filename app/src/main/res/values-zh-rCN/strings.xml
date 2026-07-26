@@ -73,6 +73,7 @@
     <string name="sort_order_settings">数据排序</string>
     <string name="sort_ascending">正序排列</string>
     <string name="sort_descending">倒序排列</string>
+    <string name="sort_order_changed">排序已更改</string>
     <string name="refresh">刷新</string>
     <string name="refreshed">已刷新</string>
 

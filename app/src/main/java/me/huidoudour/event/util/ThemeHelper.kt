@@ -2,6 +2,7 @@ package me.huidoudour.event.util
 
 import android.app.Activity
 import android.content.Context
+import androidx.core.content.edit
 import androidx.appcompat.app.AppCompatDelegate
 import me.huidoudour.event.R
 
@@ -35,7 +36,7 @@ object ThemeHelper {
      */
     fun setTheme(context: Context, themeMode: Int) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putInt(KEY_THEME, themeMode).apply()
+        prefs.edit { putInt(KEY_THEME, themeMode) }
         applyTheme(themeMode)
     }
 
@@ -90,7 +91,7 @@ object ThemeHelper {
      */
     fun setThemeColor(context: Context, color: Int) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putInt(KEY_THEME_COLOR, color).apply()
+        prefs.edit { putInt(KEY_THEME_COLOR, color) }
     }
 
     /**

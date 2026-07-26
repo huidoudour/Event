@@ -36,7 +36,7 @@ class DataImportExportHelper(private val context: Context) {
         }
         return try {
             array.toString(2)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
@@ -62,6 +62,7 @@ class DataImportExportHelper(private val context: Context) {
     /**
      * 导出数据到应用私有目录（备用，不直接暴露给 UI）。
      */
+    @Suppress("unused")
     fun exportData(repository: EventRepository): Boolean {
         return try {
             val events = repository.allEvents.value ?: emptyList()
@@ -143,11 +144,11 @@ class DataImportExportHelper(private val context: Context) {
             .replace('\u3000', ' ')
         return try {
             DATE_FORMAT.parse(normalized)?.time ?: System.currentTimeMillis()
-        } catch (e: ParseException) {
+        } catch (_: ParseException) {
             // 尝试当作毫秒时间戳
             try {
                 normalized.toLong()
-            } catch (ex: NumberFormatException) {
+            } catch (_: NumberFormatException) {
                 System.currentTimeMillis()
             }
         }
@@ -182,6 +183,7 @@ class DataImportExportHelper(private val context: Context) {
     /**
      * 从应用私有目录导入数据。
      */
+    @Suppress("unused")
     fun importData(repository: EventRepository, clearExisting: Boolean): Boolean {
         return try {
             context.openFileInput(FILE_NAME).use { inputStream ->
@@ -204,11 +206,12 @@ class DataImportExportHelper(private val context: Context) {
     /**
      * 检查是否存在备份数据。
      */
+    @Suppress("unused")
     fun hasBackupData(): Boolean {
         return try {
             val file = context.getFileStreamPath(FILE_NAME)
             file.exists() && file.length() > 0
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }
@@ -218,6 +221,7 @@ class DataImportExportHelper(private val context: Context) {
         private const val KEY_TITLE = "事件标题"
         private const val KEY_DETAIL = "事件详情"
         private const val KEY_TIME = "事件时间"
-        private val DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+        // 数据交换格式固定用 Locale.US，避免随系统语言变化导致导出/导入不一致
+        private val DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US)
     }
 }

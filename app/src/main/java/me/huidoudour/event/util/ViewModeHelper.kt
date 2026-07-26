@@ -1,7 +1,7 @@
 package me.huidoudour.event.util
 
 import android.content.Context
-import me.huidoudour.event.R
+import androidx.core.content.edit
 
 /**
  * 视图模式管理器
@@ -13,7 +13,8 @@ object ViewModeHelper {
 
     // 视图模式常量
     const val VIEW_MODE_CARD = 0  // 条目视图（默认）
-    const val VIEW_MODE_LIST = 1  // 列表视图
+    @Suppress("unused")
+    const val VIEW_MODE_LIST = 1  // 列表视图，保留作存储值语义说明
 
     /**
      * 获取当前视图模式
@@ -28,17 +29,6 @@ object ViewModeHelper {
      */
     fun setViewMode(context: Context, mode: Int) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putInt(KEY_VIEW_MODE, mode).apply()
-    }
-
-    /**
-     * 获取视图模式的显示名称
-     */
-    fun getViewModeDisplayName(context: Context, mode: Int): String {
-        return when (mode) {
-            VIEW_MODE_CARD -> context.getString(R.string.card_view)
-            VIEW_MODE_LIST -> context.getString(R.string.list_view)
-            else -> context.getString(R.string.card_view)
-        }
+        prefs.edit { putInt(KEY_VIEW_MODE, mode) }
     }
 }

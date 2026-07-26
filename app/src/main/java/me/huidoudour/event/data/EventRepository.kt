@@ -1,6 +1,7 @@
 package me.huidoudour.event.data
 
 import android.content.Context
+import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 
@@ -51,9 +52,10 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
 
     fun getSortedEvents(): LiveData<List<Event>> = sortedEvents
 
+    @Suppress("unused")
     fun toggleSortOrder() {
         isAscending = !isAscending
-        preferences.edit().putBoolean(KEY_SORT_ASCENDING, isAscending).apply()
+        preferences.edit { putBoolean(KEY_SORT_ASCENDING, isAscending) }
         setSortOrder(isAscending)
     }
 

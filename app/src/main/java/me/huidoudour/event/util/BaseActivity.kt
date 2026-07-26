@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import me.huidoudour.event.MainActivity
 
 /**
  * 基类 Activity，统一处理语言、主题模式和主题色的初始化与实时同步。
@@ -63,15 +62,4 @@ abstract class BaseActivity : AppCompatActivity() {
         overridePendingTransition(0, 0)
     }
 
-    /**
-     * 重启整个应用到主页（用于设置页变更后全局生效）
-     */
-    protected fun restartApp() {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
-        finishAffinity()
-        @Suppress("DEPRECATION")
-        overridePendingTransition(0, 0)
-    }
 }

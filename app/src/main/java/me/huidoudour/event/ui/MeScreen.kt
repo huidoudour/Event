@@ -1,7 +1,6 @@
 package me.huidoudour.event.ui
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,7 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import me.huidoudour.event.R
 
 /**
@@ -30,7 +31,7 @@ import me.huidoudour.event.R
  *   - Button 定位到底部（marginBottom=80dp）
  */
 @Composable
-fun MeScreenContent(onBack: () -> Unit) {
+fun MeScreenContent() {
     val context = LocalContext.current
 
     Box(
@@ -45,20 +46,20 @@ fun MeScreenContent(onBack: () -> Unit) {
         ) {
             // textView1 - hello_world（XML无textAppearance，默认大小）
             Text(
-                text = context.getString(R.string.hello_world),
+                text = stringResource(R.string.hello_world),
                 style = MaterialTheme.typography.bodyLarge
             )
             // textView3 - about_description
             Spacer(Modifier.height(16.dp))
             Text(
-                text = context.getString(R.string.about_description),
+                text = stringResource(R.string.about_description),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             // textView2 - about_developer
             Spacer(Modifier.height(16.dp))
             Text(
-                text = context.getString(R.string.about_developer),
+                text = stringResource(R.string.about_developer),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.outline
             )
@@ -68,7 +69,7 @@ fun MeScreenContent(onBack: () -> Unit) {
         Button(
             onClick = {
                 val url = "https://github.com/huidoudour"
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                val intent = Intent(Intent.ACTION_VIEW, url.toUri())
                 context.startActivity(intent)
             },
             modifier = Modifier
@@ -80,7 +81,7 @@ fun MeScreenContent(onBack: () -> Unit) {
                 contentColor = Color(0xFF000000)     // black
             )
         ) {
-            Text(context.getString(R.string.visit_github))
+            Text(stringResource(R.string.visit_github))
         }
     }
 }

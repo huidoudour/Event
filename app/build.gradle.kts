@@ -27,12 +27,12 @@ fun Project.gitHash(): String = try {
 
 // 统一计算版本信息，供 defaultConfig 与构建结束打印共用
 val appVersionCode = gitCommitCount()
-val appVersionName = "0.77-compose.${gitHash()}"
+val appVersionName = "0.77-compose.${gitHash()}" // 于此处修改版本名
 
 // 构建结束后打印版本号（assemble/bundle 任务完成时输出）
 tasks.matching { it.name.startsWith("assemble") || it.name.startsWith("bundle") }.configureEach {
     doLast {
-        println("[$name]:BuildSuccessful | versionName=$appVersionName | versionCode=$appVersionCode")
+        println(">>>[$name]:BuildSuccessful | versionName=$appVersionName | versionCode=$appVersionCode<<<")
     }
 }
 

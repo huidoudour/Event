@@ -142,7 +142,6 @@ class MainActivity : ComponentActivity() {
             events = events.value,
             isMultiSelectMode = multiSelect,
             selectedIds = selIds,
-            isAscending = viewModel.isAscending(),
             viewMode = viewMode,
             onToggleMultiSelect = {
                 multiSelect = !multiSelect

@@ -75,6 +75,7 @@
     <string name="sort_order_settings">Порядок сортировки</string>
     <string name="sort_ascending">По возрастанию</string>
     <string name="sort_descending">По убыванию</string>
+    <string name="sort_order_changed">Порядок сортировки изменён</string>
     <string name="refresh">Обновить</string>
     <string name="refreshed">Обновлено</string>
 

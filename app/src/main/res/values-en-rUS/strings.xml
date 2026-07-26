@@ -75,6 +75,7 @@
     <string name="sort_order_settings">Sort Order</string>
     <string name="sort_ascending">Ascending</string>
     <string name="sort_descending">Descending</string>
+    <string name="sort_order_changed">Sort order changed</string>
     <string name="refresh">Refresh</string>
     <string name="refreshed">Refreshed</string>
 

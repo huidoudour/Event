@@ -3,6 +3,7 @@ package me.huidoudour.event.util
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.core.content.edit
 
 object IconColorHelper {
     private const val PREFS_NAME = "icon_color_prefs"
@@ -12,7 +13,6 @@ object IconColorHelper {
     const val COLOR_DEFAULT = 0     // 默认(绿色)
     const val COLOR_COLORFUL = 1    // 彩色
 
-    private const val MAIN_ACTIVITY_CLASS = "me.huidoudour.event.MainActivity"
     private const val DEFAULT_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasDefault"
     private const val COLORFUL_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasColorful"
 
@@ -29,7 +29,7 @@ object IconColorHelper {
      */
     fun setIconColor(context: Context, color: Int) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putInt(KEY_ICON_COLOR, color).apply()
+        prefs.edit { putInt(KEY_ICON_COLOR, color) }
     }
 
     /**

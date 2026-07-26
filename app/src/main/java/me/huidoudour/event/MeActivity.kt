@@ -21,7 +21,7 @@ class MeActivity : ComponentActivity() {
                         (ThemeHelper.getTheme(this) == ThemeHelper.THEME_SYSTEM &&
                          isNightMode())
             ) {
-                MeScreenContent(onBack = { finish() })
+                MeScreenContent()
             }
         }
     }

@@ -11,8 +11,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModelProvider
 import me.huidoudour.event.MeActivity
 import me.huidoudour.event.R
@@ -30,7 +32,7 @@ class SettingsActivity : ComponentActivity() {
 
     // 使用 mutableStateOf 驱动 Compose 重组，避免不必要的 recreate() 导致 UI 抖动
     private var isDarkTheme by mutableStateOf(false)
-    private var themeColor by mutableStateOf(ThemeHelper.COLOR_DEFAULT)
+    private var themeColor by mutableIntStateOf(ThemeHelper.COLOR_DEFAULT)
     private var isAscending by mutableStateOf(false)
 
     private val exportFileLauncher = registerForActivityResult(
@@ -99,7 +101,7 @@ class SettingsActivity : ComponentActivity() {
                     isAscending = isAscending,
                     onSortOrderChanged = { ascending ->
                         isAscending = ascending
-                        getSortPrefs().edit().putBoolean("sort_ascending", ascending).apply()
+                        getSortPrefs().edit { putBoolean("sort_ascending", ascending) }
                     },
                     onThemeChanged = { theme ->
                         ThemeHelper.setTheme(this@SettingsActivity, theme)
@@ -126,7 +128,7 @@ class SettingsActivity : ComponentActivity() {
     }
 
     private fun getSortPrefs(): SharedPreferences {
-        return getSharedPreferences("sort_prefs", Context.MODE_PRIVATE)
+        return getSharedPreferences("sort_prefs", MODE_PRIVATE)
     }
 
     private fun showImportConfirmDialog(uri: Uri) {

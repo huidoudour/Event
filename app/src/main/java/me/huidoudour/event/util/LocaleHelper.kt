@@ -2,7 +2,7 @@ package me.huidoudour.event.util
 
 import android.content.Context
 import android.content.res.Configuration
-import android.os.Build
+import androidx.core.content.edit
 import java.util.Locale
 
 /**
@@ -27,7 +27,7 @@ object LocaleHelper {
     fun setLanguage(context: Context, language: String) {
         val normalized = normalizeLanguage(language)
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        prefs.edit().putString(KEY_LANGUAGE, normalized).apply()
+        prefs.edit { putString(KEY_LANGUAGE, normalized) }
         // 立即应用语言设置
         applyLanguage(context, normalized)
     }
@@ -40,7 +40,7 @@ object LocaleHelper {
         val language = prefs.getString(KEY_LANGUAGE, LANG_SYSTEM) ?: LANG_SYSTEM
         val normalized = normalizeLanguage(language)
         if (language != normalized) {
-            prefs.edit().putString(KEY_LANGUAGE, normalized).apply()
+            prefs.edit { putString(KEY_LANGUAGE, normalized) }
         }
         return normalized
     }
@@ -64,13 +64,7 @@ object LocaleHelper {
         val config = Configuration(context.resources.configuration)
         config.setLocale(locale)
 
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            context.createConfigurationContext(config)
-        } else {
-            @Suppress("DEPRECATION")
-            context.resources.updateConfiguration(config, context.resources.displayMetrics)
-            context
-        }
+        return context.createConfigurationContext(config)
     }
 
     /**
