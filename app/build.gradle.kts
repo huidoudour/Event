@@ -1,33 +1,32 @@
-@file:Suppress("DEPRECATION")
-
 import java.text.SimpleDateFormat
 import java.util.Date
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
 }
 
 // ── Git 版本控制 ──
-val versionRecoup = 10 // 版本补偿值 = 10
+val baseVersionCode = 10
+val baseVersionName = "0.8-compose"
+val backVersionCode = 80
+
 fun Project.gitCommitCount(): Int = try {
     providers.exec { commandLine("git", "rev-list", "--count", "HEAD") }
-        .standardOutput.asText.get().trim().toInt() + versionRecoup
-} catch (_: Exception) { 72 }
+        .standardOutput.asText.get().trim().toInt()
+} catch (_: Exception) { backVersionCode }
 
 fun Project.gitHash(): String = try {
     providers.exec { commandLine("git", "rev-parse", "--short=7", "HEAD") }
         .standardOutput.asText.get().trim()
 } catch (_: Exception) {
-    // 获取失败时回退为构建时的日期+时间，如 07252332（月日时分）
     SimpleDateFormat("MMddHHmm").format(Date())
 }
 
 // 统一计算版本信息，供 defaultConfig 与构建结束打印共用
-val appVersionCode = gitCommitCount()
-val appVersionName = "0.8-compose.${gitHash()}" // 于此处修改版本名
+val appVersionCode = baseVersionCode + gitCommitCount()
+val appVersionName = "${baseVersionName}.${gitCommitCount()}.${gitHash()}" // 于此处修改版本名
 
 // 构建结束后打印版本号（assemble/bundle 任务完成时输出）
 tasks.matching { it.name.startsWith("assemble") || it.name.startsWith("bundle") }.configureEach {
