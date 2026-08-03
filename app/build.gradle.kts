@@ -26,7 +26,7 @@ fun Project.gitHash(): String = try {
 
 // 统一计算版本信息，供 defaultConfig 与构建结束打印共用
 val appVersionCode = baseVersionCode + gitCommitCount()
-val appVersionName = "${baseVersionName}.${gitCommitCount()}.${gitHash()}" // 于此处修改版本名
+val appVersionName = "${baseVersionName}.${gitCommitCount()}.${gitHash()}"
 
 // 构建结束后打印版本号（assemble/bundle 任务完成时输出）
 tasks.matching { it.name.startsWith("assemble") || it.name.startsWith("bundle") }.configureEach {
@@ -64,10 +64,6 @@ android {
         rootProject.hasProperty("storePassword") &&
         rootProject.hasProperty("keyAlias") &&
         rootProject.hasProperty("keyPassword")
-    val devSignKey = rootProject.hasProperty("dbgFilePath") &&
-        rootProject.hasProperty("dbgPassword") &&
-        rootProject.hasProperty("dbgKeyAlias") &&
-        rootProject.hasProperty("dbgKeyPaswd")
 
     signingConfigs {
         if (useSignKey) {
@@ -82,26 +78,14 @@ android {
                 enableV4Signing = false
             }
         }
-        if (devSignKey) {
-            create("debug_key") {
-                storeFile = file(rootProject.property("dbgFilePath") as String)
-                storePassword = rootProject.property("dbgPassword") as String
-                keyAlias = rootProject.property("dbgKeyAlias") as String
-                keyPassword = rootProject.property("dbgKeyPaswd") as String
-                enableV1Signing = true
-                enableV2Signing = true
-                enableV3Signing = true
-                enableV4Signing = false
-            }
-        }
     }
 
     buildTypes {
         debug {
             isMinifyEnabled = false
             isDebuggable = true
-            signingConfig = if (devSignKey) {
-                signingConfigs.getByName("debug_key")
+            signingConfig = if (useSignKey) {
+                signingConfigs.getByName("sign_key")
             } else {
                 signingConfigs.getByName("debug")
             }

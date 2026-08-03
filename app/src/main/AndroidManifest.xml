@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Android 11+ 包可见性 -->
+    <queries>
+        <package android:name="me.huidoudour.file.manager" />
+    </queries>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -60,6 +65,9 @@
         <meta-data
             android:name="me.huidoudour.core.version"
             android:value="37" />
+        <meta-data
+            android:name="me.huidoudour.file.manager"
+            android:value="true" />
 
     </application>
 

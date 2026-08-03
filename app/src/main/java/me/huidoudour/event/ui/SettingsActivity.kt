@@ -3,8 +3,10 @@ package me.huidoudour.event.ui
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -53,11 +55,14 @@ class SettingsActivity : ComponentActivity() {
         }
     }
 
-    private val importFileLauncher = registerForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri ->
-        if (uri != null) {
-            showImportConfirmDialog(uri)
+    @Suppress("DEPRECATION")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_IMPORT_FILE && resultCode == RESULT_OK) {
+            data?.data?.let { uri ->
+                Log.d(TAG, "onActivityResult: received uri=$uri")
+                showImportConfirmDialog(uri)
+            }
         }
     }
 
@@ -96,7 +101,26 @@ class SettingsActivity : ComponentActivity() {
                         exportFileLauncher.launch("events_backup_${System.currentTimeMillis()}.json")
                     },
                     onImport = {
-                        importFileLauncher.launch("application/json")
+                        val installed = isFileManagerInstalled()
+                        Log.d(TAG, "onImport: isFileManagerInstalled=$installed")
+                        val intent = if (installed) {
+                            Intent(Intent.ACTION_GET_CONTENT).apply {
+                                type = "application/json"
+                                setClassName(FILE_MANAGER_PACKAGE, "$FILE_MANAGER_PACKAGE.MainActivity")
+                            }
+                        } else {
+                            Intent(Intent.ACTION_GET_CONTENT).apply {
+                                type = "application/json"
+                                addCategory(Intent.CATEGORY_OPENABLE)
+                            }
+                        }
+                        Log.d(TAG, "onImport: launching intent=$intent")
+                        try {
+                            startActivityForResult(intent, REQUEST_IMPORT_FILE)
+                        } catch (e: Exception) {
+                            Log.e(TAG, "onImport: launch failed", e)
+                            Toast.makeText(this@SettingsActivity, "无法启动文件选择器: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
                     },
                     isAscending = isAscending,
                     onSortOrderChanged = { ascending ->
@@ -131,6 +155,15 @@ class SettingsActivity : ComponentActivity() {
         return getSharedPreferences("sort_prefs", MODE_PRIVATE)
     }
 
+    private fun isFileManagerInstalled(): Boolean {
+        return try {
+            packageManager.getPackageInfo(FILE_MANAGER_PACKAGE, 0)
+            true
+        } catch (_: PackageManager.NameNotFoundException) {
+            false
+        }
+    }
+
     private fun showImportConfirmDialog(uri: Uri) {
         // 主题实时切换后 Activity 不重建，需要包装 Context 保证对话框深浅配色正确
         androidx.appcompat.app.AlertDialog.Builder(ThemeHelper.createNightAwareContext(this))
@@ -151,5 +184,12 @@ class SettingsActivity : ComponentActivity() {
             }
             .setNegativeButton(R.string.cancel, null)
             .show()
+    }
+
+    companion object {
+        private const val TAG = "SettingsActivity"
+        private const val REQUEST_IMPORT_FILE = 1001
+        /** FileManager 文件管理器包名 */
+        private const val FILE_MANAGER_PACKAGE = "me.huidoudour.file.manager"
     }
 }

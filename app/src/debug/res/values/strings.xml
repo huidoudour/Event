@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Event-β</string>
+    <string name="dis_name" translatable="false">事件卡片-β</string>
+
+</resources>
