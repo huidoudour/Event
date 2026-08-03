@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModelProvider
 import me.huidoudour.event.MeActivity
@@ -24,6 +25,7 @@ import me.huidoudour.event.data.DataImportExportHelper
 import me.huidoudour.event.ui.theme.EventTheme
 import me.huidoudour.event.util.LocaleHelper
 import me.huidoudour.event.util.ThemeHelper
+import java.io.File
 import java.util.concurrent.Executors
 
 class SettingsActivity : ComponentActivity() {
@@ -55,14 +57,24 @@ class SettingsActivity : ComponentActivity() {
         }
     }
 
-    @Suppress("DEPRECATION")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMPORT_FILE && resultCode == RESULT_OK) {
-            data?.data?.let { uri ->
-                Log.d(TAG, "onActivityResult: received uri=$uri")
+    /** 导入：FileManager ACTION_GET_CONTENT 或系统 SAF */
+    private val importFileLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.data?.let { uri ->
+                Log.d(TAG, "importFileLauncher: uri=$uri")
                 showImportConfirmDialog(uri)
             }
+        }
+    }
+
+    /** 导出到 FileManager：ACTION_SEND 结果处理 */
+    private val exportToFileManagerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            Toast.makeText(this, R.string.export_success, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -98,7 +110,28 @@ class SettingsActivity : ComponentActivity() {
                         startActivity(Intent(this, MeActivity::class.java))
                     },
                     onExport = {
-                        exportFileLauncher.launch("events_backup_${System.currentTimeMillis()}.json")
+                        val installed = isFileManagerInstalled()
+                        Log.d(TAG, "onExport: isFileManagerInstalled=$installed")
+                        if (installed) {
+                            // 优先使用 FileManager 保存
+                            executor.execute {
+                                val repo = viewModel.getRepository()
+                                val file = writeExportJsonToCache(repo)
+                                runOnUiThread {
+                                    if (file != null) {
+                                        launchExportToFileManager(file)
+                                    } else {
+                                        Toast.makeText(
+                                            this@SettingsActivity,
+                                            R.string.no_data_to_export,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            }
+                        } else {
+                            exportFileLauncher.launch("events_backup_${System.currentTimeMillis()}.json")
+                        }
                     },
                     onImport = {
                         val installed = isFileManagerInstalled()
@@ -116,7 +149,7 @@ class SettingsActivity : ComponentActivity() {
                         }
                         Log.d(TAG, "onImport: launching intent=$intent")
                         try {
-                            startActivityForResult(intent, REQUEST_IMPORT_FILE)
+                            importFileLauncher.launch(intent)
                         } catch (e: Exception) {
                             Log.e(TAG, "onImport: launch failed", e)
                             Toast.makeText(this@SettingsActivity, "无法启动文件选择器: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -155,6 +188,73 @@ class SettingsActivity : ComponentActivity() {
         return getSharedPreferences("sort_prefs", MODE_PRIVATE)
     }
 
+    // =========================================================================
+    //  导出：FileManager 优先
+    // =========================================================================
+
+    /** 将导出 JSON 写入 cache/shared/ 目录，返回临时文件 */
+    private fun writeExportJsonToCache(repository: me.huidoudour.event.data.EventRepository): File? {
+        return try {
+            val events = repository.getAllEventsSync()
+            if (events.isEmpty()) return null
+            val json = buildExportJson(events) ?: return null
+            val dir = File(cacheDir, "shared")
+            if (!dir.exists()) dir.mkdirs()
+            val file = File(dir, "events_backup_${System.currentTimeMillis()}.json")
+            file.writeText(json, Charsets.UTF_8)
+            Log.d(TAG, "writeExportJsonToCache: ${file.absolutePath} (${file.length()} bytes)")
+            file
+        } catch (e: Exception) {
+            Log.e(TAG, "writeExportJsonToCache: failed", e)
+            null
+        }
+    }
+
+    /** 构建导出 JSON 字符串（与 DataImportExportHelper 格式一致） */
+    private fun buildExportJson(events: List<me.huidoudour.event.data.Event>): String? {
+        if (events.isEmpty()) return null
+        val sb = StringBuilder("[\n")
+        events.forEachIndexed { index, event ->
+            if (index > 0) sb.append(",\n")
+            sb.append("  {\n")
+            sb.append("    \"事件标题\": \"${event.title.replace("\\", "\\\\").replace("\"", "\\\"")}\",\n")
+            sb.append("    \"事件详情\": \"${(event.description ?: "").replace("\\", "\\\\").replace("\"", "\\\"")}\",\n")
+            sb.append("    \"事件时间\": \"${java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.US).format(java.util.Date(event.eventTime))}\",\n")
+            sb.append("    \"createdAt\": ${event.createdAt},\n")
+            sb.append("    \"updatedAt\": ${event.updatedAt}\n")
+            sb.append("  }")
+        }
+        sb.append("\n]")
+        return sb.toString()
+    }
+
+    /** 通过 ACTION_SEND 将临时文件分享给 FileManager */
+    private fun launchExportToFileManager(file: File) {
+        try {
+            val uri = FileProvider.getUriForFile(
+                this,
+                "${packageName}.fileprovider",
+                file
+            )
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "application/json"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                setClassName(FILE_MANAGER_PACKAGE, "$FILE_MANAGER_PACKAGE.MainActivity")
+            }
+            Log.d(TAG, "launchExportToFileManager: ACTION_SEND uri=$uri")
+            exportToFileManagerLauncher.launch(intent)
+        } catch (e: Exception) {
+            Log.e(TAG, "launchExportToFileManager: failed", e)
+            file.delete()
+            Toast.makeText(this, "无法启动文件管理器: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // =========================================================================
+    //  导入：FileManager 优先
+    // =========================================================================
+
     private fun isFileManagerInstalled(): Boolean {
         return try {
             packageManager.getPackageInfo(FILE_MANAGER_PACKAGE, 0)
@@ -188,7 +288,6 @@ class SettingsActivity : ComponentActivity() {
 
     companion object {
         private const val TAG = "SettingsActivity"
-        private const val REQUEST_IMPORT_FILE = 1001
         /** FileManager 文件管理器包名 */
         private const val FILE_MANAGER_PACKAGE = "me.huidoudour.file.manager"
     }
