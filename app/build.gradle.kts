@@ -31,7 +31,7 @@ val appVersionName = "${baseVersionName}.${gitCommitCount()}.${gitHash()}"
 // 构建结束后打印版本号（assemble/bundle 任务完成时输出）
 tasks.matching { it.name.startsWith("assemble") || it.name.startsWith("bundle") }.configureEach {
     doLast {
-        println(">>>[$name]:BuildSuccessful | versionName=$appVersionName | versionCode=$appVersionCode<<<")
+        println(">>> Event-[$name]: $appVersionName($appVersionCode) <<<")
     }
 }
 
@@ -93,10 +93,6 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
             signingConfig = if (useSignKey) {
                 signingConfigs.getByName("sign_key")
             } else {

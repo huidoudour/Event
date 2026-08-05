@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Event</string>
+    <string name="dis_name">事件卡片</string>
     <string name="add_event">添加事件</string>
     <string name="no_events">暫無事件</string>
     <string name="event_title">事件標題</string>

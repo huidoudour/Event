@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Event</string>
+    <string name="dis_name">Event</string>
     <string name="add_event">Добавить событие</string>
     <string name="no_events">Нет событий</string>
     <string name="event_title">Название события</string>
