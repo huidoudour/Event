@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Event</string>
     <string name="add_event">添加事件</string>
     <string name="no_events">暂无事件</string>
     <string name="event_title">事件标题</string>
@@ -61,6 +60,8 @@
     <string name="export_failed">导出失败</string>
     <string name="import_failed">导入失败</string>
     <string name="no_data_to_export">没有可导出的数据</string>
+    <string name="confirm_export">确认导出</string>
+    <string name="export_warning">确认导出数据？</string>
     <string name="confirm_import">确认导入</string>
     <string name="import_warning">导入数据将覆盖当前数据，是否继续？</string>
     <string name="about">关于</string>
@@ -71,6 +72,7 @@
     <string name="sort_order_settings">数据排序</string>
     <string name="sort_ascending">正序排列</string>
     <string name="sort_descending">倒序排列</string>
+    <string name="sort_order_changed">排序已更改</string>
     <string name="refresh">刷新</string>
     <string name="refreshed">已刷新</string>
 
@@ -108,7 +110,7 @@
     <string name="theme_color_settings">主题色</string>
     <string name="select_theme_color">选择主题色</string>
     <string name="theme_color_changed">主题色已更改</string>
-    <string name="default_color">默认</string>
+    <string name="default_color">跟随系统色</string>
     <string name="pink_color">粉色</string>
     <string name="blue_color">蓝色</string>
     <string name="green_color">绿色</string>

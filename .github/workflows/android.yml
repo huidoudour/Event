@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master" , "compose-ui" ]
     paths:
       - 'app/src/**'
       - 'app/build.gradle.kts'
@@ -10,6 +10,7 @@ on:
       - 'gradle/**'
       - 'build.gradle.kts'
       - 'settings.gradle.kts'
+      - '.github/workflows/android.yml'
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -20,6 +21,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
     - name: Get short commit hash
       id: short_hash
       run: echo "hash=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
@@ -64,6 +67,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
     - name: Get short commit hash
       id: short_hash
       run: echo "hash=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
