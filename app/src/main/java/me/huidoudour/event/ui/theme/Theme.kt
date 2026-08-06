@@ -8,6 +8,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
@@ -90,6 +92,14 @@ fun eventColorScheme(
                 cs.copy(
                     primary = lerp(Color.White, cs.primary, 0.55f),
                     primaryContainer = lerp(Color.White, cs.primaryContainer, 0.45f),
+                    // 表面色 — 淡蓝底（对话框、卡片等共用），覆盖所有 surface 层级
+                    background = BlogBgBlue,
+                    surface = BlogBgPaleBlue,
+                    surfaceContainerLowest = BlogBgBlue,
+                    surfaceContainerLow = BlogBgPaleBlue,
+                    surfaceContainer = BlogBgPaleBlue,
+                    surfaceContainerHigh = BlogBgPaleBlue,
+                    surfaceContainerHighest = BlogCardBlue,
                     // 前景色 — 亮色下统一纯黑
                     onBackground = Color.Black,
                     onSurface = Color.Black,
@@ -177,6 +187,15 @@ fun softIconButtonBg(): Color =
     if (isDarkColorScheme()) MaterialTheme.colorScheme.surfaceContainerHighest
     else BlogBtnBlue.copy(alpha = 0.55f)
 
+/** TopAppBar 配色：亮色淡蓝半透（透出渐变），深色跟随 surface */
+@Composable
+fun topAppBarColors(): TopAppBarColors =
+    TopAppBarDefaults.topAppBarColors(
+        containerColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.surface else BlogCardBlue.copy(alpha = 0.85f),
+        titleContentColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.onSurface else Color.Black,
+        actionIconContentColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.onSurface else Color.Black
+    )
+
 /** 取消/次要按钮（OutlinedButton）底色：始终透明，仅保留边框 */
 @Composable
 fun softOutlinedButtonColors(): ButtonColors =
@@ -197,3 +216,30 @@ fun confirmButtonColors(): ButtonColors =
         containerColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.primaryContainer else BlogBtnPink.copy(alpha = 0.45f),
         contentColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.onPrimaryContainer else Color.Black
     )
+
+/** FAB 按钮配色：亮色淡粉底+黑字，深色 primaryContainer */
+@Composable
+fun fabContainerColor(): Color =
+    if (isDarkColorScheme()) MaterialTheme.colorScheme.primaryContainer else BlogBtnPink.copy(alpha = 0.55f)
+
+@Composable
+fun fabContentColor(): Color =
+    if (isDarkColorScheme()) MaterialTheme.colorScheme.onPrimaryContainer else Color.Black
+
+/** 多选-全选 FAB：亮色淡蓝底，深色 secondaryContainer */
+@Composable
+fun selectAllFabContainerColor(): Color =
+    if (isDarkColorScheme()) MaterialTheme.colorScheme.secondaryContainer else BlogBtnBlue.copy(alpha = 0.55f)
+
+@Composable
+fun selectAllFabContentColor(): Color =
+    if (isDarkColorScheme()) MaterialTheme.colorScheme.onSecondaryContainer else Color.Black
+
+/** 多选-删除 FAB：亮色淡红底，深色 errorContainer */
+@Composable
+fun deleteFabContainerColor(): Color =
+    if (isDarkColorScheme()) MaterialTheme.colorScheme.errorContainer else Color(0xFFFFCDD2).copy(alpha = 0.55f)
+
+@Composable
+fun deleteFabContentColor(): Color =
+    if (isDarkColorScheme()) MaterialTheme.colorScheme.onErrorContainer else Color.Black

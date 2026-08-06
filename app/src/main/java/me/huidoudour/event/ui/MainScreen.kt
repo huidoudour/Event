@@ -70,8 +70,15 @@ import me.huidoudour.event.ui.theme.BlogCardBlue
 import me.huidoudour.event.ui.theme.blogBackground
 import me.huidoudour.event.ui.theme.cardBorderColor
 import me.huidoudour.event.ui.theme.cardSubTextColor
+import me.huidoudour.event.ui.theme.deleteFabContainerColor
+import me.huidoudour.event.ui.theme.deleteFabContentColor
+import me.huidoudour.event.ui.theme.fabContainerColor
+import me.huidoudour.event.ui.theme.fabContentColor
 import me.huidoudour.event.ui.theme.isDarkColorScheme
+import me.huidoudour.event.ui.theme.selectAllFabContainerColor
+import me.huidoudour.event.ui.theme.selectAllFabContentColor
 import me.huidoudour.event.ui.theme.softIconButtonBg
+import me.huidoudour.event.ui.theme.topAppBarColors
 import me.huidoudour.event.util.ViewModeHelper
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -110,13 +117,7 @@ fun MainScreenContent(
             // actions 从左到右排列，顺序：多选 → 清空 → 刷新 → 设置
             TopAppBar(
                 title = { Text("Event") },
-                // 亮色下用半透明白，让渐变背景透出；深色回退默认 surface
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.surface
-                    else Color.White.copy(alpha = 0.72f),
-                    actionIconContentColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.onSurface
-                    else Color.Black
-                ),
+                colors = topAppBarColors(),
                 actions = {
                     // 多选按钮（最左）— 对齐XML：btnMultiSelect（最后一个ImageButton，最左）
                     // 底色圆 40dp，触摸区域保持 48dp
@@ -208,9 +209,11 @@ fun MainScreenContent(
                         onAddEvent()
                     }
                 },
-                containerColor = MaterialTheme.colorScheme.primaryContainer
+                containerColor = fabContainerColor(),
+                contentColor = fabContentColor(),
+                elevation = FloatingActionButtonDefaults.elevation(0.dp)
             ) {
-                Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(R.string.add_event), tint = MaterialTheme.colorScheme.onPrimaryContainer)
+                Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(R.string.add_event), tint = fabContentColor())
             }
         }
     ) { padding ->
@@ -311,8 +314,8 @@ fun MainScreenContent(
                             onSelectAll()
                         },
                         modifier = Modifier.size(56.dp),
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        containerColor = selectAllFabContainerColor(),
+                        contentColor = selectAllFabContentColor(),
                         elevation = FloatingActionButtonDefaults.elevation(0.dp)
                     ) {
                         Icon(
@@ -320,14 +323,14 @@ fun MainScreenContent(
                             contentDescription = stringResource(R.string.select_all)
                         )
                     }
-                    // 删除所选按钮 - 56dp 圆形，错误颜色
+                    // 删除所选按钮 - 56dp 圆形
                     FloatingActionButton(
                         onClick = {
                             onDeleteSelected()
                         },
                         modifier = Modifier.size(56.dp),
-                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                        contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                        containerColor = deleteFabContainerColor(),
+                        contentColor = deleteFabContentColor(),
                         elevation = FloatingActionButtonDefaults.elevation(0.dp)
                     ) {
                         Icon(painterResource(R.drawable.ic_delete), contentDescription = stringResource(R.string.delete_selected))

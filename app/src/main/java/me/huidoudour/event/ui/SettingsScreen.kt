@@ -64,6 +64,7 @@ import me.huidoudour.event.ui.theme.cardBorderColor
 import me.huidoudour.event.ui.theme.confirmButtonColors
 import me.huidoudour.event.ui.theme.isDarkColorScheme
 import me.huidoudour.event.ui.theme.softOutlinedButtonColors
+import me.huidoudour.event.ui.theme.topAppBarColors
 import me.huidoudour.event.util.IconColorHelper
 import me.huidoudour.event.util.LocaleHelper
 import me.huidoudour.event.util.ThemeHelper
@@ -115,13 +116,7 @@ fun SettingsScreenContent(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.settings)) },
-                // 亮色下用半透明白，让渐变背景透出；深色回退默认 surface
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.surface
-                    else Color.White.copy(alpha = 0.72f),
-                    actionIconContentColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.onSurface
-                    else Color.Black
-                ),
+                colors = topAppBarColors(),
                 navigationIcon = {
                     // 返回按钮：无底色
                     IconButton(onClick = onBack) {
