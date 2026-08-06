@@ -1,6 +1,5 @@
 package me.huidoudour.event.ui
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -8,11 +7,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -23,12 +22,12 @@ import me.huidoudour.event.MeActivity
 import me.huidoudour.event.R
 import me.huidoudour.event.data.DataImportExportHelper
 import me.huidoudour.event.ui.theme.EventTheme
-import me.huidoudour.event.util.LocaleHelper
+import me.huidoudour.event.util.BaseActivity
 import me.huidoudour.event.util.ThemeHelper
 import java.io.File
 import java.util.concurrent.Executors
 
-class SettingsActivity : ComponentActivity() {
+class SettingsActivity : BaseActivity() {
 
     private lateinit var viewModel: EventViewModel
     private lateinit var dataHelper: DataImportExportHelper
@@ -36,7 +35,6 @@ class SettingsActivity : ComponentActivity() {
 
     // 使用 mutableStateOf 驱动 Compose 重组，避免不必要的 recreate() 导致 UI 抖动
     private var isDarkTheme by mutableStateOf(false)
-    private var themeColor by mutableIntStateOf(ThemeHelper.COLOR_DEFAULT)
     private var isAscending by mutableStateOf(false)
 
     private val exportFileLauncher = registerForActivityResult(
@@ -78,12 +76,8 @@ class SettingsActivity : ComponentActivity() {
         }
     }
 
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(ThemeHelper.applyNightMode(LocaleHelper.applyLanguage(newBase)))
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        ThemeHelper.initTheme(this)
+        // enableEdgeToEdge 必须在 super.onCreate() 之前调用
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
@@ -96,84 +90,85 @@ class SettingsActivity : ComponentActivity() {
         // 初始化状态
         isDarkTheme = ThemeHelper.getTheme(this) == ThemeHelper.THEME_DARK ||
                 (ThemeHelper.getTheme(this) == ThemeHelper.THEME_SYSTEM && isNightMode())
-        themeColor = ThemeHelper.getThemeColor(this)
         isAscending = getSortPrefs().getBoolean("sort_ascending", false)
 
+        applyContent()
+    }
+
+    /**
+     * 设置 Compose 内容。
+     * 使用 key(isDarkTheme) 驱动主题切换时 Compose 树的完全重建。
+     */
+    private fun applyContent() {
         setContent {
-            EventTheme(
-                themeColor = themeColor,
-                darkTheme = isDarkTheme
-            ) {
-                SettingsScreenContent(
-                    onBack = { finish() },
-                    onAboutDeveloper = {
-                        startActivity(Intent(this, MeActivity::class.java))
-                    },
-                    onExport = {
-                        val installed = isFileManagerInstalled()
-                        Log.d(TAG, "onExport: isFileManagerInstalled=$installed")
-                        if (installed) {
-                            // 优先使用 FileManager 保存
-                            executor.execute {
-                                val repo = viewModel.getRepository()
-                                val file = writeExportJsonToCache(repo)
-                                runOnUiThread {
-                                    if (file != null) {
-                                        launchExportToFileManager(file)
-                                    } else {
-                                        Toast.makeText(
-                                            this@SettingsActivity,
-                                            R.string.no_data_to_export,
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+            key(isDarkTheme) {
+                EventTheme(darkTheme = isDarkTheme) {
+                    SettingsScreenContent(
+                        onBack = { finish() },
+                        onAboutDeveloper = {
+                            startActivity(Intent(this, MeActivity::class.java))
+                        },
+                        onExport = {
+                            val installed = isFileManagerInstalled()
+                            Log.d(TAG, "onExport: isFileManagerInstalled=$installed")
+                            if (installed) {
+                                // 优先使用 FileManager 保存
+                                executor.execute {
+                                    val repo = viewModel.getRepository()
+                                    val file = writeExportJsonToCache(repo)
+                                    runOnUiThread {
+                                        if (file != null) {
+                                            launchExportToFileManager(file)
+                                        } else {
+                                            Toast.makeText(
+                                                this@SettingsActivity,
+                                                R.string.no_data_to_export,
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                                     }
                                 }
+                            } else {
+                                exportFileLauncher.launch("events_backup_${System.currentTimeMillis()}.json")
                             }
-                        } else {
-                            exportFileLauncher.launch("events_backup_${System.currentTimeMillis()}.json")
-                        }
-                    },
-                    onImport = {
-                        val installed = isFileManagerInstalled()
-                        Log.d(TAG, "onImport: isFileManagerInstalled=$installed")
-                        val intent = if (installed) {
-                            Intent(Intent.ACTION_GET_CONTENT).apply {
-                                type = "application/json"
-                                setClassName(FILE_MANAGER_PACKAGE, "$FILE_MANAGER_PACKAGE.MainActivity")
+                        },
+                        onImport = {
+                            val installed = isFileManagerInstalled()
+                            Log.d(TAG, "onImport: isFileManagerInstalled=$installed")
+                            val intent = if (installed) {
+                                Intent(Intent.ACTION_GET_CONTENT).apply {
+                                    type = "application/json"
+                                    setClassName(FILE_MANAGER_PACKAGE, "$FILE_MANAGER_PACKAGE.MainActivity")
+                                }
+                            } else {
+                                Intent(Intent.ACTION_GET_CONTENT).apply {
+                                    type = "application/json"
+                                    addCategory(Intent.CATEGORY_OPENABLE)
+                                }
                             }
-                        } else {
-                            Intent(Intent.ACTION_GET_CONTENT).apply {
-                                type = "application/json"
-                                addCategory(Intent.CATEGORY_OPENABLE)
+                            Log.d(TAG, "onImport: launching intent=$intent")
+                            try {
+                                importFileLauncher.launch(intent)
+                            } catch (e: Exception) {
+                                Log.e(TAG, "onImport: launch failed", e)
+                                Toast.makeText(this@SettingsActivity, "无法启动文件选择器: ${e.message}", Toast.LENGTH_SHORT).show()
                             }
+                        },
+                        isAscending = isAscending,
+                        onSortOrderChanged = { ascending ->
+                            isAscending = ascending
+                            getSortPrefs().edit { putBoolean("sort_ascending", ascending) }
+                        },
+                        onThemeChanged = { theme ->
+                            ThemeHelper.saveTheme(this@SettingsActivity, theme)
+                            recreate()
+                        },
+                        onNeedsRecreate = {
+                            Toast.makeText(this, R.string.settings_applied, Toast.LENGTH_SHORT).show()
+                            recreate()
                         }
-                        Log.d(TAG, "onImport: launching intent=$intent")
-                        try {
-                            importFileLauncher.launch(intent)
-                        } catch (e: Exception) {
-                            Log.e(TAG, "onImport: launch failed", e)
-                            Toast.makeText(this@SettingsActivity, "无法启动文件选择器: ${e.message}", Toast.LENGTH_SHORT).show()
-                        }
-                    },
-                    isAscending = isAscending,
-                    onSortOrderChanged = { ascending ->
-                        isAscending = ascending
-                        getSortPrefs().edit { putBoolean("sort_ascending", ascending) }
-                    },
-                    onThemeChanged = { theme ->
-                        ThemeHelper.setTheme(this@SettingsActivity, theme)
-                        isDarkTheme = theme == ThemeHelper.THEME_DARK ||
-                                (theme == ThemeHelper.THEME_SYSTEM && isNightMode())
-                    },
-                    onThemeColorChanged = { color ->
-                        ThemeHelper.setThemeColor(this@SettingsActivity, color)
-                        themeColor = color
-                    },
-                    onNeedsRecreate = {
-                        Toast.makeText(this, R.string.settings_applied, Toast.LENGTH_SHORT).show()
-                        recreate()
-                    }
-                )
+                    )
+                }
             }
         }
     }

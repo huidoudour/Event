@@ -2,12 +2,10 @@ package me.huidoudour.event
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
@@ -36,8 +34,8 @@ import me.huidoudour.event.ui.EventViewModel
 import me.huidoudour.event.ui.MainScreenContent
 import me.huidoudour.event.ui.SettingsActivity
 import me.huidoudour.event.ui.theme.EventTheme
+import me.huidoudour.event.util.BaseActivity
 import me.huidoudour.event.util.IconColorHelper
-import me.huidoudour.event.util.LocaleHelper
 import me.huidoudour.event.util.ThemeHelper
 import me.huidoudour.event.util.ViewModeHelper
 import java.text.SimpleDateFormat
@@ -45,19 +43,12 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var viewModel: EventViewModel
-    private var lastThemeMode = 0
-    private var lastThemeColor = 0
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(ThemeHelper.applyNightMode(LocaleHelper.applyLanguage(newBase)))
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // 应用主题和语言
-        ThemeHelper.initTheme(this)
+        // enableEdgeToEdge 必须在 super.onCreate() 之前调用
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
@@ -65,10 +56,6 @@ class MainActivity : ComponentActivity() {
             this,
             EventViewModel.Factory(application)
         )[EventViewModel::class.java]
-
-        // 记录当前主题状态，用于 onResume 检测变化
-        lastThemeMode = ThemeHelper.getTheme(this)
-        lastThemeColor = ThemeHelper.getThemeColor(this)
 
         setContent {
             EventTheme(
@@ -95,13 +82,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        // 检测主题变化，若从设置页回来则重建界面以应用新主题
-        val currentMode = ThemeHelper.getTheme(this)
-        val currentColor = ThemeHelper.getThemeColor(this)
-        if (currentMode != lastThemeMode || currentColor != lastThemeColor) {
-            recreate()
-            return
-        }
+        if (isRestarting) return
         viewModel.getRepository().syncSortOrder()
     }
 

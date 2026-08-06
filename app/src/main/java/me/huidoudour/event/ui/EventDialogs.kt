@@ -42,6 +42,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
+import me.huidoudour.event.ui.theme.cancelButtonBorder
+import me.huidoudour.event.ui.theme.confirmButtonColors
+import me.huidoudour.event.ui.theme.softOutlinedButtonColors
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -92,14 +95,17 @@ fun AddEventDialog(
                 },
                 enabled = title.isNotBlank(),
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                colors = confirmButtonColors()
             ) { Text(stringResource(R.string.save)) }
         },
         dismissButton = {
             OutlinedButton(
                 onClick = onDismiss,
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                border = cancelButtonBorder(),
+                colors = softOutlinedButtonColors(),
             ) { Text(stringResource(R.string.cancel)) }
         }
     )
@@ -149,14 +155,17 @@ fun EditEventDialog(
                 },
                 enabled = title.isNotBlank(),
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                colors = confirmButtonColors()
             ) { Text(stringResource(R.string.save)) }
         },
         dismissButton = {
             OutlinedButton(
                 onClick = onDismiss,
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                border = cancelButtonBorder(),
+                colors = softOutlinedButtonColors(),
             ) { Text(stringResource(R.string.cancel)) }
         }
     )
@@ -219,14 +228,17 @@ fun DeleteConfirmDialog(
                 },
                 enabled = input == "d",
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                colors = confirmButtonColors()
             ) { Text(stringResource(R.string.delete)) }
         },
         dismissButton = {
             OutlinedButton(
                 onClick = onDismiss,
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                border = cancelButtonBorder(),
+                colors = softOutlinedButtonColors(),
             ) { Text(stringResource(R.string.cancel)) }
         }
     )
@@ -276,7 +288,9 @@ fun EventDetailDialog(
                 OutlinedButton(
                     onClick = onDismiss,
                     shape = RoundedCornerShape(12.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                    border = cancelButtonBorder(),
+                    colors = softOutlinedButtonColors(),
                 ) { Text(stringResource(R.string.close)) }
             }
         }
@@ -332,7 +346,9 @@ fun EventLongClickMenu(
             OutlinedButton(
                 onClick = onDismiss,
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                border = cancelButtonBorder(),
+                colors = softOutlinedButtonColors(),
             ) { Text(stringResource(R.string.cancel)) }
         }
     )
@@ -433,14 +449,17 @@ fun ClearAllConfirmDialog(
                 },
                 enabled = input == "clear",
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                colors = confirmButtonColors()
             ) { Text(stringResource(R.string.clear)) }
         },
         dismissButton = {
             OutlinedButton(
                 onClick = onDismiss,
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                border = cancelButtonBorder(),
+                colors = softOutlinedButtonColors(),
             ) { Text(stringResource(R.string.cancel)) }
         }
     )
@@ -460,14 +479,17 @@ fun BatchDeleteConfirmDialog(
             Button(
                 onClick = { onConfirm(); onDismiss() },
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                colors = confirmButtonColors()
             ) { Text(stringResource(R.string.delete)) }
         },
         dismissButton = {
             OutlinedButton(
                 onClick = onDismiss,
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                border = cancelButtonBorder(),
+                colors = softOutlinedButtonColors(),
             ) { Text(stringResource(R.string.cancel)) }
         }
     )

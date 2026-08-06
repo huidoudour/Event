@@ -23,6 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import me.huidoudour.event.R
+import me.huidoudour.event.ui.theme.blogBackground
+import me.huidoudour.event.ui.theme.isDarkColorScheme
 
 /**
  * 关于页面 Compose 组件：对齐原 XML 布局 activity_me.xml
@@ -35,10 +37,13 @@ import me.huidoudour.event.R
 fun MeScreenContent() {
     val context = LocalContext.current
 
-    // Surface 提供主题背景色和默认内容色，文本无需叠加样式即可适配深色模式
+    // 亮色下使用博客风格淡蓝→淡粉渐变背景，深色模式回退默认背景色
     Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        modifier = Modifier
+            .fillMaxSize()
+            .blogBackground(),
+        color = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onBackground
     ) {
         Box(
             modifier = Modifier
@@ -71,10 +76,16 @@ fun MeScreenContent() {
                     .width(135.dp)
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 80.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFFB6C1), // light_pink
-                    contentColor = Color(0xFF000000)     // black
-                )
+                colors = if (isDarkColorScheme())
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                else
+                    ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFFB6C1), // light_pink
+                        contentColor = Color(0xFF000000)     // black
+                    )
             ) {
                 Text(stringResource(R.string.visit_github))
             }

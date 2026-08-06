@@ -39,6 +39,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -54,7 +55,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import me.huidoudour.event.R
+import me.huidoudour.event.ui.theme.BlogCardBlue
+import me.huidoudour.event.ui.theme.blogBackground
+import me.huidoudour.event.ui.theme.cancelButtonBorder
+import me.huidoudour.event.ui.theme.cardBorderColor
+import me.huidoudour.event.ui.theme.confirmButtonColors
+import me.huidoudour.event.ui.theme.isDarkColorScheme
+import me.huidoudour.event.ui.theme.softOutlinedButtonColors
 import me.huidoudour.event.util.IconColorHelper
 import me.huidoudour.event.util.LocaleHelper
 import me.huidoudour.event.util.ThemeHelper
@@ -94,15 +103,27 @@ fun SettingsScreenContent(
     isAscending: Boolean = true,
     onSortOrderChanged: (Boolean) -> Unit = {},
     onThemeChanged: (Int) -> Unit = {},
-    onThemeColorChanged: (Int) -> Unit = {},
     onNeedsRecreate: () -> Unit = {}
 ) {
     val context = LocalContext.current
     Scaffold(
+        // 博客风格淡蓝→淡粉渐变背景（深色模式回退默认背景色）
+        modifier = Modifier
+            .fillMaxSize()
+            .blogBackground(),
+        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.settings)) },
+                // 亮色下用半透明白，让渐变背景透出；深色回退默认 surface
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.surface
+                    else Color.White.copy(alpha = 0.72f),
+                    actionIconContentColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.onSurface
+                    else Color.Black
+                ),
                 navigationIcon = {
+                    // 返回按钮：无底色
                     IconButton(onClick = onBack) {
                         Icon(painterResource(R.drawable.ic_back), contentDescription = stringResource(R.string.back))
                     }
@@ -138,7 +159,7 @@ fun SettingsScreenContent(
 
             SettingGroup(titleRes = R.string.data_management) {
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_export), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    icon = { Icon(painterResource(R.drawable.ic_export), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
                     titleRes = R.string.export_data,
                     onClick = { showExportConfirm = true },
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -146,7 +167,7 @@ fun SettingsScreenContent(
                 )
                 Spacer(Modifier.height(SegGap))
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_import), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    icon = { Icon(painterResource(R.drawable.ic_import), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
                     titleRes = R.string.import_data,
                     onClick = { showImportConfirm = true },
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -154,7 +175,7 @@ fun SettingsScreenContent(
                 )
                 Spacer(Modifier.height(SegGap))
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_list), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    icon = { Icon(painterResource(R.drawable.ic_list), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
                     titleRes = R.string.data_display_mode,
                     onClick = { showViewModeDialog = true },
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -162,7 +183,7 @@ fun SettingsScreenContent(
                 )
                 Spacer(Modifier.height(SegGap))
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_sort), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    icon = { Icon(painterResource(R.drawable.ic_sort), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
                     titleRes = R.string.sort_order_settings,
                     onClick = { showSortDialog = true },
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -179,13 +200,13 @@ fun SettingsScreenContent(
                     title = { Text(stringResource(R.string.confirm_export)) },
                     text = { Text(stringResource(R.string.export_warning)) },
                     confirmButton = {
-                        Button(onClick = { showExportConfirm = false; onExport() }, shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)) {
-                            Text(stringResource(R.string.ok))
+                        Button(onClick = { showExportConfirm = false; onExport() }, shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp), colors = confirmButtonColors()) {
+                            Text(stringResource(R.string.ok), fontSize = 16.sp)
                         }
                     },
                     dismissButton = {
-                        OutlinedButton(onClick = { showExportConfirm = false }, shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)) {
-                            Text(stringResource(R.string.cancel))
+                        OutlinedButton(onClick = { showExportConfirm = false }, shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp), border = cancelButtonBorder(), colors = softOutlinedButtonColors()) {
+                            Text(stringResource(R.string.cancel), fontSize = 16.sp)
                         }
                     }
                 )
@@ -196,13 +217,13 @@ fun SettingsScreenContent(
                     title = { Text(stringResource(R.string.confirm_import)) },
                     text = { Text(stringResource(R.string.import_warning)) },
                     confirmButton = {
-                        Button(onClick = { showImportConfirm = false; onImport() }, shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)) {
-                            Text(stringResource(R.string.ok))
+                        Button(onClick = { showImportConfirm = false; onImport() }, shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp), colors = confirmButtonColors()) {
+                            Text(stringResource(R.string.ok), fontSize = 16.sp)
                         }
                     },
                     dismissButton = {
-                        OutlinedButton(onClick = { showImportConfirm = false }, shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)) {
-                            Text(stringResource(R.string.cancel))
+                        OutlinedButton(onClick = { showImportConfirm = false }, shape = RoundedCornerShape(12.dp), contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp), border = cancelButtonBorder(), colors = softOutlinedButtonColors()) {
+                            Text(stringResource(R.string.cancel), fontSize = 16.sp)
                         }
                     }
                 )
@@ -251,33 +272,21 @@ fun SettingsScreenContent(
             var showThemeDialog by remember { mutableStateOf(false) }
             val themes = ThemeHelper.getSupportedThemes()
             val currentTheme = ThemeHelper.getTheme(context)
-            var showColorDialog by remember { mutableStateOf(false) }
-            val colors = ThemeHelper.getSupportedThemeColors()
-            val currentColor = ThemeHelper.getThemeColor(context)
-
             SettingGroup(titleRes = R.string.settings) {
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_language), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    icon = { Icon(painterResource(R.drawable.ic_language), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
                     titleRes = R.string.language_settings,
                     onClick = { showLangDialog = true },
                     modifier = Modifier.padding(horizontal = 12.dp),
-                    shape = segmentedShape(0, 3)
+                    shape = segmentedShape(0, 2)
                 )
                 Spacer(Modifier.height(SegGap))
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_panel_hollow), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    icon = { Icon(painterResource(R.drawable.ic_panel_hollow), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
                     titleRes = R.string.theme_settings,
                     onClick = { showThemeDialog = true },
                     modifier = Modifier.padding(horizontal = 12.dp),
-                    shape = segmentedShape(1, 3)
-                )
-                Spacer(Modifier.height(SegGap))
-                SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_panel_solid), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
-                    titleRes = R.string.theme_color_settings,
-                    onClick = { showColorDialog = true },
-                    modifier = Modifier.padding(horizontal = 12.dp),
-                    shape = segmentedShape(2, 3)
+                    shape = segmentedShape(1, 2)
                 )
             }
 
@@ -309,7 +318,6 @@ fun SettingsScreenContent(
                     onDismiss = { showThemeDialog = false },
                     onConfirm = { idx ->
                         if (themes[idx] != currentTheme) {
-                            ThemeHelper.setTheme(context, themes[idx])
                             onThemeChanged(themes[idx])
                             Toast.makeText(context, themeChangedText + ": " + themeNames[idx], Toast.LENGTH_SHORT).show()
                         }
@@ -317,26 +325,6 @@ fun SettingsScreenContent(
                     }
                 )
             }
-            if (showColorDialog) {
-                val colorNames = colors.map { ThemeHelper.getThemeColorDisplayName(context, it) }.toTypedArray()
-                val checkedIdx = colors.indexOfFirst { it == currentColor }.coerceAtLeast(0)
-                val themeColorChangedText = stringResource(R.string.theme_color_changed)
-                SingleChoiceDialog(
-                    title = stringResource(R.string.select_theme_color),
-                    items = colorNames,
-                    checkedIndex = checkedIdx,
-                    onDismiss = { showColorDialog = false },
-                    onConfirm = { idx ->
-                        if (colors[idx] != currentColor) {
-                            ThemeHelper.setThemeColor(context, colors[idx])
-                            onThemeColorChanged(colors[idx])
-                            Toast.makeText(context, themeColorChangedText + ": " + colorNames[idx], Toast.LENGTH_SHORT).show()
-                        }
-                        showColorDialog = false
-                    }
-                )
-            }
-
             // ==================== 关于 ====================
             var showIconColorDialog by remember { mutableStateOf(false) }
             val currentIconColor = IconColorHelper.getIconColor(context)
@@ -367,7 +355,7 @@ fun SettingsScreenContent(
 
             SettingGroup(titleRes = R.string.about, showTitle = false) {
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_version), contentDescription = null, modifier = Modifier.size(24.dp), tint = Color.Unspecified) },
+                    icon = { Icon(painterResource(R.drawable.ic_version), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
                     titleRes = R.string.about_app,
                     onClick = onAboutDeveloper,
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -401,6 +389,7 @@ private fun SectionHeader(
     Text(
         text = stringResource(titleRes),
         style = MaterialTheme.typography.titleSmall,
+        color = MaterialTheme.colorScheme.onBackground,
         modifier = modifier
     )
 }
@@ -421,9 +410,10 @@ private fun SettingsCard(
             .clickable(onClick = onClick),
         shape = shape,
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        border = BorderStroke(1.dp, cardBorderColor()),
+        // 亮色淡蓝底，深色保持透明
         colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent
+            containerColor = if (isDarkColorScheme()) Color.Transparent else BlogCardBlue
         )
     ) {
         Row(
@@ -432,13 +422,8 @@ private fun SettingsCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Surface(
-                modifier = Modifier.size(40.dp),
-                shape = CircleShape,
-                color = Color.Transparent
-            ) {
-                icon()
-            }
+            // 图标：卡片已有淡蓝底，不再额外加圆底
+            icon()
             Spacer(Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -482,6 +467,7 @@ private fun SettingGroup(
             Text(
                 text = stringResource(titleRes),
                 style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
             )
         }
@@ -489,7 +475,8 @@ private fun SettingGroup(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(CardShape)
-                .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                // 亮色透明（融入渐变背景），深色保持 surfaceContainerLow
+                .background(if (isDarkColorScheme()) MaterialTheme.colorScheme.surfaceContainerLow else Color.Transparent)
                 .padding(top = 8.dp, bottom = 12.dp)
         ) {
             items()
@@ -563,17 +550,20 @@ private fun SingleChoiceDialog(
             Button(
                 onClick = { onConfirm(selected) },
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp),
+                colors = confirmButtonColors()
             ) {
-                Text(stringResource(R.string.ok))
+                Text(stringResource(R.string.ok), fontSize = 16.sp)
             }
         },
         dismissButton = {
             OutlinedButton(
                 onClick = onDismiss,
                 shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp)
-            ) { Text(stringResource(R.string.cancel)) }
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp),
+                border = cancelButtonBorder(),
+                colors = softOutlinedButtonColors()
+            ) { Text(stringResource(R.string.cancel), fontSize = 16.sp) }
         }
     )
 }

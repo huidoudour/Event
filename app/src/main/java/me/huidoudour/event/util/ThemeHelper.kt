@@ -43,6 +43,15 @@ object ThemeHelper {
     }
 
     /**
+     * 仅持久化主题设置（不触发 AppCompatDelegate 导致 Activity recreate），
+     * 配合 Compose 层 state 驱动即时切换，适用于设置页的实时预览。
+     */
+    fun saveTheme(context: Context, themeMode: Int) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit { putInt(KEY_THEME, themeMode) }
+    }
+
+    /**
      * 获取当前保存的主题设置
      */
     fun getTheme(context: Context): Int {

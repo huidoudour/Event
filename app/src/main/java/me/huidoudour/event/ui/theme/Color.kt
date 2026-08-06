@@ -20,3 +20,11 @@ val ThemeSeedColors = listOf(
 /** 根据主题色索引获取对应的种子色 */
 fun themeSeedColor(index: Int): Color =
     ThemeSeedColors.getOrElse(index) { ThemeSeedColors[0] }
+
+// ── 博客风格淡色系（亮色模式，参考 huidoudour.github.io 的淡蓝）──
+val BlogBgBlue = Color(0xFFF8FBFF)       // 背景渐变起点 — 淡蓝白
+val BlogBgPaleBlue = Color(0xFFEEF6FC)   // 背景渐变中点 — 淡蓝
+val BlogBgPaleBlue2 = Color(0xFFE5F0FA)  // 背景渐变终点 — 稍深淡蓝
+val BlogBtnBlue = Color(0xFFB9DFF7)      // 按钮淡蓝底
+val BlogBtnPink = Color(0xFFF2B3C3)      // 按钮淡粉底
+val BlogCardBlue = Color(0xFFE8F3FC)     // 卡片淡蓝底

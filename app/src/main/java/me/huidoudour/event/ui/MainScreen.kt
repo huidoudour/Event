@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -43,6 +44,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -64,6 +66,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
+import me.huidoudour.event.ui.theme.BlogCardBlue
+import me.huidoudour.event.ui.theme.blogBackground
+import me.huidoudour.event.ui.theme.cardBorderColor
+import me.huidoudour.event.ui.theme.cardSubTextColor
+import me.huidoudour.event.ui.theme.isDarkColorScheme
+import me.huidoudour.event.ui.theme.softIconButtonBg
 import me.huidoudour.event.util.ViewModeHelper
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -92,24 +100,49 @@ fun MainScreenContent(
 ) {
     val context = LocalContext.current
     Scaffold(
+        // 博客风格淡蓝→淡粉渐变背景（深色模式回退默认背景色）
+        modifier = Modifier
+            .fillMaxSize()
+            .blogBackground(),
+        containerColor = Color.Transparent,
         topBar = {
             // ── Toolbar ── 对齐 XML：btnMultiSelect, btnClearAll, btnRefresh, btnSettings
             // actions 从左到右排列，顺序：多选 → 清空 → 刷新 → 设置
             TopAppBar(
                 title = { Text("Event") },
+                // 亮色下用半透明白，让渐变背景透出；深色回退默认 surface
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.surface
+                    else Color.White.copy(alpha = 0.72f),
+                    actionIconContentColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.onSurface
+                    else Color.Black
+                ),
                 actions = {
                     // 多选按钮（最左）— 对齐XML：btnMultiSelect（最后一个ImageButton，最左）
-                    IconButton(onClick = {
-                        onToggleMultiSelect()
-                    }) {
-                        Icon(
-                            painterResource(R.drawable.ic_multi_select),
-                            contentDescription = stringResource(R.string.multi_select)
-                        )
+                    // 底色圆 40dp，触摸区域保持 48dp
+                    IconButton(
+                        onClick = {
+                            onToggleMultiSelect()
+                        },
+                        modifier = Modifier.padding(horizontal = 2.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(softIconButtonBg(), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.ic_multi_select),
+                                contentDescription = stringResource(R.string.multi_select)
+                            )
+                        }
                     }
                     // 清空按钮（长按触发）— 对齐XML：btnClearAll（Clear All Button Long Press）
+                    // 底色圆 40dp，触摸区域保持 48dp
                     Box(
                         modifier = Modifier
+                            .padding(horizontal = 2.dp)
                             .size(48.dp)
                             .clip(CircleShape)
                             .combinedClickable(
@@ -120,19 +153,47 @@ fun MainScreenContent(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(painterResource(R.drawable.ic_delete), contentDescription = stringResource(R.string.clear_all))
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(softIconButtonBg(), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(painterResource(R.drawable.ic_delete), contentDescription = stringResource(R.string.clear_all))
+                        }
                     }
-                    // 刷新按钮
-                    IconButton(onClick = {
-                        onRefresh()
-                    }) {
-                        Icon(painterResource(R.drawable.ic_refresh), contentDescription = stringResource(R.string.refresh))
+                    // 刷新按钮 — 底色圆 40dp，触摸区域保持 48dp
+                    IconButton(
+                        onClick = {
+                            onRefresh()
+                        },
+                        modifier = Modifier.padding(horizontal = 2.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(softIconButtonBg(), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(painterResource(R.drawable.ic_refresh), contentDescription = stringResource(R.string.refresh))
+                        }
                     }
                     // 设置按钮（最右）— 对齐XML：btnSettings（第一个ImageButton，最右）
-                    IconButton(onClick = {
-                        onSettings()
-                    }) {
-                        Icon(painterResource(R.drawable.ic_settings), contentDescription = stringResource(R.string.settings))
+                    // 底色圆 40dp，触摸区域保持 48dp
+                    IconButton(
+                        onClick = {
+                            onSettings()
+                        },
+                        modifier = Modifier.padding(horizontal = 2.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(softIconButtonBg(), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(painterResource(R.drawable.ic_settings), contentDescription = stringResource(R.string.settings))
+                        }
                     }
                 }
             )
@@ -149,7 +210,7 @@ fun MainScreenContent(
                 },
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ) {
-                Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(R.string.add_event), tint = Color.Unspecified)
+                Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(R.string.add_event), tint = MaterialTheme.colorScheme.onPrimaryContainer)
             }
         }
     ) { padding ->
@@ -292,13 +353,14 @@ private fun EventCard(
 ) {
     val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()) }
 
+    // 亮色下用博客风淡蓝卡片底，深色回退默认 surface；
     // 选中时：用不透明的混合色填充（半透明色会透出卡片阴影，在边缘形成一圈深色"粗框"）
-    val surface = MaterialTheme.colorScheme.surface
+    val base = if (isDarkColorScheme()) MaterialTheme.colorScheme.surface else BlogCardBlue
     val containerColor by animateColorAsState(
         targetValue = if (isSelected)
-            lerp(surface, MaterialTheme.colorScheme.primaryContainer, 0.5f)
+            lerp(base, MaterialTheme.colorScheme.primaryContainer, 0.5f)
         else
-            surface,
+            base,
         label = "eventCardColor"
     )
 
@@ -312,7 +374,7 @@ private fun EventCard(
         shape = MaterialTheme.shapes.medium, // 12dp
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = containerColor),
-        border = if (isSelected) null else CardDefaults.outlinedCardBorder().copy(width = 1.dp)
+        border = if (isSelected) null else BorderStroke(1.dp, cardBorderColor())
     ) {
         Row(
             modifier = Modifier
@@ -351,7 +413,7 @@ private fun EventCard(
                 Text(
                     text = dateFormat.format(Date(event.eventTime)),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = cardSubTextColor(),
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }

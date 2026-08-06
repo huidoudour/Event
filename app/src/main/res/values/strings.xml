@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Event</string>
+    <string name="dis_name">Event</string>
     <string name="add_event">添加事件</string>
     <string name="no_events">暂无事件</string>
     <string name="event_title">事件标题</string>

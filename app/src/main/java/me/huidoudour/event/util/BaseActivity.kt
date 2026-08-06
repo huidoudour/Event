@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 
 /**
  * 基类 Activity，统一处理语言、主题模式和主题色的初始化与实时同步。
@@ -24,8 +25,13 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // 在super.onCreate前应用主题模式（夜间模式）
-        ThemeHelper.initTheme(this)
+        // 在super.onCreate前设置本地夜间模式（delegate实例方法，确保对当前Activity生效）
+        val themeMode = ThemeHelper.getTheme(this)
+        delegate.setLocalNightMode(when (themeMode) {
+            ThemeHelper.THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+            ThemeHelper.THEME_DARK -> AppCompatDelegate.MODE_NIGHT_YES
+            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+        })
         super.onCreate(savedInstanceState)
         // 在super.onCreate后应用主题色overlay（必须在setContentView前）
         ThemeHelper.applyThemeColor(this)
