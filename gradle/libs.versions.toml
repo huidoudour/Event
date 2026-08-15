@@ -2,7 +2,7 @@
 #noinspection AndroidGradlePluginVersion
 agp = "9.2.0"
 kotlin = "2.4.10"
-composeBom = "2026.06.01"
+composeBom = "2026.08.00"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
