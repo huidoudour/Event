@@ -1,6 +1,6 @@
 [versions]
 #noinspection AndroidGradlePluginVersion
-agp = "9.2.0"
+agp = "9.3.1"
 kotlin = "2.4.10"
 composeBom = "2026.08.00"
 junit = "4.13.2"
