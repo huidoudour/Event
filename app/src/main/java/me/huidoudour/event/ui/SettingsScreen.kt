@@ -83,6 +83,10 @@ private val SegGap: Dp = 4.dp
 private val CardCorner = 28.dp
 private val CardShape = RoundedCornerShape(CardCorner)
 
+// 图标圆底固定淡蓝（不用动态 secondaryContainer，避免壁纸/种子色导致紫色）
+private val IconCircleLight = Color(0xFFD0E6F3)
+private val IconCircleDark = Color(0xFF364954)
+
 @Composable
 private fun segmentedShape(index: Int, total: Int): androidx.compose.ui.graphics.Shape = when {
     total == 1 -> SegSingleShape
@@ -155,7 +159,7 @@ fun SettingsScreenContent(
 
             SettingGroup(titleRes = R.string.data_management) {
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_export), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
+                    iconRes = R.drawable.ic_export,
                     titleRes = R.string.export_data,
                     onClick = { showExportConfirm = true },
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -163,7 +167,7 @@ fun SettingsScreenContent(
                 )
                 Spacer(Modifier.height(SegGap))
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_import), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
+                    iconRes = R.drawable.ic_import,
                     titleRes = R.string.import_data,
                     onClick = { showImportConfirm = true },
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -171,7 +175,7 @@ fun SettingsScreenContent(
                 )
                 Spacer(Modifier.height(SegGap))
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_list), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
+                    iconRes = R.drawable.ic_list,
                     titleRes = R.string.data_display_mode,
                     onClick = { showViewModeDialog = true },
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -179,7 +183,7 @@ fun SettingsScreenContent(
                 )
                 Spacer(Modifier.height(SegGap))
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_sort), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
+                    iconRes = R.drawable.ic_sort,
                     titleRes = R.string.sort_order_settings,
                     onClick = { showSortDialog = true },
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -270,7 +274,7 @@ fun SettingsScreenContent(
             val currentTheme = ThemeHelper.getTheme(context)
             SettingGroup(titleRes = R.string.settings) {
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_language), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
+                    iconRes = R.drawable.ic_language,
                     titleRes = R.string.language_settings,
                     onClick = { showLangDialog = true },
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -278,7 +282,7 @@ fun SettingsScreenContent(
                 )
                 Spacer(Modifier.height(SegGap))
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_panel_hollow), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
+                    iconRes = R.drawable.ic_panel_hollow,
                     titleRes = R.string.theme_settings,
                     onClick = { showThemeDialog = true },
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -351,7 +355,7 @@ fun SettingsScreenContent(
 
             SettingGroup(titleRes = R.string.about, showTitle = false) {
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_version), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
+                    iconRes = R.drawable.ic_version,
                     titleRes = R.string.about_app,
                     onClick = onAboutDeveloper,
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -359,7 +363,7 @@ fun SettingsScreenContent(
                 )
                 Spacer(Modifier.height(SegGap))
                 SettingsCard(
-                    icon = { Icon(painterResource(R.drawable.ic_license), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
+                    iconRes = R.drawable.ic_license,
                     titleRes = R.string.open_source_licenses,
                     onClick = onOpenLicenses,
                     modifier = Modifier.padding(horizontal = 12.dp),
@@ -400,7 +404,7 @@ private fun SectionHeader(
 
 @Composable
 private fun SettingsCard(
-    icon: @Composable () -> Unit,
+    iconRes: Int,
     titleRes: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -421,13 +425,27 @@ private fun SettingsCard(
         )
     ) {
         Row(
+            // 对齐迁移前 XML：40dp 圆底图标 + 上下各 12dp = 64dp 行高
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 图标：卡片已有淡蓝底，不再额外加圆底
-            icon()
+            // 40dp 圆形图标底（图标 24dp 居中），对齐迁移前 MaterialCardView 40dp/圆角20dp
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(if (isDarkColorScheme()) IconCircleDark else IconCircleLight),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painterResource(iconRes),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                    // 不设 tint，保留 drawable 原始颜色（light_and_night 亮/暗自适应）
+                )
+            }
             Spacer(Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
