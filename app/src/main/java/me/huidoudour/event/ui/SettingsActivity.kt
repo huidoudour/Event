@@ -108,6 +108,9 @@ class SettingsActivity : BaseActivity() {
                         onAboutDeveloper = {
                             startActivity(Intent(this, MeActivity::class.java))
                         },
+                        onOpenLicenses = {
+                            startActivity(Intent(this, OpenSourceLicensesActivity::class.java))
+                        },
                         onExport = {
                             val installed = isFileManagerInstalled()
                             Log.d(TAG, "onExport: isFileManagerInstalled=$installed")

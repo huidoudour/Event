@@ -143,5 +143,12 @@
     <string name="list_view">リスト表示</string>
     <string name="view_mode_changed">表示モードを変更しました</string>
 
+    <!-- オープンソースライセンス -->
+    <string name="open_source_licenses">オープンソースライセンス</string>
+    <string name="licenses_this_app">本アプリ</string>
+    <string name="licenses_third_party">サードパーティ製オープンソースライブラリ</string>
+    <string name="licenses_build_tools">ビルドツール</string>
+    <string name="licenses_notice">本アプリは以下のオープンソースプロジェクトを使用しています。各プロジェクトの完全なライセンス文は、各プロジェクトのホームページまたはソースコードリポジトリで確認できます。</string>
+    <string name="license_not_provided">未提供</string>
 
 </resources>

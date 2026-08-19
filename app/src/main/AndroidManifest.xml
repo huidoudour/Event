@@ -61,6 +61,11 @@
             android:exported="false"
             android:label="@string/about" />
 
+        <activity
+            android:name=".ui.OpenSourceLicensesActivity"
+            android:exported="false"
+            android:label="@string/open_source_licenses" />
+
         <meta-data
             android:name="me.huidoudour.core.version"
             android:value="37" />

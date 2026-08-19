@@ -143,5 +143,12 @@
     <string name="list_view">List View</string>
     <string name="view_mode_changed">View mode changed</string>
 
+    <!-- Open Source Licenses -->
+    <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="licenses_this_app">This App</string>
+    <string name="licenses_third_party">Third-Party Open Source Libraries</string>
+    <string name="licenses_build_tools">Build Tools</string>
+    <string name="licenses_notice">This app is built with the following open source projects. The full license text of each project is available on its homepage or source repository.</string>
+    <string name="license_not_provided">Not provided</string>
 
 </resources>

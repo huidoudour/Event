@@ -1,0 +1,329 @@
+package me.huidoudour.event.ui
+
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.OpenInNew
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import me.huidoudour.event.R
+import me.huidoudour.event.ui.theme.blogBackground
+import me.huidoudour.event.ui.theme.cardBorderColor
+import me.huidoudour.event.ui.theme.isDarkColorScheme
+import me.huidoudour.event.ui.theme.topAppBarColors
+
+// ── 项目主页链接 ──
+private const val URL_EVENT = "https://github.com/huidoudour/Event"
+private const val URL_COMPOSE = "https://developer.android.com/jetpack/compose"
+private const val URL_APPCOMPAT = "https://developer.android.com/jetpack/androidx/releases/appcompat"
+private const val URL_ACTIVITY = "https://developer.android.com/jetpack/androidx/releases/activity"
+private const val URL_FRAGMENT = "https://developer.android.com/jetpack/androidx/releases/fragment"
+private const val URL_LIFECYCLE = "https://developer.android.com/jetpack/androidx/releases/lifecycle"
+private const val URL_ROOM = "https://developer.android.com/jetpack/androidx/releases/room"
+private const val URL_MATERIAL = "https://github.com/material-components/material-components-android"
+private const val URL_MATERIALKOLOR = "https://github.com/jordond/materialkolor"
+private const val URL_SQLITE = "https://github.com/requery/sqlite-android"
+private const val URL_RXJAVA = "https://github.com/ReactiveX/RxJava"
+private const val URL_RXANDROID = "https://github.com/ReactiveX/RxAndroid"
+private const val URL_MTFILES = "https://github.com/L-JINBIN/MTDataFilesProvider"
+private const val URL_JUNIT = "https://github.com/junit-team/junit4"
+private const val URL_TEST = "https://developer.android.com/training/testing"
+private const val URL_KOTLIN = "https://github.com/JetBrains/kotlin"
+private const val URL_AGP = "https://developer.android.com/build/releases/gradle-plugin"
+private const val URL_KSP = "https://github.com/google/ksp"
+
+// ── assets/licenses/ 下的协议全文文件 ──
+private const val LIC_APACHE = "apache-2.0.txt"
+private const val LIC_MIT_EVENT = "mit-event.txt"
+private const val LIC_MIT_MATERIALKOLOR = "mit-materialkolor.txt"
+private const val LIC_EPL = "epl-1.0.txt"
+
+/** 单个开源项目条目：url 为项目主页，licenseFile 为内置协议全文（null 表示未提供，不可展开） */
+private data class LicenseItem(
+    val name: String,
+    val version: String,
+    val license: String,
+    val url: String,
+    val licenseFile: String? = null
+)
+
+/** 圆角分段卡片形状（与设置页一致） */
+private val LicCardShape = RoundedCornerShape(28.dp)
+
+/**
+ * 开源许可页面 Compose 组件：
+ * 展示本项目与所使用的第三方开源依赖、构建工具的许可证信息。
+ * 点击条目展开协议全文，行尾外链按钮跳转项目主页。
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun OpenSourceLicensesScreenContent(onBack: () -> Unit) {
+    val context = LocalContext.current
+    val appVersion = remember {
+        try {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
+        } catch (_: Exception) { "" }
+    }
+
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .blogBackground(),
+        containerColor = Color.Transparent,
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.open_source_licenses)) },
+                colors = topAppBarColors(),
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(painterResource(R.drawable.ic_back), contentDescription = stringResource(R.string.back))
+                    }
+                }
+            )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 32.dp)
+        ) {
+            // 顶部说明
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                shape = RoundedCornerShape(16.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                border = BorderStroke(1.dp, cardBorderColor()),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.surfaceContainerLow else Color.Transparent
+                )
+            ) {
+                Text(
+                    text = stringResource(R.string.licenses_notice),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            // ==================== 本项目 ====================
+            LicenseGroup(titleRes = R.string.licenses_this_app) {
+                LicenseRow(
+                    item = LicenseItem(
+                        name = stringResource(R.string.app_name),
+                        version = "v$appVersion",
+                        license = "MIT License",
+                        url = URL_EVENT,
+                        licenseFile = LIC_MIT_EVENT
+                    )
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            // ==================== 第三方开源依赖 ====================
+            LicenseGroup(titleRes = R.string.licenses_third_party) {
+                LicenseRow(LicenseItem("Jetpack Compose", "BOM 2026.08.00", "Apache License 2.0", URL_COMPOSE, LIC_APACHE))
+                LicenseRow(LicenseItem("AndroidX AppCompat", "1.8.0", "Apache License 2.0", URL_APPCOMPAT, LIC_APACHE))
+                LicenseRow(LicenseItem("AndroidX Activity Compose", "1.13.0", "Apache License 2.0", URL_ACTIVITY, LIC_APACHE))
+                LicenseRow(LicenseItem("AndroidX Fragment KTX", "1.9.0", "Apache License 2.0", URL_FRAGMENT, LIC_APACHE))
+                LicenseRow(LicenseItem("AndroidX Lifecycle (ViewModel / LiveData)", "2.11.0", "Apache License 2.0", URL_LIFECYCLE, LIC_APACHE))
+                LicenseRow(LicenseItem("AndroidX Room", "2.8.4", "Apache License 2.0", URL_ROOM, LIC_APACHE))
+                LicenseRow(LicenseItem("Material Components for Android", "1.14.0", "Apache License 2.0", URL_MATERIAL, LIC_APACHE))
+                LicenseRow(LicenseItem("MaterialKolor", "5.0.0", "MIT License", URL_MATERIALKOLOR, LIC_MIT_MATERIALKOLOR))
+                LicenseRow(LicenseItem("SQLite Android (requery)", "3.49.0", "Apache License 2.0", URL_SQLITE, LIC_APACHE))
+                LicenseRow(LicenseItem("RxJava", "3.1.12", "Apache License 2.0", URL_RXJAVA, LIC_APACHE))
+                LicenseRow(LicenseItem("RxAndroid", "3.0.2", "Apache License 2.0", URL_RXANDROID, LIC_APACHE))
+                LicenseRow(LicenseItem("MTDataFilesProvider", "v1.0.0", stringResource(R.string.license_not_provided), URL_MTFILES))
+                LicenseRow(LicenseItem("JUnit", "4.13.2", "Eclipse Public License 1.0", URL_JUNIT, LIC_EPL))
+                LicenseRow(LicenseItem("AndroidX Test (JUnit Ext / Espresso)", "1.3.0 / 3.7.0", "Apache License 2.0", URL_TEST, LIC_APACHE))
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            // ==================== 构建工具 ====================
+            LicenseGroup(titleRes = R.string.licenses_build_tools) {
+                LicenseRow(LicenseItem("Kotlin", "2.4.10", "Apache License 2.0", URL_KOTLIN, LIC_APACHE))
+                LicenseRow(LicenseItem("Android Gradle Plugin", "9.3.1", "Apache License 2.0", URL_AGP, LIC_APACHE))
+                LicenseRow(LicenseItem("KSP (Kotlin Symbol Processing)", "2.3.10", "Apache License 2.0", URL_KSP, LIC_APACHE))
+            }
+        }
+    }
+}
+
+/** 分组容器：标题 + 圆角分段卡片列表（样式与设置页一致） */
+@Composable
+private fun LicenseGroup(
+    titleRes: Int,
+    items: @Composable () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        Text(
+            text = stringResource(titleRes),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(LicCardShape)
+                .background(if (isDarkColorScheme()) MaterialTheme.colorScheme.surfaceContainerLow else Color.Transparent)
+                .padding(vertical = 4.dp)
+        ) {
+            items()
+        }
+    }
+}
+
+/** 单个依赖条目：点击行展开/收起协议全文，行尾外链按钮跳转项目主页 */
+@Composable
+private fun LicenseRow(item: LicenseItem) {
+    val context = LocalContext.current
+    // 未提供协议全文的条目不可展开
+    val expandable = item.licenseFile != null
+    var expanded by remember { mutableStateOf(false) }
+
+    // 展开时从 assets 读取协议全文
+    val licenseText = remember(item.licenseFile, expanded) {
+        if (expanded && item.licenseFile != null) {
+            try {
+                context.assets.open("licenses/${item.licenseFile}")
+                    .bufferedReader()
+                    .use { it.readText() }
+            } catch (_: Exception) { "" }
+        } else ""
+    }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .let { if (expandable) it.clickable { expanded = !expanded } else it }
+                .padding(start = 16.dp, end = 4.dp, top = 10.dp, bottom = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = item.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = item.version,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            // 许可证标签
+            Surface(
+                shape = RoundedCornerShape(8.dp),
+                color = if (isDarkColorScheme()) MaterialTheme.colorScheme.primaryContainer else Color(0xFFE3F2FD),
+                contentColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.onPrimaryContainer else Color(0xFF0D47A1)
+            ) {
+                Text(
+                    text = item.license,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                )
+            }
+            // 展开/收起箭头（仅可展开条目）
+            if (expandable) {
+                Icon(
+                    imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
+            }
+            // 外链按钮：跳转项目主页
+            IconButton(
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
+                    context.startActivity(intent)
+                },
+                modifier = Modifier.size(40.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.OpenInNew,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+
+        // 展开区：协议全文
+        if (expanded) {
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = if (isDarkColorScheme()) MaterialTheme.colorScheme.outline else Color.Black.copy(alpha = 0.12f),
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            if (licenseText.isNotEmpty()) {
+                Text(
+                    text = licenseText,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.license_not_provided),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                )
+            }
+        }
+    }
+}

@@ -143,5 +143,12 @@
     <string name="list_view">Список</string>
     <string name="view_mode_changed">Режим отображения изменён</string>
 
+    <!-- Лицензии открытого ПО -->
+    <string name="open_source_licenses">Лицензии открытого ПО</string>
+    <string name="licenses_this_app">Это приложение</string>
+    <string name="licenses_third_party">Сторонние библиотеки с открытым исходным кодом</string>
+    <string name="licenses_build_tools">Инструменты сборки</string>
+    <string name="licenses_notice">Это приложение использует следующие проекты с открытым исходным кодом. Полный текст лицензии каждого проекта доступен на его домашней странице или в репозитории исходного кода.</string>
+    <string name="license_not_provided">Не указано</string>
 
 </resources>

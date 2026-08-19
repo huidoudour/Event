@@ -99,6 +99,7 @@ private fun segmentedShape(index: Int, total: Int): androidx.compose.ui.graphics
 fun SettingsScreenContent(
     onBack: () -> Unit,
     onAboutDeveloper: () -> Unit,
+    onOpenLicenses: () -> Unit,
     onExport: () -> Unit,
     onImport: () -> Unit,
     isAscending: Boolean = true,
@@ -354,7 +355,15 @@ fun SettingsScreenContent(
                     titleRes = R.string.about_app,
                     onClick = onAboutDeveloper,
                     modifier = Modifier.padding(horizontal = 12.dp),
-                    shape = segmentedShape(0, 1)
+                    shape = segmentedShape(0, 2)
+                )
+                Spacer(Modifier.height(SegGap))
+                SettingsCard(
+                    icon = { Icon(painterResource(R.drawable.ic_license), contentDescription = null, modifier = Modifier.size(24.dp), tint = MaterialTheme.colorScheme.onSurface) },
+                    titleRes = R.string.open_source_licenses,
+                    onClick = onOpenLicenses,
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    shape = segmentedShape(1, 2)
                 )
             }
 

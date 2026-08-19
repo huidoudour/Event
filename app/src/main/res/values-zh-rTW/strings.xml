@@ -136,5 +136,12 @@
     <string name="list_view">列表視圖</string>
     <string name="view_mode_changed">視圖已更改</string>
 
+    <!-- 開放原始碼授權 -->
+    <string name="open_source_licenses">開放原始碼授權</string>
+    <string name="licenses_this_app">本應用程式</string>
+    <string name="licenses_third_party">第三方開放原始碼依賴</string>
+    <string name="licenses_build_tools">建置工具</string>
+    <string name="licenses_notice">本應用程式使用了以下開放原始碼專案。各專案的完整授權條款請參閱對應專案首頁或原始碼儲存庫。</string>
+    <string name="license_not_provided">未提供</string>
 
 </resources>
