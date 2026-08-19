@@ -45,6 +45,7 @@ import me.huidoudour.event.data.Event
 import me.huidoudour.event.ui.theme.cancelButtonBorder
 import me.huidoudour.event.ui.theme.confirmButtonColors
 import me.huidoudour.event.ui.theme.softOutlinedButtonColors
+import dev.jeziellago.compose.markdowntext.MarkdownText
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -266,11 +267,24 @@ fun EventDetailDialog(
         text = {
             Column {
                 if (!event.description.isNullOrBlank()) {
-                    Text(
-                        text = event.description!!,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    val desc = event.description!!
+                    if (containsMarkdown(desc)) {
+                        // 含 Markdown 语法：按 Markdown 渲染
+                        MarkdownText(
+                            markdown = desc,
+                            modifier = Modifier.fillMaxWidth(),
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        )
+                    } else {
+                        // 普通文本：仅显示纯文本
+                        Text(
+                            text = desc,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
             }
         },
@@ -493,4 +507,22 @@ fun BatchDeleteConfirmDialog(
             ) { Text(stringResource(R.string.cancel)) }
         }
     )
+}
+
+/**
+ * 简单检测文本是否包含 Markdown 语法（用于详情对话框决定是否按 Markdown 渲染）：
+ * - 行级结构标记：# 标题、- 或 * 或 + 无序列表、1. 有序列表、> 引用、``` 代码块
+ * - 成对标记：**粗体**、__粗体__、`行内代码`、[链接](url)
+ * - 分割线：*** 或 --- 或 ___
+ * 普通文本（无上述语法）返回 false，仍按纯文本显示。
+ */
+private fun containsMarkdown(text: String): Boolean {
+    if (text.isBlank()) return false
+    // 行级结构标记
+    if (Regex("(?m)^\\s{0,3}(#{1,6}\\s|[-*+]\\s|\\d+\\.\\s|>\\s?|`{3})").containsMatchIn(text)) return true
+    // 成对标记
+    if (Regex("\\*\\*.+?\\*\\*|__.+?__|`[^`\\n]+`|\\[[^\\]]+]\\([^)]+\\)").containsMatchIn(text)) return true
+    // 分割线
+    if (Regex("(?m)^\\s{0,3}(\\*{3,}|-{3,}|_{3,})\\s*$").containsMatchIn(text)) return true
+    return false
 }

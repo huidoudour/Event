@@ -157,6 +157,9 @@ dependencies {
     // MaterialKolor - 动态取色
     implementation(libs.materialkolor)
 
+    // Compose Markdown - 详情对话框 Markdown 渲染
+    implementation(libs.compose.markdown)
+
     // 本地依赖，仅用于调试（仅在文件存在时添加）
     val localSqliteFile = file("libs/android.aar")
     if (localSqliteFile.exists()) {

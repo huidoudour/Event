@@ -4,7 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -61,7 +63,9 @@ private const val URL_LIFECYCLE = "https://developer.android.com/jetpack/android
 private const val URL_ROOM = "https://developer.android.com/jetpack/androidx/releases/room"
 private const val URL_MATERIAL = "https://github.com/material-components/material-components-android"
 private const val URL_MATERIALKOLOR = "https://github.com/jordond/materialkolor"
-private const val URL_SQLITE = "https://github.com/requery/sqlite-android"
+// SQLite 官方仓库（Public Domain）；构建实际经 requery/sqlite-android fork 引入
+private const val URL_SQLITE = "https://github.com/sqlite/sqlite"
+private const val URL_COMPOSE_MARKDOWN = "https://github.com/jeziellago/compose-markdown"
 private const val URL_RXJAVA = "https://github.com/ReactiveX/RxJava"
 private const val URL_RXANDROID = "https://github.com/ReactiveX/RxAndroid"
 private const val URL_MTFILES = "https://github.com/L-JINBIN/MTDataFilesProvider"
@@ -75,6 +79,8 @@ private const val URL_KSP = "https://github.com/google/ksp"
 private const val LIC_APACHE = "apache-2.0.txt"
 private const val LIC_MIT_EVENT = "mit-event.txt"
 private const val LIC_MIT_MATERIALKOLOR = "mit-materialkolor.txt"
+private const val LIC_MIT_COMPOSE_MARKDOWN = "mit-compose-markdown.txt"
+private const val LIC_SQLITE_PD = "sqlite-public-domain.txt"
 private const val LIC_EPL = "epl-1.0.txt"
 
 /** 单个开源项目条目：url 为项目主页，licenseFile 为内置协议全文（null 表示未提供，不可展开） */
@@ -175,7 +181,8 @@ fun OpenSourceLicensesScreenContent(onBack: () -> Unit) {
                 LicenseRow(LicenseItem("AndroidX Room", "2.8.4", "Apache License 2.0", URL_ROOM, LIC_APACHE))
                 LicenseRow(LicenseItem("Material Components for Android", "1.14.0", "Apache License 2.0", URL_MATERIAL, LIC_APACHE))
                 LicenseRow(LicenseItem("MaterialKolor", "5.0.0", "MIT License", URL_MATERIALKOLOR, LIC_MIT_MATERIALKOLOR))
-                LicenseRow(LicenseItem("SQLite Android (requery)", "3.49.0", "Apache License 2.0", URL_SQLITE, LIC_APACHE))
+                LicenseRow(LicenseItem("SQLite", "3.49.0 (via requery/sqlite-android)", "Public Domain", URL_SQLITE, LIC_SQLITE_PD))
+                LicenseRow(LicenseItem("Compose Markdown", "0.7.2", "MIT License", URL_COMPOSE_MARKDOWN, LIC_MIT_COMPOSE_MARKDOWN))
                 LicenseRow(LicenseItem("RxJava", "3.1.12", "Apache License 2.0", URL_RXJAVA, LIC_APACHE))
                 LicenseRow(LicenseItem("RxAndroid", "3.0.2", "Apache License 2.0", URL_RXANDROID, LIC_APACHE))
                 LicenseRow(LicenseItem("MTDataFilesProvider", "v1.0.0", stringResource(R.string.license_not_provided), URL_MTFILES))
@@ -224,7 +231,14 @@ private fun LicenseGroup(
     }
 }
 
+// 许可证标签与外链按钮固定配色（避免动态主题出现紫色）
+private val LicTagLight = Color(0xFFE3F2FD)   // 标签底：淡蓝
+private val LicTagDark = Color(0xFF364954)    // 标签底：深蓝灰
+private val LicBtnLight = Color(0xFFD0E6F3)   // 外链按钮圆底：淡蓝（同设置页）
+private val LicBtnDark = Color(0xFF364954)    // 外链按钮圆底：深蓝灰
+
 /** 单个依赖条目：点击行展开/收起协议全文，行尾外链按钮跳转项目主页 */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LicenseRow(item: LicenseItem) {
     val context = LocalContext.current
@@ -244,61 +258,73 @@ private fun LicenseRow(item: LicenseItem) {
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .let { if (expandable) it.clickable { expanded = !expanded } else it }
-                .padding(start = 16.dp, end = 4.dp, top = 10.dp, bottom = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
+        // Surface(onClick)：波纹严格跟随圆角 shape，不再溢出
+        Surface(
+            onClick = { if (expandable) expanded = !expanded },
+            enabled = expandable,
+            shape = RoundedCornerShape(12.dp),
+            color = Color.Transparent,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = item.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = item.version,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            // 许可证标签
-            Surface(
-                shape = RoundedCornerShape(8.dp),
-                color = if (isDarkColorScheme()) MaterialTheme.colorScheme.primaryContainer else Color(0xFFE3F2FD),
-                contentColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.onPrimaryContainer else Color(0xFF0D47A1)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 6.dp, top = 12.dp, bottom = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = item.license,
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
-                )
-            }
-            // 展开/收起箭头（仅可展开条目）
-            if (expandable) {
-                Icon(
-                    imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outline,
-                    modifier = Modifier.padding(start = 4.dp)
-                )
-            }
-            // 外链按钮：跳转项目主页
-            IconButton(
-                onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
-                    context.startActivity(intent)
-                },
-                modifier = Modifier.size(40.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.OpenInNew,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.outline,
-                    modifier = Modifier.size(18.dp)
-                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = item.name,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = item.version,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                // 许可证标签（胶囊形）
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = if (isDarkColorScheme()) LicTagDark else LicTagLight,
+                    contentColor = if (isDarkColorScheme()) Color(0xFFB4CAD6) else Color(0xFF0D47A1)
+                ) {
+                    Text(
+                        text = item.license,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp)
+                    )
+                }
+                // 展开/收起箭头（仅可展开条目）
+                if (expandable) {
+                    Icon(
+                        imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.outline,
+                        modifier = Modifier.padding(start = 2.dp, end = 4.dp)
+                    )
+                }
+                // 外链按钮：淡蓝圆底，跳转项目主页（自带圆形波纹，不与其他区域冲突）
+                Surface(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
+                        context.startActivity(intent)
+                    },
+                    shape = CircleShape,
+                    color = if (isDarkColorScheme()) LicBtnDark else LicBtnLight,
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.OpenInNew,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
             }
         }
 
@@ -309,19 +335,21 @@ private fun LicenseRow(item: LicenseItem) {
                 color = if (isDarkColorScheme()) MaterialTheme.colorScheme.outline else Color.Black.copy(alpha = 0.12f),
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-            if (licenseText.isNotEmpty()) {
+            val text = if (licenseText.isNotEmpty()) licenseText
+            else stringResource(R.string.license_not_provided)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(if (isDarkColorScheme()) MaterialTheme.colorScheme.surfaceContainerLow else Color(0xFFF1F6FC))
+                    .border(1.dp, cardBorderColor(), RoundedCornerShape(10.dp))
+                    .padding(12.dp)
+            ) {
                 Text(
-                    text = licenseText,
+                    text = text,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-                )
-            } else {
-                Text(
-                    text = stringResource(R.string.license_not_provided),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
