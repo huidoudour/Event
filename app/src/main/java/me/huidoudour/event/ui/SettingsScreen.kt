@@ -230,7 +230,6 @@ fun SettingsScreenContent(
             }
             if (showViewModeDialog) {
                 val modeNames = listOf(stringResource(R.string.card_view), stringResource(R.string.list_view)).toTypedArray()
-                val viewModeChangedText = stringResource(R.string.view_mode_changed)
                 SingleChoiceDialog(
                     title = stringResource(R.string.data_display_mode),
                     items = modeNames,
@@ -240,7 +239,7 @@ fun SettingsScreenContent(
                         if (idx != currentMode) {
                             val mode = if (idx == 0) ViewModeHelper.VIEW_MODE_CARD else ViewModeHelper.VIEW_MODE_LIST
                             ViewModeHelper.setViewMode(context, mode)
-                            Toast.makeText(context, viewModeChangedText + ": " + modeNames[idx], Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.view_mode_changed_format, modeNames[idx]), Toast.LENGTH_SHORT).show()
                         }
                         showViewModeDialog = false
                     }
@@ -248,7 +247,6 @@ fun SettingsScreenContent(
             }
             if (showSortDialog) {
                 val checkedIdx = if (isAscending) 0 else 1
-                val sortOrderChangedText = stringResource(R.string.sort_order_changed)
                 SingleChoiceDialog(
                     title = stringResource(R.string.sort_order_settings),
                     items = sortOptions,
@@ -258,7 +256,7 @@ fun SettingsScreenContent(
                         val newAscending = idx == 0
                         if (newAscending != isAscending) {
                             onSortOrderChanged(newAscending)
-                            Toast.makeText(context, sortOrderChangedText + ": " + sortOptions[idx], Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.sort_order_changed_format, sortOptions[idx]), Toast.LENGTH_SHORT).show()
                         }
                         showSortDialog = false
                     }
@@ -310,7 +308,6 @@ fun SettingsScreenContent(
             if (showThemeDialog) {
                 val themeNames = themes.map { ThemeHelper.getThemeDisplayName(context, it) }.toTypedArray()
                 val checkedIdx = themes.indexOfFirst { it == currentTheme }.coerceAtLeast(0)
-                val themeChangedText = stringResource(R.string.theme_changed)
                 SingleChoiceDialog(
                     title = stringResource(R.string.select_theme),
                     items = themeNames,
@@ -319,7 +316,7 @@ fun SettingsScreenContent(
                     onConfirm = { idx ->
                         if (themes[idx] != currentTheme) {
                             onThemeChanged(themes[idx])
-                            Toast.makeText(context, themeChangedText + ": " + themeNames[idx], Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.theme_changed_format, themeNames[idx]), Toast.LENGTH_SHORT).show()
                         }
                         showThemeDialog = false
                     }

@@ -154,7 +154,7 @@ class SettingsActivity : BaseActivity() {
                                 importFileLauncher.launch(intent)
                             } catch (e: Exception) {
                                 Log.e(TAG, "onImport: launch failed", e)
-                                Toast.makeText(this@SettingsActivity, "无法启动文件选择器: ${e.message}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@SettingsActivity, getString(R.string.cannot_launch_file_picker, e.message), Toast.LENGTH_SHORT).show()
                             }
                         },
                         isAscending = isAscending,
@@ -245,7 +245,7 @@ class SettingsActivity : BaseActivity() {
         } catch (e: Exception) {
             Log.e(TAG, "launchExportToFileManager: failed", e)
             file.delete()
-            Toast.makeText(this, "无法启动文件管理器: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.cannot_launch_file_manager, e.message), Toast.LENGTH_SHORT).show()
         }
     }
 

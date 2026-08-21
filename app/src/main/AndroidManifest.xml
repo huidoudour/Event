@@ -20,8 +20,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="false"
-            android:enabled="true"
-            android:label="@string/dis_name" />
+            android:enabled="true" />
         
         <!-- 默认绿色图标 -->
         <activity-alias

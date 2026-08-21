@@ -116,7 +116,7 @@ fun MainScreenContent(
             // ── Toolbar ── 对齐 XML：btnMultiSelect, btnClearAll, btnRefresh, btnSettings
             // actions 从左到右排列，顺序：多选 → 清空 → 刷新 → 设置
             TopAppBar(
-                title = { Text("Event") },
+                title = { Text(stringResource(R.string.dis_name)) },
                 colors = topAppBarColors(),
                 actions = {
                     // 多选按钮（最左）— 对齐XML：btnMultiSelect（最后一个ImageButton，最左）
@@ -648,7 +648,7 @@ fun EmptyView(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            "暂无事件",
+            stringResource(R.string.no_events),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

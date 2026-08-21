@@ -245,8 +245,7 @@ class MainActivity : BaseActivity() {
                         viewModel.updateEvent(event)
                         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
                         Toast.makeText(this,
-                            "${getString(R.string.event_datetime_changed)}: ${
-                                sdf.format(Date(event.eventTime))}",
+                            getString(R.string.event_datetime_changed_format, sdf.format(Date(event.eventTime))),
                             Toast.LENGTH_LONG).show()
                     }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true)
                     timePicker.show()

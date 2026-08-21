@@ -76,7 +76,6 @@
     <string name="sort_order_settings">Порядок сортировки</string>
     <string name="sort_ascending">По возрастанию</string>
     <string name="sort_descending">По убыванию</string>
-    <string name="sort_order_changed">Порядок сортировки изменён</string>
     <string name="refresh">Обновить</string>
     <string name="refreshed">Обновлено</string>
 
@@ -95,14 +94,12 @@
 
     <!-- Дата и время -->
     <string name="change_datetime">Изменить дату и время</string>
-    <string name="event_datetime_changed">Дата и время обновлены</string>
 
     <!-- Переключение языка -->
     <string name="language_changed">Язык изменён</string>
     <string name="language_changed_restart">Язык изменён, приложение перезапускается…</string>
 
     <!-- Переключение темы -->
-    <string name="theme_changed">Тема изменена</string>
 
     <!-- Цвет темы -->
     <string name="theme_color_settings">Цвет темы</string>
@@ -141,8 +138,6 @@
     <string name="data_display_mode">Режим отображения</string>
     <string name="card_view">Карточки</string>
     <string name="list_view">Список</string>
-    <string name="view_mode_changed">Режим отображения изменён</string>
-
     <!-- Лицензии открытого ПО -->
     <string name="open_source_licenses">Лицензии открытого ПО</string>
     <string name="licenses_this_app">Это приложение</string>
@@ -150,5 +145,19 @@
     <string name="licenses_build_tools">Инструменты сборки</string>
     <string name="licenses_notice">Это приложение использует следующие проекты с открытым исходным кодом. Полный текст лицензии каждого проекта доступен на его домашней странице или в репозитории исходного кода.</string>
     <string name="license_not_provided">Не указано</string>
+
+    <!-- Дополнительные локализованные строки -->
+    <string name="edit_event">Редактировать событие</string>
+    <string name="delete_event_message">Удалить событие "%1$s". Введите "d" для подтверждения:</string>
+    <string name="cannot_launch_file_picker">Не удалось запустить выбор файла: %1$s</string>
+    <string name="cannot_launch_file_manager">Не удалось запустить файловый менеджер: %1$s</string>
+    <string name="view_mode_changed_format">Режим отображения изменён: %1$s</string>
+    <string name="sort_order_changed_format">Порядок сортировки изменён: %1$s</string>
+    <string name="theme_changed_format">Тема изменена: %1$s</string>
+    <string name="event_datetime_changed_format">Дата и время обновлены: %1$s</string>
+    <string name="follow_system">Как в системе</string>
+    <string name="clear">Очистить</string>
+    <string name="close">Закрыть</string>
+    <string name="settings_applied">Настройки применены</string>
 
 </resources>

@@ -9,7 +9,7 @@ plugins {
 
 // ── Git 版本控制 ──
 val baseVersionCode = 10
-val baseVersionName = "0.9-beta03"
+val baseVersionName = "1.1-rc1"
 val backVersionCode = 90
 
 fun Project.gitCommitCount(): Int = try {
@@ -155,7 +155,14 @@ dependencies {
     implementation(libs.sqlite.android)
 
     // MaterialKolor - 动态取色
-    implementation(libs.materialkolor)
+    // 排除 JetBrains Compose Multiplatform 传递依赖，避免与官方 androidx Compose 类同名冲突导致 AbstractMethodError
+    implementation(libs.materialkolor) {
+        exclude(group = "org.jetbrains.compose.material3")
+        exclude(group = "org.jetbrains.compose.foundation")
+        exclude(group = "org.jetbrains.compose.ui")
+        exclude(group = "org.jetbrains.compose.runtime")
+        exclude(group = "org.jetbrains.compose.animation")
+    }
 
     // Compose Markdown - 详情对话框 Markdown 渲染
     implementation(libs.compose.markdown)

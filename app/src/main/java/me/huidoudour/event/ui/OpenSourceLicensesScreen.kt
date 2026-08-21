@@ -92,8 +92,11 @@ private data class LicenseItem(
     val licenseFile: String? = null
 )
 
-/** 圆角分段卡片形状（与设置页一致） */
-private val LicCardShape = RoundedCornerShape(28.dp)
+/** 条目卡片圆角：每个条目独立成正常圆角卡片，不做分段连排 */
+private val LicItemRadius = 16.dp
+private val LicItemShape = RoundedCornerShape(LicItemRadius)
+// 展开时行只保留顶部圆角，底部由展开区接续，波纹不会进入展开区
+private val LicItemTopShape = RoundedCornerShape(LicItemRadius, LicItemRadius, 0.dp, 0.dp)
 
 /**
  * 开源许可页面 Compose 组件：
@@ -157,9 +160,10 @@ fun OpenSourceLicensesScreenContent(onBack: () -> Unit) {
             Spacer(Modifier.height(8.dp))
 
             // ==================== 本项目 ====================
-            LicenseGroup(titleRes = R.string.licenses_this_app) {
-                LicenseRow(
-                    item = LicenseItem(
+            LicenseGroup(
+                titleRes = R.string.licenses_this_app,
+                items = listOf(
+                    LicenseItem(
                         name = stringResource(R.string.app_name),
                         version = "v$appVersion",
                         license = "MIT License",
@@ -167,46 +171,52 @@ fun OpenSourceLicensesScreenContent(onBack: () -> Unit) {
                         licenseFile = LIC_MIT_EVENT
                     )
                 )
-            }
+            )
 
             Spacer(Modifier.height(16.dp))
 
             // ==================== 第三方开源依赖 ====================
-            LicenseGroup(titleRes = R.string.licenses_third_party) {
-                LicenseRow(LicenseItem("Jetpack Compose", "BOM 2026.08.00", "Apache License 2.0", URL_COMPOSE, LIC_APACHE))
-                LicenseRow(LicenseItem("AndroidX AppCompat", "1.8.0", "Apache License 2.0", URL_APPCOMPAT, LIC_APACHE))
-                LicenseRow(LicenseItem("AndroidX Activity Compose", "1.13.0", "Apache License 2.0", URL_ACTIVITY, LIC_APACHE))
-                LicenseRow(LicenseItem("AndroidX Fragment KTX", "1.9.0", "Apache License 2.0", URL_FRAGMENT, LIC_APACHE))
-                LicenseRow(LicenseItem("AndroidX Lifecycle (ViewModel / LiveData)", "2.11.0", "Apache License 2.0", URL_LIFECYCLE, LIC_APACHE))
-                LicenseRow(LicenseItem("AndroidX Room", "2.8.4", "Apache License 2.0", URL_ROOM, LIC_APACHE))
-                LicenseRow(LicenseItem("Material Components for Android", "1.14.0", "Apache License 2.0", URL_MATERIAL, LIC_APACHE))
-                LicenseRow(LicenseItem("MaterialKolor", "5.0.0", "MIT License", URL_MATERIALKOLOR, LIC_MIT_MATERIALKOLOR))
-                LicenseRow(LicenseItem("SQLite", "3.49.0 (via requery/sqlite-android)", "Public Domain", URL_SQLITE, LIC_SQLITE_PD))
-                LicenseRow(LicenseItem("Compose Markdown", "0.7.2", "MIT License", URL_COMPOSE_MARKDOWN, LIC_MIT_COMPOSE_MARKDOWN))
-                LicenseRow(LicenseItem("RxJava", "3.1.12", "Apache License 2.0", URL_RXJAVA, LIC_APACHE))
-                LicenseRow(LicenseItem("RxAndroid", "3.0.2", "Apache License 2.0", URL_RXANDROID, LIC_APACHE))
-                LicenseRow(LicenseItem("MTDataFilesProvider", "v1.0.0", stringResource(R.string.license_not_provided), URL_MTFILES))
-                LicenseRow(LicenseItem("JUnit", "4.13.2", "Eclipse Public License 1.0", URL_JUNIT, LIC_EPL))
-                LicenseRow(LicenseItem("AndroidX Test (JUnit Ext / Espresso)", "1.3.0 / 3.7.0", "Apache License 2.0", URL_TEST, LIC_APACHE))
-            }
+            LicenseGroup(
+                titleRes = R.string.licenses_third_party,
+                items = listOf(
+                    LicenseItem("Jetpack Compose", "BOM 2026.08.00", "Apache License 2.0", URL_COMPOSE, LIC_APACHE),
+                    LicenseItem("AndroidX AppCompat", "1.8.0", "Apache License 2.0", URL_APPCOMPAT, LIC_APACHE),
+                    LicenseItem("AndroidX Activity Compose", "1.13.0", "Apache License 2.0", URL_ACTIVITY, LIC_APACHE),
+                    LicenseItem("AndroidX Fragment KTX", "1.9.0", "Apache License 2.0", URL_FRAGMENT, LIC_APACHE),
+                    LicenseItem("AndroidX Lifecycle (ViewModel / LiveData)", "2.11.0", "Apache License 2.0", URL_LIFECYCLE, LIC_APACHE),
+                    LicenseItem("AndroidX Room", "2.8.4", "Apache License 2.0", URL_ROOM, LIC_APACHE),
+                    LicenseItem("Material Components for Android", "1.14.0", "Apache License 2.0", URL_MATERIAL, LIC_APACHE),
+                    LicenseItem("MaterialKolor", "5.0.0", "MIT License", URL_MATERIALKOLOR, LIC_MIT_MATERIALKOLOR),
+                    LicenseItem("SQLite", "3.49.0 (via requery/sqlite-android)", "Public Domain", URL_SQLITE, LIC_SQLITE_PD),
+                    LicenseItem("Compose Markdown", "0.7.2", "MIT License", URL_COMPOSE_MARKDOWN, LIC_MIT_COMPOSE_MARKDOWN),
+                    LicenseItem("RxJava", "3.1.12", "Apache License 2.0", URL_RXJAVA, LIC_APACHE),
+                    LicenseItem("RxAndroid", "3.0.2", "Apache License 2.0", URL_RXANDROID, LIC_APACHE),
+                    LicenseItem("MTDataFilesProvider", "v1.0.0", stringResource(R.string.license_not_provided), URL_MTFILES),
+                    LicenseItem("JUnit", "4.13.2", "Eclipse Public License 1.0", URL_JUNIT, LIC_EPL),
+                    LicenseItem("AndroidX Test (JUnit Ext / Espresso)", "1.3.0 / 3.7.0", "Apache License 2.0", URL_TEST, LIC_APACHE)
+                )
+            )
 
             Spacer(Modifier.height(16.dp))
 
             // ==================== 构建工具 ====================
-            LicenseGroup(titleRes = R.string.licenses_build_tools) {
-                LicenseRow(LicenseItem("Kotlin", "2.4.10", "Apache License 2.0", URL_KOTLIN, LIC_APACHE))
-                LicenseRow(LicenseItem("Android Gradle Plugin", "9.3.1", "Apache License 2.0", URL_AGP, LIC_APACHE))
-                LicenseRow(LicenseItem("KSP (Kotlin Symbol Processing)", "2.3.10", "Apache License 2.0", URL_KSP, LIC_APACHE))
-            }
+            LicenseGroup(
+                titleRes = R.string.licenses_build_tools,
+                items = listOf(
+                    LicenseItem("Kotlin", "2.4.10", "Apache License 2.0", URL_KOTLIN, LIC_APACHE),
+                    LicenseItem("Android Gradle Plugin", "9.3.1", "Apache License 2.0", URL_AGP, LIC_APACHE),
+                    LicenseItem("KSP (Kotlin Symbol Processing)", "2.3.10", "Apache License 2.0", URL_KSP, LIC_APACHE)
+                )
+            )
         }
     }
 }
 
-/** 分组容器：标题 + 圆角分段卡片列表（样式与设置页一致） */
+/** 分组容器：标题 + 独立圆角卡片列表（每个条目一张正常圆角卡片，行间留白） */
 @Composable
 private fun LicenseGroup(
     titleRes: Int,
-    items: @Composable () -> Unit
+    items: List<LicenseItem>
 ) {
     Column(
         modifier = Modifier
@@ -219,14 +229,9 @@ private fun LicenseGroup(
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
         )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(LicCardShape)
-                .background(if (isDarkColorScheme()) MaterialTheme.colorScheme.surfaceContainerLow else Color.Transparent)
-                .padding(vertical = 4.dp)
-        ) {
-            items()
+        items.forEachIndexed { index, item ->
+            LicenseRow(item = item)
+            if (index < items.lastIndex) Spacer(Modifier.height(8.dp))
         }
     }
 }
@@ -237,7 +242,7 @@ private val LicTagDark = Color(0xFF364954)    // 标签底：深蓝灰
 private val LicBtnLight = Color(0xFFD0E6F3)   // 外链按钮圆底：淡蓝（同设置页）
 private val LicBtnDark = Color(0xFF364954)    // 外链按钮圆底：深蓝灰
 
-/** 单个依赖条目：点击行展开/收起协议全文，行尾外链按钮跳转项目主页 */
+/** 单个依赖条目：独立圆角卡片，点击行展开/收起协议全文，行尾外链按钮跳转项目主页 */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LicenseRow(item: LicenseItem) {
@@ -257,12 +262,17 @@ private fun LicenseRow(item: LicenseItem) {
         } else ""
     }
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        // Surface(onClick)：波纹严格跟随圆角 shape，不再溢出
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(LicItemShape)
+            .background(if (isDarkColorScheme()) MaterialTheme.colorScheme.surfaceContainerLow else Color.Transparent)
+    ) {
         Surface(
             onClick = { if (expandable) expanded = !expanded },
             enabled = expandable,
-            shape = RoundedCornerShape(12.dp),
+            // 未展开整卡全圆角；展开后行只保留顶部圆角，波纹与卡片圆角同心、不进入展开区
+            shape = if (expanded) LicItemTopShape else LicItemShape,
             color = Color.Transparent,
             modifier = Modifier.fillMaxWidth()
         ) {

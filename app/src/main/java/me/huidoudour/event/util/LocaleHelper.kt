@@ -113,13 +113,13 @@ object LocaleHelper {
     fun getLanguageDisplayName(context: Context, language: String): String {
         val normalized = normalizeLanguage(language)
         return when (normalized) {
-            LANG_SYSTEM -> "跟随系统"
+            LANG_SYSTEM -> context.getString(me.huidoudour.event.R.string.follow_system)
             LANG_CHINESE -> context.getString(me.huidoudour.event.R.string.chinese)
             LANG_TRADITIONAL_CHINESE -> context.getString(me.huidoudour.event.R.string.traditional_chinese)
             LANG_ENGLISH -> context.getString(me.huidoudour.event.R.string.english)
             LANG_RUSSIAN -> context.getString(me.huidoudour.event.R.string.russian)
             LANG_JAPANESE -> context.getString(me.huidoudour.event.R.string.japanese)
-            else -> "跟随系统"
+            else -> context.getString(me.huidoudour.event.R.string.follow_system)
         }
     }
 

@@ -123,7 +123,7 @@ fun EditEventDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.edit) + "事件") },
+        title = { Text(stringResource(R.string.edit_event)) },
         text = {
             Column(
                 modifier = Modifier.padding(top = 8.dp),
@@ -205,7 +205,7 @@ fun DeleteConfirmDialog(
         text = {
             Column {
                 Text(
-                    "删除事件\"$eventTitle\"，请输入 d 确认：",
+                    stringResource(R.string.delete_event_message, eventTitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -488,7 +488,7 @@ fun BatchDeleteConfirmDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.confirm_delete_selected)) },
-        text = { Text("${stringResource(R.string.delete_selected)} $count ?") },
+        text = { Text(stringResource(R.string.confirm_delete_selected_message, count)) },
         confirmButton = {
             Button(
                 onClick = { onConfirm(); onDismiss() },

@@ -76,7 +76,6 @@
     <string name="sort_order_settings">排序方式</string>
     <string name="sort_ascending">正序排列</string>
     <string name="sort_descending">倒序排列</string>
-    <string name="sort_order_changed">排序已更改</string>
     <string name="refresh">刷新</string>
     <string name="refreshed">已刷新</string>
 
@@ -95,14 +94,12 @@
 
     <!-- 日期时间 -->
     <string name="change_datetime">修改日期時間</string>
-    <string name="event_datetime_changed">日期時間已更新</string>>
 
     <!-- 語言切換 -->
     <string name="language_changed">語言已更改</string>
     <string name="language_changed_restart">語言已更改，應用即將重啟…</string>
 
     <!-- 主題切換 -->
-    <string name="theme_changed">主題已更改</string>
 
     <!-- 主題色切換 -->
     <string name="theme_color_settings">主題色</string>
@@ -134,7 +131,6 @@
     <string name="data_display_mode">數據視圖</string>
     <string name="card_view">條目視圖</string>
     <string name="list_view">列表視圖</string>
-    <string name="view_mode_changed">視圖已更改</string>
 
     <!-- 開放原始碼授權 -->
     <string name="open_source_licenses">開放原始碼授權</string>
@@ -143,5 +139,26 @@
     <string name="licenses_build_tools">建置工具</string>
     <string name="licenses_notice">本應用程式使用了以下開放原始碼專案。各專案的完整授權條款請參閱對應專案首頁或原始碼儲存庫。</string>
     <string name="license_not_provided">未提供</string>
+
+    <!-- 補充本地化文字 -->
+    <string name="edit_event">編輯事件</string>
+    <string name="delete_event_message">刪除事件"%1$s"，請輸入 d 確認：</string>
+    <string name="cannot_launch_file_picker">無法啟動文件選擇器: %1$s</string>
+    <string name="cannot_launch_file_manager">無法啟動文件管理器: %1$s</string>
+    <string name="view_mode_changed_format">視圖已更改: %1$s</string>
+    <string name="sort_order_changed_format">排序已更改: %1$s</string>
+    <string name="theme_changed_format">主題已更改: %1$s</string>
+    <string name="event_datetime_changed_format">日期時間已更新: %1$s</string>
+    <string name="follow_system">跟隨系統</string>
+    <string name="clear">清空</string>
+    <string name="close">關閉</string>
+    <string name="settings_applied">設置已應用</string>
+    <string name="blue_icon">藍色圖標</string>
+    <string name="cyan_icon">青色圖標</string>
+    <string name="orange_icon">橙色圖標</string>
+    <string name="pink_icon">粉色圖標</string>
+    <string name="purple_icon">紫色圖標</string>
+    <string name="red_icon">紅色圖標</string>
+    <string name="yellow_icon">黃色圖標</string>
 
 </resources>

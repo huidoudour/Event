@@ -76,7 +76,6 @@
     <string name="sort_order_settings">Sort Order</string>
     <string name="sort_ascending">Ascending</string>
     <string name="sort_descending">Descending</string>
-    <string name="sort_order_changed">Sort order changed</string>
     <string name="refresh">Refresh</string>
     <string name="refreshed">Refreshed</string>
 
@@ -95,14 +94,12 @@
 
     <!-- Date Time -->
     <string name="change_datetime">Change Date &amp; Time</string>
-    <string name="event_datetime_changed">Date &amp; time updated</string>
 
     <!-- Language Switch -->
     <string name="language_changed">Language changed</string>
     <string name="language_changed_restart">Language changed, app will restart…</string>
 
     <!-- Theme Switch -->
-    <string name="theme_changed">Theme changed</string>
 
     <!-- Theme Color -->
     <string name="theme_color_settings">Theme Color</string>
@@ -141,8 +138,6 @@
     <string name="data_display_mode">Data View</string>
     <string name="card_view">Card View</string>
     <string name="list_view">List View</string>
-    <string name="view_mode_changed">View mode changed</string>
-
     <!-- Open Source Licenses -->
     <string name="open_source_licenses">Open Source Licenses</string>
     <string name="licenses_this_app">This App</string>
@@ -150,5 +145,19 @@
     <string name="licenses_build_tools">Build Tools</string>
     <string name="licenses_notice">This app is built with the following open source projects. The full license text of each project is available on its homepage or source repository.</string>
     <string name="license_not_provided">Not provided</string>
+
+    <!-- Additional localized strings -->
+    <string name="edit_event">Edit Event</string>
+    <string name="delete_event_message">Delete event "%1$s". Please type "d" to confirm:</string>
+    <string name="cannot_launch_file_picker">Unable to launch file picker: %1$s</string>
+    <string name="cannot_launch_file_manager">Unable to launch file manager: %1$s</string>
+    <string name="view_mode_changed_format">View mode changed: %1$s</string>
+    <string name="sort_order_changed_format">Sort order changed: %1$s</string>
+    <string name="theme_changed_format">Theme changed: %1$s</string>
+    <string name="event_datetime_changed_format">Date &amp; time updated: %1$s</string>
+    <string name="follow_system">System Default</string>
+    <string name="clear">Clear</string>
+    <string name="close">Close</string>
+    <string name="settings_applied">Settings applied</string>
 
 </resources>
