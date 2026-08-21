@@ -94,9 +94,8 @@ private data class LicenseItem(
 
 /** 条目卡片圆角：每个条目独立成正常圆角卡片，不做分段连排 */
 private val LicItemRadius = 16.dp
+// 点击层始终用全圆角：波纹按 shape 裁剪，展开时若切换为顶部圆角会变成直角波纹
 private val LicItemShape = RoundedCornerShape(LicItemRadius)
-// 展开时行只保留顶部圆角，底部由展开区接续，波纹不会进入展开区
-private val LicItemTopShape = RoundedCornerShape(LicItemRadius, LicItemRadius, 0.dp, 0.dp)
 
 /**
  * 开源许可页面 Compose 组件：
@@ -271,8 +270,8 @@ private fun LicenseRow(item: LicenseItem) {
         Surface(
             onClick = { if (expandable) expanded = !expanded },
             enabled = expandable,
-            // 未展开整卡全圆角；展开后行只保留顶部圆角，波纹与卡片圆角同心、不进入展开区
-            shape = if (expanded) LicItemTopShape else LicItemShape,
+            // 波纹与卡片圆角同心、不进入展开区；行本身透明，底部直角由外层 Column 背景接续
+            shape = LicItemShape,
             color = Color.Transparent,
             modifier = Modifier.fillMaxWidth()
         ) {
