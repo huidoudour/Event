@@ -247,13 +247,13 @@ fun MainScreenContent(
                         }
                     }
                 } else {
-                    // ── 表格视图 ── 横向可滑动，按数据内容统一列宽
+                    // ── 表格视图 ── 保留卡片边框，左右保留 6dp 边距，横向可滑动查看完整数据
                     val colWidths = remember(events) { calculateColumnWidths(events, dateFormat) }
                     val horizontalScrollState = rememberScrollState()
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                            .padding(start = 6.dp, end = 6.dp, bottom = 16.dp)
                             .horizontalScroll(horizontalScrollState)
                     ) {
                         Card(
@@ -524,11 +524,13 @@ private fun TableRow(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
+    // 交替行背景：亮色为中性白/灰条纹（图 2 效果），深色为深灰/稍亮深灰。
+    // 使用固定色而非 surface/surfaceContainerHigh，避免受主题色、壁纸影响而各设备不一致。
     val rowBackground = when {
         isSelected -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
         isPressed -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
-        isEvenRow -> MaterialTheme.colorScheme.surface
-        else -> MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.5f)
+        isEvenRow -> if (isDarkColorScheme()) Color(0xFF1C1C1E) else Color(0xFFFFFFFF)
+        else -> if (isDarkColorScheme()) Color(0xFF2C2D31) else Color(0xFFECEEF1)
     }
 
     Surface(

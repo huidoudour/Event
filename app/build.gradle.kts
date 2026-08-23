@@ -26,7 +26,6 @@ fun Project.gitHash(): String = try {
 val appVersionCode = baseVersionCode + gitCommitCount()
 val appVersionName = "${baseVersionName}.${gitCommitCount()}.${gitHash()}"
 
-// 构建结束后打印版本号（assemble/bundle 任务完成时输出）
 tasks.matching { it.name.startsWith("assemble") || it.name.startsWith("bundle") }.configureEach {
     doLast {
         println(">>> Event-[$name]: $appVersionName($appVersionCode) <<<")
@@ -51,8 +50,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {
-            // 包含所有支持的架构：armeabi-v7a, arm64-v8a, x86, x86_64
-            abiFilters += listOf("arm64-v8a" , "x86_64")
+            // "armeabi-v7a","arm64-v8a","x86","x86_64"
+            abiFilters += listOf( "arm64-v8a" , "x86_64" )
         }
     }
 
