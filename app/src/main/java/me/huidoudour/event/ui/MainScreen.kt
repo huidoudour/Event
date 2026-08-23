@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -106,6 +107,8 @@ fun MainScreenContent(
     onToggleSelection: (Long) -> Unit
 ) {
     val context = LocalContext.current
+    // 整个主界面复用一个日期格式实例，避免每个卡片/行都创建 SimpleDateFormat
+    val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()) }
     Scaffold(
         // 博客风格淡蓝→淡粉渐变背景（深色模式回退默认背景色）
         modifier = Modifier
@@ -237,14 +240,14 @@ fun MainScreenContent(
                                     if (isMultiSelectMode) onToggleSelection(event.id)
                                     else onEventClick(event)
                                 },
-                                onLongClick = { onEventLongClick(event) }
+                                onLongClick = { onEventLongClick(event) },
+                                dateFormat = dateFormat
                             )
                             Spacer(Modifier.height(8.dp))
                         }
                     }
                 } else {
                     // ── 表格视图 ── 横向可滑动，按数据内容统一列宽
-                    val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()) }
                     val colWidths = remember(events) { calculateColumnWidths(events, dateFormat) }
                     val horizontalScrollState = rememberScrollState()
                     Box(
@@ -276,8 +279,7 @@ fun MainScreenContent(
                                 )
                                 // 数据行 — 交替背景
                                 LazyColumn(modifier = Modifier.fillMaxHeight()) {
-                                    items(events, key = { it.id }) { event ->
-                                        val index = events.indexOf(event)
+                                    itemsIndexed(events, key = { _, event -> event.id }) { index, event ->
                                         TableRow(
                                             event = event,
                                             isMultiSelectMode = isMultiSelectMode,
@@ -352,10 +354,9 @@ private fun EventCard(
     isMultiSelectMode: Boolean,
     isSelected: Boolean,
     onClick: () -> Unit,
-    onLongClick: () -> Unit
+    onLongClick: () -> Unit,
+    dateFormat: SimpleDateFormat
 ) {
-    val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()) }
-
     // 亮色下用博客风淡蓝卡片底，深色回退默认 surface；
     // 选中时：用不透明的混合色填充（半透明色会透出卡片阴影，在边缘形成一圈深色"粗框"）
     val base = if (isDarkColorScheme()) MaterialTheme.colorScheme.surface else BlogCardBlue

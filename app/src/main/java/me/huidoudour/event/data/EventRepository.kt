@@ -32,6 +32,9 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
 
     fun insert(event: Event): Long = eventDao.insert(event)
 
+    /** 批量插入（用于导入等场景），Room 会在单个事务中完成 */
+    fun insertAll(events: List<Event>) = eventDao.insertAll(events)
+
     fun update(event: Event) {
         // 只在内容变化时更新时间戳
         event.updatedAt = System.currentTimeMillis()

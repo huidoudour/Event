@@ -10,3 +10,9 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# ── RxJava / RxAndroid ──
+# 保留原始类名与成员
+# RxJava 自带 consumer 规则仅有 -dontwarn，不会保留类名。
+-keep class io.reactivex.rxjava3.** { *; }
+-keep class io.reactivex.android.** { *; }

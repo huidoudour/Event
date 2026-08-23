@@ -25,6 +25,10 @@ interface EventDao {
     @Insert
     fun insert(event: Event): Long
 
+    /** 批量插入（用于导入等场景），Room 会在单个事务中完成 */
+    @Insert
+    fun insertAll(events: List<Event>)
+
     @Update
     fun update(event: Event)
 

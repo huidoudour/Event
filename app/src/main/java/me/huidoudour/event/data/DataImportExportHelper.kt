@@ -25,7 +25,7 @@ class DataImportExportHelper(private val context: Context) {
             try {
                 obj.put(KEY_TITLE, event.title)
                 obj.put(KEY_DETAIL, event.description ?: "")
-                obj.put(KEY_TIME, DATE_FORMAT.format(Date(event.eventTime)))
+                obj.put(KEY_TIME, DATE_FORMAT.get()!!.format(Date(event.eventTime)))
                 // 保存 createdAt 和 updatedAt 以保持原始时间戳
                 obj.put("createdAt", event.createdAt)
                 obj.put("updatedAt", event.updatedAt)
@@ -92,10 +92,9 @@ class DataImportExportHelper(private val context: Context) {
             val array = JSONArray(jsonString)
             if (clearExisting) repository.deleteAll()
 
-            // 按时间戳排序，确保导入后ID顺序与时间顺序一致（新的在前）
-            data class EventData(val title: String, val detail: String?, val eventTime: Long)
-
-            val eventsToImport = mutableListOf<EventData>()
+            // 解析为 Event 列表，按时间升序排序后一次批量插入
+            // （Room 的 List @Insert 会在单个事务中完成，避免逐条 INSERT 的性能损耗）
+            val eventsToImport = mutableListOf<Event>()
             for (i in 0 until array.length()) {
                 val obj = array.getJSONObject(i)
                 val title: String
@@ -113,17 +112,12 @@ class DataImportExportHelper(private val context: Context) {
                     detail = obj.optString("description", "")
                     eventTime = obj.optLong("eventTime", System.currentTimeMillis())
                 }
-                eventsToImport.add(EventData(title, detail, eventTime))
+                eventsToImport.add(Event(title, detail, eventTime))
             }
 
-            // 按时间升序排序（最旧的在前）
+            // 按时间升序排序（最旧的在前），ID会自动从1开始递增
             eventsToImport.sortBy { it.eventTime }
-
-            // 按排序后的顺序插入，ID会自动从1开始递增
-            for (data in eventsToImport) {
-                val event = Event(data.title, data.detail, data.eventTime)
-                repository.insert(event)
-            }
+            repository.insertAll(eventsToImport)
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -143,7 +137,7 @@ class DataImportExportHelper(private val context: Context) {
             .replace('：', ':')
             .replace('\u3000', ' ')
         return try {
-            DATE_FORMAT.parse(normalized)?.time ?: System.currentTimeMillis()
+            DATE_FORMAT.get()!!.parse(normalized)?.time ?: System.currentTimeMillis()
         } catch (_: ParseException) {
             // 尝试当作毫秒时间戳
             try {
@@ -221,7 +215,10 @@ class DataImportExportHelper(private val context: Context) {
         private const val KEY_TITLE = "事件标题"
         private const val KEY_DETAIL = "事件详情"
         private const val KEY_TIME = "事件时间"
-        // 数据交换格式固定用 Locale.US，避免随系统语言变化导致导出/导入不一致
-        private val DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US)
+        // 数据交换格式固定用 Locale.US，避免随系统语言变化导致导出/导入不一致。
+        // SimpleDateFormat 非线程安全，使用 ThreadLocal 避免并发导入/导出时共享状态。
+        private val DATE_FORMAT = ThreadLocal.withInitial {
+            SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US)
+        }
     }
 }

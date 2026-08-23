@@ -516,13 +516,17 @@ fun BatchDeleteConfirmDialog(
  * - 分割线：*** 或 --- 或 ___
  * 普通文本（无上述语法）返回 false，仍按纯文本显示。
  */
+private val MARKDOWN_STRUCTURE = Regex("(?m)^\\s{0,3}(#{1,6}\\s|[-*+]\\s|\\d+\\.\\s|>\\s?|`{3})")
+private val MARKDOWN_PAIRED = Regex("\\*\\*.+?\\*\\*|__.+?__|`[^`\\n]+`|\\[[^\\]]+]\\([^)]+\\)")
+private val MARKDOWN_DIVIDER = Regex("(?m)^\\s{0,3}(\\*{3,}|-{3,}|_{3,})\\s*$")
+
 private fun containsMarkdown(text: String): Boolean {
     if (text.isBlank()) return false
     // 行级结构标记
-    if (Regex("(?m)^\\s{0,3}(#{1,6}\\s|[-*+]\\s|\\d+\\.\\s|>\\s?|`{3})").containsMatchIn(text)) return true
+    if (MARKDOWN_STRUCTURE.containsMatchIn(text)) return true
     // 成对标记
-    if (Regex("\\*\\*.+?\\*\\*|__.+?__|`[^`\\n]+`|\\[[^\\]]+]\\([^)]+\\)").containsMatchIn(text)) return true
+    if (MARKDOWN_PAIRED.containsMatchIn(text)) return true
     // 分割线
-    if (Regex("(?m)^\\s{0,3}(\\*{3,}|-{3,}|_{3,})\\s*$").containsMatchIn(text)) return true
+    if (MARKDOWN_DIVIDER.containsMatchIn(text)) return true
     return false
 }

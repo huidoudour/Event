@@ -18,6 +18,11 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModelProvider
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import me.huidoudour.event.MeActivity
 import me.huidoudour.event.R
 import me.huidoudour.event.data.DataImportExportHelper
@@ -25,13 +30,13 @@ import me.huidoudour.event.ui.theme.EventTheme
 import me.huidoudour.event.util.BaseActivity
 import me.huidoudour.event.util.ThemeHelper
 import java.io.File
-import java.util.concurrent.Executors
 
 class SettingsActivity : BaseActivity() {
 
     private lateinit var viewModel: EventViewModel
     private lateinit var dataHelper: DataImportExportHelper
-    private val executor = Executors.newSingleThreadExecutor()
+    // RxJava 统一管理导入/导出异步任务，onDestroy 时自动释放
+    private val disposables = CompositeDisposable()
 
     // 使用 mutableStateOf 驱动 Compose 重组，避免不必要的 recreate() 导致 UI 抖动
     private var isDarkTheme by mutableStateOf(false)
@@ -41,17 +46,23 @@ class SettingsActivity : BaseActivity() {
         ActivityResultContracts.CreateDocument("application/json")
     ) { uri ->
         if (uri != null) {
-            executor.execute {
-                val repo = viewModel.getRepository()
-                val success = dataHelper.exportDataToUri(repo, uri)
-                runOnUiThread {
-                    if (success) {
-                        Toast.makeText(this, R.string.export_success, Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this, R.string.no_data_to_export, Toast.LENGTH_SHORT).show()
-                    }
+            disposables.add(
+                Single.fromCallable {
+                    dataHelper.exportDataToUri(viewModel.getRepository(), uri)
                 }
-            }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                        { success ->
+                            if (success) {
+                                Toast.makeText(this, R.string.export_success, Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, R.string.no_data_to_export, Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        { e -> Log.e(TAG, "exportDataToUri failed", e) }
+                    )
+            )
         }
     }
 
@@ -95,6 +106,11 @@ class SettingsActivity : BaseActivity() {
         applyContent()
     }
 
+    override fun onDestroy() {
+        disposables.dispose()
+        super.onDestroy()
+    }
+
     /**
      * 设置 Compose 内容。
      * 使用 key(isDarkTheme) 驱动主题切换时 Compose 树的完全重建。
@@ -115,22 +131,25 @@ class SettingsActivity : BaseActivity() {
                             val installed = isFileManagerInstalled()
                             Log.d(TAG, "onExport: isFileManagerInstalled=$installed")
                             if (installed) {
-                                // 优先使用 FileManager 保存
-                                executor.execute {
-                                    val repo = viewModel.getRepository()
-                                    val file = writeExportJsonToCache(repo)
-                                    runOnUiThread {
-                                        if (file != null) {
-                                            launchExportToFileManager(file)
-                                        } else {
-                                            Toast.makeText(
-                                                this@SettingsActivity,
-                                                R.string.no_data_to_export,
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
+                                // 优先使用 FileManager 保存（Maybe：null 表示无数据可导出，走 onComplete）
+                                disposables.add(
+                                    Maybe.fromCallable {
+                                        writeExportJsonToCache(viewModel.getRepository())
                                     }
-                                }
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(
+                                            { file -> launchExportToFileManager(file) },
+                                            { e -> Log.e(TAG, "writeExportJsonToCache failed", e) },
+                                            {
+                                                Toast.makeText(
+                                                    this@SettingsActivity,
+                                                    R.string.no_data_to_export,
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        )
+                                )
                             } else {
                                 exportFileLauncher.launch("events_backup_${System.currentTimeMillis()}.json")
                             }
@@ -211,13 +230,15 @@ class SettingsActivity : BaseActivity() {
     /** 构建导出 JSON 字符串（与 DataImportExportHelper 格式一致） */
     private fun buildExportJson(events: List<me.huidoudour.event.data.Event>): String? {
         if (events.isEmpty()) return null
+        // 每个导出任务只创建一个日期格式实例，避免在循环中反复 new
+        val dateFormat = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.US)
         val sb = StringBuilder("[\n")
         events.forEachIndexed { index, event ->
             if (index > 0) sb.append(",\n")
             sb.append("  {\n")
             sb.append("    \"事件标题\": \"${event.title.replace("\\", "\\\\").replace("\"", "\\\"")}\",\n")
             sb.append("    \"事件详情\": \"${(event.description ?: "").replace("\\", "\\\\").replace("\"", "\\\"")}\",\n")
-            sb.append("    \"事件时间\": \"${java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.US).format(java.util.Date(event.eventTime))}\",\n")
+            sb.append("    \"事件时间\": \"${dateFormat.format(java.util.Date(event.eventTime))}\",\n")
             sb.append("    \"createdAt\": ${event.createdAt},\n")
             sb.append("    \"updatedAt\": ${event.updatedAt}\n")
             sb.append("  }")
@@ -268,17 +289,23 @@ class SettingsActivity : BaseActivity() {
             .setTitle(R.string.confirm_import)
             .setMessage(R.string.import_warning)
             .setPositiveButton(R.string.ok) { _, _ ->
-                executor.execute {
-                    val repo = viewModel.getRepository()
-                    val success = dataHelper.importDataFromUri(repo, uri, true)
-                    runOnUiThread {
-                        if (success) {
-                            Toast.makeText(this, R.string.import_success, Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(this, R.string.import_failed, Toast.LENGTH_SHORT).show()
-                        }
+                disposables.add(
+                    Single.fromCallable {
+                        dataHelper.importDataFromUri(viewModel.getRepository(), uri, true)
                     }
-                }
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                            { success ->
+                                if (success) {
+                                    Toast.makeText(this, R.string.import_success, Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(this, R.string.import_failed, Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            { e -> Log.e(TAG, "importDataFromUri failed", e) }
+                        )
+                )
             }
             .setNegativeButton(R.string.cancel, null)
             .show()

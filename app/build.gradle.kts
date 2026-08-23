@@ -9,7 +9,7 @@ plugins {
 
 // ── Git 版本控制 ──
 val baseVersionCode = 10
-val baseVersionName = "1.2"
+val baseVersionName = "1.3"
 val backVersionCode = 95
 
 fun Project.gitCommitCount(): Int = try {
@@ -167,12 +167,14 @@ dependencies {
     // Compose Markdown - 详情对话框 Markdown 渲染
     implementation(libs.compose.markdown)
 
+    // RxJava / RxAndroid - 异步线程调度（Schedulers.io + AndroidSchedulers.mainThread）
+    implementation(libs.rxjava)
+    implementation(libs.rxandroid)
+
     // 本地依赖，仅用于调试（仅在文件存在时添加）
     val localSqliteFile = file("libs/android.aar")
     if (localSqliteFile.exists()) {
         debugImplementation(files(localSqliteFile))
     }
 
-    debugImplementation(libs.rxjava)
-    debugImplementation(libs.rxandroid)
 }

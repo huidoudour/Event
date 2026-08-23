@@ -34,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +48,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import me.huidoudour.event.R
 import me.huidoudour.event.ui.theme.blogBackground
 import me.huidoudour.event.ui.theme.cardBorderColor
@@ -250,15 +254,26 @@ private fun LicenseRow(item: LicenseItem) {
     val expandable = item.licenseFile != null
     var expanded by remember { mutableStateOf(false) }
 
-    // 展开时从 assets 读取协议全文
-    val licenseText = remember(item.licenseFile, expanded) {
+    // 展开时从 assets 读取协议全文；读取放到 IO 线程，避免阻塞主线程
+    var licenseText by remember(item.licenseFile, expanded) { mutableStateOf("") }
+    DisposableEffect(item.licenseFile, expanded) {
         if (expanded && item.licenseFile != null) {
-            try {
+            val disposable = Single.fromCallable {
                 context.assets.open("licenses/${item.licenseFile}")
                     .bufferedReader()
                     .use { it.readText() }
-            } catch (_: Exception) { "" }
-        } else ""
+            }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { text -> licenseText = text },
+                    { licenseText = "" }
+                )
+            onDispose { disposable.dispose() }
+        } else {
+            licenseText = ""
+            onDispose { }
+        }
     }
 
     Column(
