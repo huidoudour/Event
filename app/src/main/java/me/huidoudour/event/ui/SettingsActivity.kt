@@ -22,6 +22,8 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import me.huidoudour.event.MeActivity
 import me.huidoudour.event.R
@@ -35,7 +37,7 @@ class SettingsActivity : BaseActivity() {
 
     private lateinit var viewModel: EventViewModel
     private lateinit var dataHelper: DataImportExportHelper
-    // RxJava 统一管理导入/导出异步任务，onDestroy 时自动释放
+    // RxKotlin / RxJava 统一管理导入/导出异步任务，onDestroy 时自动释放
     private val disposables = CompositeDisposable()
 
     // 使用 mutableStateOf 驱动 Compose 重组，避免不必要的 recreate() 导致 UI 抖动
@@ -46,23 +48,22 @@ class SettingsActivity : BaseActivity() {
         ActivityResultContracts.CreateDocument("application/json")
     ) { uri ->
         if (uri != null) {
-            disposables.add(
-                Single.fromCallable {
-                    dataHelper.exportDataToUri(viewModel.getRepository(), uri)
-                }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        { success ->
-                            if (success) {
-                                Toast.makeText(this, R.string.export_success, Toast.LENGTH_SHORT).show()
-                            } else {
-                                Toast.makeText(this, R.string.no_data_to_export, Toast.LENGTH_SHORT).show()
-                            }
-                        },
-                        { e -> Log.e(TAG, "exportDataToUri failed", e) }
-                    )
-            )
+            Single.fromCallable {
+                dataHelper.exportDataToUri(viewModel.getRepository(), uri)
+            }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                    onSuccess = { success ->
+                        if (success) {
+                            Toast.makeText(this, R.string.export_success, Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, R.string.no_data_to_export, Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    onError = { e -> Log.e(TAG, "exportDataToUri failed", e) }
+                )
+                .addTo(disposables)
         }
     }
 
@@ -132,24 +133,23 @@ class SettingsActivity : BaseActivity() {
                             Log.d(TAG, "onExport: isFileManagerInstalled=$installed")
                             if (installed) {
                                 // 优先使用 FileManager 保存（Maybe：null 表示无数据可导出，走 onComplete）
-                                disposables.add(
-                                    Maybe.fromCallable {
-                                        writeExportJsonToCache(viewModel.getRepository())
-                                    }
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(
-                                            { file -> launchExportToFileManager(file) },
-                                            { e -> Log.e(TAG, "writeExportJsonToCache failed", e) },
-                                            {
-                                                Toast.makeText(
-                                                    this@SettingsActivity,
-                                                    R.string.no_data_to_export,
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                        )
-                                )
+                                Maybe.fromCallable {
+                                    writeExportJsonToCache(viewModel.getRepository())
+                                }
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribeBy(
+                                        onSuccess = { file -> launchExportToFileManager(file) },
+                                        onError = { e -> Log.e(TAG, "writeExportJsonToCache failed", e) },
+                                        onComplete = {
+                                            Toast.makeText(
+                                                this@SettingsActivity,
+                                                R.string.no_data_to_export,
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    )
+                                    .addTo(disposables)
                             } else {
                                 exportFileLauncher.launch("events_backup_${System.currentTimeMillis()}.json")
                             }
@@ -289,23 +289,22 @@ class SettingsActivity : BaseActivity() {
             .setTitle(R.string.confirm_import)
             .setMessage(R.string.import_warning)
             .setPositiveButton(R.string.ok) { _, _ ->
-                disposables.add(
-                    Single.fromCallable {
-                        dataHelper.importDataFromUri(viewModel.getRepository(), uri, true)
-                    }
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                            { success ->
-                                if (success) {
-                                    Toast.makeText(this, R.string.import_success, Toast.LENGTH_SHORT).show()
-                                } else {
-                                    Toast.makeText(this, R.string.import_failed, Toast.LENGTH_SHORT).show()
-                                }
-                            },
-                            { e -> Log.e(TAG, "importDataFromUri failed", e) }
-                        )
-                )
+                Single.fromCallable {
+                    dataHelper.importDataFromUri(viewModel.getRepository(), uri, true)
+                }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy(
+                        onSuccess = { success ->
+                            if (success) {
+                                Toast.makeText(this, R.string.import_success, Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, R.string.import_failed, Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        onError = { e -> Log.e(TAG, "importDataFromUri failed", e) }
+                    )
+                    .addTo(disposables)
             }
             .setNegativeButton(R.string.cancel, null)
             .show()

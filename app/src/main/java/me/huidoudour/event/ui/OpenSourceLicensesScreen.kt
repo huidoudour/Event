@@ -50,6 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import me.huidoudour.event.R
 import me.huidoudour.event.ui.theme.blogBackground
@@ -265,9 +266,9 @@ private fun LicenseRow(item: LicenseItem) {
             }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { text -> licenseText = text },
-                    { licenseText = "" }
+                .subscribeBy(
+                    onSuccess = { text -> licenseText = text },
+                    onError = { licenseText = "" }
                 )
             onDispose { disposable.dispose() }
         } else {

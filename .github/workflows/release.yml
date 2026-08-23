@@ -4,6 +4,11 @@ on:
   push:
     tags:
       - 'v*'
+      # 排除预发布标签；预发布请使用 pre-release.yml 触发
+      - '!v*-beta*'
+      - '!v*-rc*'
+      - '!v*-alpha*'
+      - '!v*-pre*'
 
 env:
   SIGN_KEYSTORE_PATH: ${{ github.workspace }}/sign_key

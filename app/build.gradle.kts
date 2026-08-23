@@ -7,9 +7,8 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-// ── Git 版本控制 ──
 val baseVersionCode = 10
-val baseVersionName = "1.3"
+val baseVersionName = "1.4-beta1"
 val backVersionCode = 95
 
 fun Project.gitCommitCount(): Int = try {
@@ -24,7 +23,6 @@ fun Project.gitHash(): String = try {
     SimpleDateFormat("MMddHHmm").format(Date())
 }
 
-// 统一计算版本信息，供 defaultConfig 与构建结束打印共用
 val appVersionCode = baseVersionCode + gitCommitCount()
 val appVersionName = "${baseVersionName}.${gitCommitCount()}.${gitHash()}"
 
@@ -46,14 +44,12 @@ android {
     defaultConfig {
         applicationId = "me.huidoudour.event"
         minSdk = 28
-        //noinspection OldTargetApi
-        targetSdk = 36
+        targetSdk = 37
         versionCode = appVersionCode
         versionName = appVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        
-        // 指定要包含的 ABI 架构（所有架构）
+
         ndk {
             // 包含所有支持的架构：armeabi-v7a, arm64-v8a, x86, x86_64
             abiFilters += listOf("arm64-v8a" , "x86_64")
@@ -82,7 +78,6 @@ android {
 
     buildTypes {
         debug {
-            isMinifyEnabled = false
             isDebuggable = true
             signingConfig = if (useSignKey) {
                 signingConfigs.getByName("sign_key")
@@ -110,7 +105,7 @@ android {
     }
     
     // 配置 NDK 版本
-    ndkVersion = "27.0.12077973" // 使用与 AGP 9.0.1 兼容的 NDK 版本
+    ndkVersion = "27.0.12077973"
 }
 
 kotlin {
@@ -129,8 +124,7 @@ dependencies {
     implementation(libs.room.runtime)
     //noinspection KspUsageInsteadOfKapt
     ksp("androidx.room:room-compiler:${libs.versions.room.get()}")
-    
-    // Fragment (仅兼容过渡期使用)
+
     implementation(libs.fragment.ktx)
     
     // Compose
@@ -167,9 +161,13 @@ dependencies {
     // Compose Markdown - 详情对话框 Markdown 渲染
     implementation(libs.compose.markdown)
 
-    // RxJava / RxAndroid - 异步线程调度（Schedulers.io + AndroidSchedulers.mainThread）
+    // RxJava / RxKotlin / RxAndroid - 异步线程调度（Schedulers.io + AndroidSchedulers.mainThread）
+    // RxKotlin 提供 Kotlin 扩展（subscribeBy / addTo / toCompletable），让 RxJava 调用更符合 Kotlin 习惯
     implementation(libs.rxjava)
+    implementation(libs.rxkotlin)
     implementation(libs.rxandroid)
+    // debugImplementation(libs.rxjava.preview)
+    // debugImplementation("com.github.ReactiveX:RxJava:4.0.0-alpha-21")
 
     // 本地依赖，仅用于调试（仅在文件存在时添加）
     val localSqliteFile = file("libs/android.aar")

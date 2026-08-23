@@ -6,8 +6,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.kotlin.toCompletable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import me.huidoudour.event.data.Event
 import me.huidoudour.event.data.EventDatabase
@@ -17,7 +19,7 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: EventRepository
     val allEvents: LiveData<List<Event>>
-    // RxJava 统一管理异步任务，onCleared 时自动释放
+    // RxKotlin / RxJava 统一管理异步任务，onCleared 时自动释放
     private val disposables = CompositeDisposable()
 
     init {
@@ -59,14 +61,12 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
 
     /** 在 io 线程池执行数据库写操作（替代手写单线程 Executor，线程池可复用） */
     private fun runOnIo(action: () -> Unit) {
-        disposables.add(
-            Completable.fromAction(action)
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                    {},
-                    { e -> Log.e(TAG, "database operation failed", e) }
-                )
-        )
+        action.toCompletable()
+            .subscribeOn(Schedulers.io())
+            .subscribeBy(
+                onError = { e -> Log.e(TAG, "database operation failed", e) }
+            )
+            .addTo(disposables)
     }
 
     override fun onCleared() {

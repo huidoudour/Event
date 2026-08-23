@@ -14,7 +14,9 @@ fragment = "1.9.0"
 activityCompose = "1.13.0"
 mtDataFilesProvider = "v1.0.0"
 rxandroid = "3.0.2"
+rxkotlin = "3.0.1"
 rxjava = "3.1.12"
+rxjava-preview = "4.0.0-alpha-21"
 sqliteAndroid = "3.49.0"
 materialkolor = "5.0.0"
 composeMarkdown = "0.7.2"
@@ -27,6 +29,7 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 lifecycle-livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
+
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
@@ -42,7 +45,11 @@ compose-foundation = { group = "androidx.compose.foundation", name = "foundation
 compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata" }
 mt-data-files-provider = { group = "com.github.L-JINBIN", name = "MTDataFilesProvider", version.ref = "mtDataFilesProvider" }
 rxandroid = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxandroid" }
+#noinspection SimilarGradleDependency
 rxjava = { module = "io.reactivex.rxjava3:rxjava", version.ref = "rxjava" }
+#noinspection SimilarGradleDependency
+rxjava-preview = { module = "io.reactivex.rxjava3:rxjava", version.ref = "rxjava-preview" }
+rxkotlin = { group = "io.reactivex.rxjava3", name = "rxkotlin", version.ref = "rxkotlin" }
 sqlite-android = { group = "com.github.requery", name = "sqlite-android", version.ref = "sqliteAndroid" }
 materialkolor = { group = "com.materialkolor", name = "material-kolor", version.ref = "materialkolor" }
 compose-markdown = { module = "com.github.jeziellago:compose-markdown", version.ref = "composeMarkdown" }

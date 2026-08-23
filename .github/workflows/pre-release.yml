@@ -1,0 +1,138 @@
+name: Pre-release
+
+on:
+  push:
+    tags:
+      - 'v*-beta*'
+      - 'v*-rc*'
+      - 'v*-alpha*'
+      - 'v*-pre*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '预发布版本号，例如 v1.3-beta1'
+        required: true
+        type: string
+      target:
+        description: '目标分支，例如 master'
+        required: false
+        default: 'master'
+        type: string
+      title:
+        description: '发布标题（可选，默认 Pre-release <version>）'
+        required: false
+        type: string
+
+env:
+  SIGN_KEYSTORE_PATH: ${{ github.workspace }}/sign_key
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  prerelease:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
+        ref: ${{ github.event_name == 'push' && github.ref || github.event.inputs.target }}
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v5
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: 'gradle'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v5
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Decode Keystore
+      run: |
+        echo "$SIGN_KEY_STORE_B64" | base64 -d > ${{ env.SIGN_KEYSTORE_PATH }}
+      env:
+        SIGN_KEY_STORE_B64: ${{ secrets.SIGN_KEY_STORE_B64 }}
+
+    - name: Normalize version
+      id: version
+      run: |
+        if [ "${{ github.event_name }}" == "push" ]; then
+          VERSION="${GITHUB_REF#refs/tags/}"
+        else
+          VERSION="${{ github.event.inputs.version }}"
+          if [[ "$VERSION" != v* ]]; then VERSION="v${VERSION}"; fi
+        fi
+        echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
+
+    - name: Resolve release title
+      id: release_title
+      run: |
+        if [ "${{ github.event_name }}" == "push" ]; then
+          TITLE="Pre-release ${GITHUB_REF#refs/tags/}"
+        elif [ -n "${{ github.event.inputs.title }}" ]; then
+          TITLE="${{ github.event.inputs.title }}"
+        else
+          TITLE="Pre-release ${{ steps.version.outputs.VERSION }}"
+        fi
+        echo "TITLE=${TITLE}" >> "$GITHUB_OUTPUT"
+
+    - name: Build Signed Release APK
+      run: |
+        ./gradlew assembleRelease \
+          -Pandroid.injected.signing.store.file="${{ env.SIGN_KEYSTORE_PATH }}" \
+          -Pandroid.injected.signing.store.password="${{ secrets.SIGN_KEY_STORE_PASSWD }}" \
+          -Pandroid.injected.signing.key.alias="${{ secrets.SIGN_KEY_ALIAS }}" \
+          -Pandroid.injected.signing.key.password="${{ secrets.SIGN_KEY_ALIAS_PASSWD }}"
+
+    - name: Rename APK with version
+      run: |
+        mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/Event-${{ steps.version.outputs.VERSION }}.apk
+
+    - name: Upload Signed Pre-release APK
+      uses: actions/upload-artifact@v5
+      if: success()
+      with:
+        name: app-signed-prerelease
+        path: app/build/outputs/apk/release/Event-${{ steps.version.outputs.VERSION }}.apk
+        retention-days: 30
+
+    - name: Get git commit messages
+      id: git_commits
+      run: |
+        PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        if [ -n "$PREV_TAG" ]; then
+          COMMITS=$(git log --oneline --no-merges $PREV_TAG..HEAD)
+        else
+          COMMITS=$(git log --oneline --no-merges)
+        fi
+        FORMATTED=$(echo "$COMMITS" | sed 's/^/- /')
+        echo "commits<<EOF" >> $GITHUB_OUTPUT
+        echo "$FORMATTED" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: Create Pre-release
+      uses: softprops/action-gh-release@v2.2.2
+      if: success()
+      with:
+        files: app/build/outputs/apk/release/Event-${{ steps.version.outputs.VERSION }}.apk
+        name: ${{ steps.release_title.outputs.TITLE }}
+        tag_name: ${{ steps.version.outputs.VERSION }}
+        target_commitish: ${{ github.event_name == 'push' && github.sha || github.event.inputs.target }}
+        draft: false
+        prerelease: true
+        body: |
+          ## 预发布更新内容
+          ${{ steps.git_commits.outputs.commits }}
+
+          ### 安装说明
+          这是预发布版本，可能存在不稳定问题，请谨慎安装测试。
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Cleanup Keystore
+      if: always()
+      run: rm -f ${{ env.SIGN_KEYSTORE_PATH }}
