@@ -43,6 +43,7 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -203,19 +204,21 @@ fun MainScreenContent(
                         modifier = Modifier
                             .padding(horizontal = 2.dp)
                             .size(48.dp)
-                            .clip(CircleShape)
-                            .combinedClickable(
-                                onClick = {
-                                    Toast.makeText(context, R.string.long_press_to_clear, Toast.LENGTH_SHORT).show()
-                                },
-                                onLongClick = onClearAll
-                            ),
+                            .clip(CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         Box(
                             modifier = Modifier
+                                .minimumInteractiveComponentSize()
                                 .size(40.dp)
-                                .background(softIconButtonBg(), CircleShape),
+                                .clip(CircleShape)
+                                .background(softIconButtonBg(), CircleShape)
+                                .combinedClickable(
+                                    onClick = {
+                                        Toast.makeText(context, R.string.long_press_to_clear, Toast.LENGTH_SHORT).show()
+                                    },
+                                    onLongClick = onClearAll
+                                ),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(painterResource(R.drawable.ic_delete), contentDescription = stringResource(R.string.clear_all))

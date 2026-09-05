@@ -8,7 +8,7 @@ plugins {
 }
 
 val baseVersionCode = 10
-val baseVersionName = "1.5"
+val baseVersionName = "1.6"
 val backVersionCode = 95
 
 fun Project.gitCommitCount(): Int = try {
