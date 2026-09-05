@@ -119,11 +119,33 @@ class MainActivity : BaseActivity() {
         var multiSelect by remember { mutableStateOf(false) }
         var selIds by remember { mutableStateOf(setOf<Long>()) }
 
+        // 搜索状态
+        var isSearchActive by remember { mutableStateOf(false) }
+        var searchQuery by remember { mutableStateOf("") }
+        // 进入/退出搜索或输入关键词时，实时刷新搜索结果
+        LaunchedEffect(isSearchActive, searchQuery) {
+            viewModel.setSearchQuery(if (isSearchActive) searchQuery else "")
+        }
+
         MainScreenContent(
             events = events.value,
             isMultiSelectMode = multiSelect,
             selectedIds = selIds,
             viewMode = viewMode,
+            isSearchActive = isSearchActive,
+            searchQuery = searchQuery,
+            onSearchToggle = {
+                if (isSearchActive) {
+                    isSearchActive = false
+                    searchQuery = ""
+                } else {
+                    // 进入搜索前退出多选，避免选中态与过滤结果冲突
+                    multiSelect = false
+                    selIds = emptySet()
+                    isSearchActive = true
+                }
+            },
+            onSearchQueryChange = { searchQuery = it },
             onToggleMultiSelect = {
                 multiSelect = !multiSelect
                 selIds = emptySet()

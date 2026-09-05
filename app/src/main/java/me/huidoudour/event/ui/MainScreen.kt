@@ -29,6 +29,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.SelectAll
 import androidx.compose.material3.Card
@@ -47,18 +49,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -94,6 +100,10 @@ fun MainScreenContent(
     isMultiSelectMode: Boolean,
     selectedIds: Set<Long>,
     viewMode: Int,
+    isSearchActive: Boolean,
+    searchQuery: String,
+    onSearchToggle: () -> Unit,
+    onSearchQueryChange: (String) -> Unit,
     onSettings: () -> Unit,
     onRefresh: () -> Unit,
     onClearAll: () -> Unit,
@@ -118,9 +128,55 @@ fun MainScreenContent(
             // ── Toolbar ── 对齐 XML：btnMultiSelect, btnClearAll, btnRefresh, btnSettings
             // actions 从左到右排列，顺序：多选 → 清空 → 刷新 → 设置
             TopAppBar(
-                title = { Text(stringResource(R.string.dis_name)) },
+                title = {
+                    if (isSearchActive) {
+                        SearchField(
+                            query = searchQuery,
+                            onQueryChange = onSearchQueryChange
+                        )
+                    } else {
+                        Text(stringResource(R.string.dis_name))
+                    }
+                },
                 colors = topAppBarColors(),
                 actions = {
+                    // ── Toolbar actions ── 搜索模式下仅显示关闭；普通模式：搜索 → 多选 → 清空 → 刷新 → 设置
+                    if (isSearchActive) {
+                        // 关闭搜索按钮
+                        IconButton(
+                            onClick = onSearchToggle,
+                            modifier = Modifier.padding(horizontal = 2.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .background(softIconButtonBg(), CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.ic_close),
+                                    contentDescription = stringResource(R.string.close_search)
+                                )
+                            }
+                        }
+                    } else {
+                    // 搜索按钮（最左）— 进入搜索模式
+                    IconButton(
+                        onClick = onSearchToggle,
+                        modifier = Modifier.padding(horizontal = 2.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(softIconButtonBg(), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.ic_search),
+                                contentDescription = stringResource(R.string.search)
+                            )
+                        }
+                    }
                     // 多选按钮（最左）— 对齐XML：btnMultiSelect（最后一个ImageButton，最左）
                     // 底色圆 40dp，触摸区域保持 48dp
                     IconButton(
@@ -198,6 +254,7 @@ fun MainScreenContent(
                             Icon(painterResource(R.drawable.ic_settings), contentDescription = stringResource(R.string.settings))
                         }
                     }
+                    }
                 }
             )
         },
@@ -222,7 +279,7 @@ fun MainScreenContent(
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             // ── 主内容 ──
             if (events.isEmpty()) {
-                EmptyView(modifier = Modifier.fillMaxSize())
+                EmptyView(modifier = Modifier.fillMaxSize(), isSearchActive = isSearchActive)
             } else {
                 if (viewMode == ViewModeHelper.VIEW_MODE_CARD) {
                     // ── 卡片视图 ── 对齐 fragment_event_list.xml padding
@@ -640,17 +697,88 @@ private fun calculateColumnWidths(events: List<Event>, dateFormat: SimpleDateFor
 }
 
 // ═══════════════════════════════════════════════════
+// 顶部搜索框 — 搜索模式下占据 TopAppBar 标题区域
+// ═══════════════════════════════════════════════════
+
+@Composable
+private fun SearchField(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val dark = isDarkColorScheme()
+    val textColor = if (dark) MaterialTheme.colorScheme.onSurface else Color.Black
+    val hintColor = if (dark) MaterialTheme.colorScheme.onSurfaceVariant else Color.Black.copy(alpha = 0.5f)
+    val bgColor = if (dark) MaterialTheme.colorScheme.surfaceContainerHigh else BlogCardBlue
+    // 进入搜索即刻唤起输入法
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(22.dp))
+            .background(bgColor)
+            .padding(horizontal = 14.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_search),
+            contentDescription = null,
+            tint = hintColor,
+            modifier = Modifier.size(20.dp)
+        )
+        BasicTextField(
+            value = query,
+            onValueChange = onQueryChange,
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 10.dp),
+            singleLine = true,
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+            textStyle = TextStyle(color = textColor, fontSize = 16.sp),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            decorationBox = { innerTextField ->
+                Box(contentAlignment = Alignment.CenterStart) {
+                    if (query.isEmpty()) {
+                        Text(
+                            text = stringResource(R.string.search_hint),
+                            style = TextStyle(color = hintColor, fontSize = 16.sp)
+                        )
+                    }
+                    innerTextField()
+                }
+            }
+        )
+        if (query.isNotEmpty()) {
+            IconButton(
+                onClick = { onQueryChange("") },
+                modifier = Modifier.size(24.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_close),
+                    contentDescription = stringResource(R.string.clear_search),
+                    tint = hintColor,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════
 // 空视图
 // ═══════════════════════════════════════════════════
 
 @Composable
-fun EmptyView(modifier: Modifier = Modifier) {
+fun EmptyView(modifier: Modifier = Modifier, isSearchActive: Boolean = false) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
         Text(
-            stringResource(R.string.no_events),
+            stringResource(if (isSearchActive) R.string.no_search_results else R.string.no_events),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

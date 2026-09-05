@@ -31,6 +31,11 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getSortedEvents(): LiveData<List<Event>> = repository.getSortedEvents()
 
+    /** 更新搜索关键词，空串/空白则恢复展示全部事件 */
+    fun setSearchQuery(query: String) {
+        repository.setSearchQuery(query)
+    }
+
     @Suppress("unused")
     fun isAscending(): Boolean = repository.isAscending
 
@@ -71,7 +76,6 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
 
     override fun onCleared() {
         disposables.dispose()
-        super.onCleared()
     }
 
     class Factory(private val application: Application) : ViewModelProvider.Factory {

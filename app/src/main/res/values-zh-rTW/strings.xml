@@ -161,4 +161,11 @@
     <string name="red_icon">紅色圖標</string>
     <string name="yellow_icon">黃色圖標</string>
 
+    <!-- 搜尋 -->
+    <string name="search">搜尋</string>
+    <string name="search_hint">輸入關鍵字搜尋</string>
+    <string name="clear_search">清除搜尋</string>
+    <string name="close_search">關閉搜尋</string>
+    <string name="no_search_results">未找到符合的事件</string>
+
 </resources>

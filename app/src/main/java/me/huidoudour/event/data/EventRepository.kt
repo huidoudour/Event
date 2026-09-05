@@ -12,18 +12,29 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
     private val sortedEvents = MediatorLiveData<List<Event>>()
     private var currentSource: LiveData<List<Event>>? = null
 
+    /** 当前搜索关键词（已转义 LIKE 通配符），空串表示不搜索 */
+    private var searchQuery: String = ""
+
     var isAscending: Boolean = preferences.getBoolean(KEY_SORT_ASCENDING, false)
         private set
 
     init {
-        setSortOrder(isAscending)
+        reloadSource()
     }
 
-    private fun setSortOrder(ascending: Boolean) {
-        val newSource = if (ascending) {
-            eventDao.getEventsByTimeAscending()
-        } else {
-            eventDao.getEventsByTimeDescending()
+    /**
+     * 根据当前排序方向与搜索关键词重建数据源。
+     * 有搜索词时切换为搜索结果查询，否则恢复常规排序查询。
+     */
+    private fun reloadSource() {
+        val newSource = when {
+            searchQuery.isNotBlank() -> if (isAscending) {
+                eventDao.searchEventsByTimeAscending(searchQuery)
+            } else {
+                eventDao.searchEventsByTimeDescending(searchQuery)
+            }
+            isAscending -> eventDao.getEventsByTimeAscending()
+            else -> eventDao.getEventsByTimeDescending()
         }
         currentSource?.let { sortedEvents.removeSource(it) }
         currentSource = newSource
@@ -55,11 +66,18 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
 
     fun getSortedEvents(): LiveData<List<Event>> = sortedEvents
 
+    fun setSearchQuery(query: String) {
+        val normalized = escapeLike(query.trim())
+        if (normalized == searchQuery) return
+        searchQuery = normalized
+        reloadSource()
+    }
+
     @Suppress("unused")
     fun toggleSortOrder() {
         isAscending = !isAscending
         preferences.edit { putBoolean(KEY_SORT_ASCENDING, isAscending) }
-        setSortOrder(isAscending)
+        reloadSource()
     }
 
     /** 同步排序状态（从SharedPreferences读取） */
@@ -67,9 +85,13 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
         val savedAscending = preferences.getBoolean(KEY_SORT_ASCENDING, false)
         if (savedAscending != isAscending) {
             isAscending = savedAscending
-            setSortOrder(isAscending)
+            reloadSource()
         }
     }
+
+    /** 转义 LIKE 通配符（配合 DAO 的 ESCAPE '\\'，用于执行字面关键词匹配） */
+    private fun escapeLike(query: String): String =
+        query.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
     companion object {
         private const val PREFS_NAME = "sort_prefs"

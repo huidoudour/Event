@@ -160,4 +160,11 @@
     <string name="close">Close</string>
     <string name="settings_applied">Settings applied</string>
 
+    <!-- Search -->
+    <string name="search">Search</string>
+    <string name="search_hint">Type keywords to search</string>
+    <string name="clear_search">Clear search</string>
+    <string name="close_search">Close search</string>
+    <string name="no_search_results">No matching events found</string>
+
 </resources>

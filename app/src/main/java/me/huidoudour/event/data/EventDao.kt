@@ -22,6 +22,22 @@ interface EventDao {
     @Query("SELECT * FROM events ORDER BY eventTime DESC, id DESC")
     fun getEventsByTimeDescending(): LiveData<List<Event>>
 
+    /** 按关键词搜索（标题或描述包含），按时间正序 */
+    @Query(
+        "SELECT * FROM events WHERE title LIKE '%' || :query || '%' ESCAPE '\\' " +
+            "OR description LIKE '%' || :query || '%' ESCAPE '\\' " +
+            "ORDER BY eventTime ASC, id ASC"
+    )
+    fun searchEventsByTimeAscending(query: String): LiveData<List<Event>>
+
+    /** 按关键词搜索（标题或描述包含），按时间倒序 */
+    @Query(
+        "SELECT * FROM events WHERE title LIKE '%' || :query || '%' ESCAPE '\\' " +
+            "OR description LIKE '%' || :query || '%' ESCAPE '\\' " +
+            "ORDER BY eventTime DESC, id DESC"
+    )
+    fun searchEventsByTimeDescending(query: String): LiveData<List<Event>>
+
     @Insert
     fun insert(event: Event): Long
 

@@ -160,4 +160,11 @@
     <string name="close">Закрыть</string>
     <string name="settings_applied">Настройки применены</string>
 
+    <!-- Поиск -->
+    <string name="search">Поиск</string>
+    <string name="search_hint">Введите ключевые слова для поиска</string>
+    <string name="clear_search">Очистить поиск</string>
+    <string name="close_search">Закрыть поиск</string>
+    <string name="no_search_results">Совпадающих событий не найдено</string>
+
 </resources>

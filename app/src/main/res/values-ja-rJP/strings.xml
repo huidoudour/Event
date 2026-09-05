@@ -160,4 +160,11 @@
     <string name="close">閉じる</string>
     <string name="settings_applied">設定が適用されました</string>
 
+    <!-- 検索 -->
+    <string name="search">検索</string>
+    <string name="search_hint">キーワードを入力して検索</string>
+    <string name="clear_search">検索をクリア</string>
+    <string name="close_search">検索を閉じる</string>
+    <string name="no_search_results">一致するイベントが見つかりません</string>
+
 </resources>

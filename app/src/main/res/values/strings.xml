@@ -159,4 +159,11 @@
     <string name="event_datetime_changed_format">日期时间已更新: %1$s</string>
     <string name="follow_system">跟随系统</string>
 
+    <!-- 搜索 -->
+    <string name="search">搜索</string>
+    <string name="search_hint">输入关键词搜索</string>
+    <string name="clear_search">清除搜索</string>
+    <string name="close_search">关闭搜索</string>
+    <string name="no_search_results">未找到匹配的事件</string>
+
 </resources>
