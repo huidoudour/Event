@@ -20,11 +20,11 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        ndk {
-            // 包含所有支持的架构："armeabi-v7a", "arm64-v8a", "x86", "x86_64"
-            //noinspection ChromeOsAbiSupport
-            abiFilters += listOf( "arm64-v8a" )
-        }
+        // ndk {
+        //     // 包含所有支持的架构："armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        //     //noinspection ChromeOsAbiSupport
+        //     abiFilters += listOf( "arm64-v8a" )
+        // }
     }
 
     val useSecKey = rootProject.hasProperty("SecKeyFile") &&
@@ -59,6 +59,10 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = if (useSecKey) {
                 signingConfigs.getByName("sec_sign_key")
             } else {
@@ -79,18 +83,13 @@ dependencies {
     implementation(libs.material)
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.livedata)
-    implementation(libs.room.runtime)
-    annotationProcessor(libs.room.compiler)
-    
+
     // Fragment
     implementation(libs.fragment.ktx)
 
     // MTDataFilesProvider
     implementation(libs.mt.data.files.provider)
 
-    // 本地依赖，仅用于调试（仅在文件存在时添加）
-    val localSqliteFile = file("libs/android.aar")
-    if (localSqliteFile.exists()) {
-        debugImplementation(files(localSqliteFile))
-    }
+    // 本地 SQLite 原生库（org.sqlite），替代 Room/Requery
+    implementation(files("libs/android.aar"))
 }

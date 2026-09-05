@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# ── 本地 SQLite 原生库（org.sqlite / libsqliteX.so）R8 保留规则 ──
+# 保持 org.sqlite 相关类与 JNI native 方法，避免 release 混淆破坏原生调用
+-keep class org.sqlite.** { *; }

@@ -1,11 +1,9 @@
 package dev.huidou.event.data;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-@Entity(tableName = "events")
+/**
+ * 事件实体（纯 POJO，改用本地 SQLite 后不再依赖 Room 注解）
+ */
 public class Event {
-    @PrimaryKey(autoGenerate = true)
     private long id;
     private String title;
     private String description;

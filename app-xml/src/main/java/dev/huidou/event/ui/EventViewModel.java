@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 
 import dev.huidou.event.data.Event;
 import dev.huidou.event.data.EventDao;
-import dev.huidou.event.data.EventDatabase;
+import dev.huidou.event.data.EventOpenHelper;
 import dev.huidou.event.data.EventRepository;
 
 public class EventViewModel extends AndroidViewModel {
@@ -23,8 +23,8 @@ public class EventViewModel extends AndroidViewModel {
 
     public EventViewModel(@NonNull Application application) {
         super(application);
-        EventDatabase database = EventDatabase.getDatabase(application);
-        EventDao eventDao = database.eventDao();
+        EventOpenHelper openHelper = EventOpenHelper.getInstance(application);
+        EventDao eventDao = openHelper.getDao();
         repository = new EventRepository(application, eventDao);
         allEvents = repository.allEvents;
     }
@@ -98,8 +98,8 @@ public class EventViewModel extends AndroidViewModel {
         }
         
         public EventRepository createRepository() {
-            EventDatabase database = EventDatabase.getDatabase(application);
-            return new EventRepository(application, database.eventDao());
+            EventOpenHelper openHelper = EventOpenHelper.getInstance(application);
+            return new EventRepository(application, openHelper.getDao());
         }
     }
 }

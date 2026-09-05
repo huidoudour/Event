@@ -43,13 +43,6 @@
             android:exported="false"
             android:label="@string/list_view" />
 
-        <meta-data
-            android:name="me.huidoudour.core"
-            android:value="true" />
-        <meta-data
-            android:name="me.huidoudour.core.version"
-            android:value="40" />
-
     </application>
 
 </manifest>

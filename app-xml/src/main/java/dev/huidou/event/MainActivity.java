@@ -393,20 +393,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showDeleteConfirmDialog(Event event) {
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_confirm_delete, null);
-        TextInputEditText editInput = dialogView.findViewById(R.id.editConfirmInput);
-
         new MaterialAlertDialogBuilder(this)
-            .setView(dialogView)
+            .setTitle(R.string.confirm_delete)
+            .setMessage(R.string.delete_confirmation_message)
             .setPositiveButton(R.string.delete, (dialog, which) -> {
-                String input = editInput.getText() != null
-                        ? editInput.getText().toString().trim() : "";
-                if ("d".equals(input)) {
-                    viewModel.deleteEvent(event);
-                    Toast.makeText(this, R.string.event_deleted, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, R.string.invalid_input, Toast.LENGTH_SHORT).show();
-                }
+                viewModel.deleteEvent(event);
+                Toast.makeText(this, R.string.event_deleted, Toast.LENGTH_SHORT).show();
             })
             .setNegativeButton(R.string.cancel, null)
             .show();
