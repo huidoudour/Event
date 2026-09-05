@@ -13,14 +13,14 @@
         
         <!-- 主Activity - 不直接显示在桌面，通过alias控制入口 -->
         <activity
-            android:name=".MainActivity"
+            android:name="dev.huidou.event.MainActivity"
             android:exported="false"
             android:enabled="true" />
         
         <!-- 默认绿色图标 -->
         <activity-alias
             android:name=".MainActivityAliasDefault"
-            android:targetActivity=".MainActivity"
+            android:targetActivity="dev.huidou.event.MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher"
             android:roundIcon="@mipmap/ic_launcher_round"
@@ -34,7 +34,7 @@
         <!-- 多彩图标 -->
         <activity-alias
             android:name=".MainActivityAliasColorful"
-            android:targetActivity=".MainActivity"
+            android:targetActivity="dev.huidou.event.MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_colorful"
             android:roundIcon="@mipmap/ic_launcher_round_colorful"
@@ -48,7 +48,7 @@
         <!-- 红色图标 -->
         <activity-alias
             android:name=".MainActivityAliasRed"
-            android:targetActivity=".MainActivity"
+            android:targetActivity="dev.huidou.event.MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_red"
             android:roundIcon="@mipmap/ic_launcher_round_red"
@@ -62,7 +62,7 @@
         <!-- 蓝色图标 -->
         <activity-alias
             android:name=".MainActivityAliasBlue"
-            android:targetActivity=".MainActivity"
+            android:targetActivity="dev.huidou.event.MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_blue"
             android:roundIcon="@mipmap/ic_launcher_round_blue"
@@ -76,7 +76,7 @@
         <!-- 黄色图标 -->
         <activity-alias
             android:name=".MainActivityAliasYellow"
-            android:targetActivity=".MainActivity"
+            android:targetActivity="dev.huidou.event.MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_yellow"
             android:roundIcon="@mipmap/ic_launcher_round_yellow"
@@ -90,7 +90,7 @@
         <!-- 紫色图标 -->
         <activity-alias
             android:name=".MainActivityAliasPurple"
-            android:targetActivity=".MainActivity"
+            android:targetActivity="dev.huidou.event.MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_purple"
             android:roundIcon="@mipmap/ic_launcher_round_purple"
@@ -104,7 +104,7 @@
         <!-- 橙色图标 -->
         <activity-alias
             android:name=".MainActivityAliasOrange"
-            android:targetActivity=".MainActivity"
+            android:targetActivity="dev.huidou.event.MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_orange"
             android:roundIcon="@mipmap/ic_launcher_round_orange"
@@ -118,7 +118,7 @@
         <!-- 青色图标 -->
         <activity-alias
             android:name=".MainActivityAliasCyan"
-            android:targetActivity=".MainActivity"
+            android:targetActivity="dev.huidou.event.MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_cyan"
             android:roundIcon="@mipmap/ic_launcher_round_cyan"
@@ -132,7 +132,7 @@
         <!-- 粉色图标 -->
         <activity-alias
             android:name=".MainActivityAliasPink"
-            android:targetActivity=".MainActivity"
+            android:targetActivity="dev.huidou.event.MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_pink"
             android:roundIcon="@mipmap/ic_launcher_round_pink"
@@ -143,17 +143,17 @@
             </intent-filter>
         </activity-alias>        
         <activity
-            android:name=".ui.SettingsActivity"
+            android:name="dev.huidou.event.ui.SettingsActivity"
             android:exported="true"
             android:label="@string/settings" />
         
         <activity
-            android:name=".MeActivity"
+            android:name="dev.huidou.event.MeActivity"
             android:exported="false"
             android:label="@string/about_developer" />
 
         <activity
-            android:name=".ui.ListViewActivity"
+            android:name="dev.huidou.event.ui.ListViewActivity"
             android:exported="false"
             android:label="@string/list_view" />
 

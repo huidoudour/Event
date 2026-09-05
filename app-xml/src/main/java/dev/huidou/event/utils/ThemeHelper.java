@@ -1,4 +1,4 @@
-package me.huidoudour.event.utils;
+package dev.huidou.event.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -70,13 +70,13 @@ public class ThemeHelper {
     public static String getThemeDisplayName(Context context, int themeMode) {
         switch (themeMode) {
             case THEME_SYSTEM:
-                return context.getString(me.huidoudour.event.R.string.system_theme);
+                return context.getString(dev.huidou.event.R.string.system_theme);
             case THEME_LIGHT:
-                return context.getString(me.huidoudour.event.R.string.light_theme);
+                return context.getString(dev.huidou.event.R.string.light_theme);
             case THEME_DARK:
-                return context.getString(me.huidoudour.event.R.string.dark_theme);
+                return context.getString(dev.huidou.event.R.string.dark_theme);
             default:
-                return context.getString(me.huidoudour.event.R.string.system_theme);
+                return context.getString(dev.huidou.event.R.string.system_theme);
         }
     }
     

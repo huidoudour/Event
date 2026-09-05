@@ -13,8 +13,8 @@ object IconColorHelper {
     const val COLOR_DEFAULT = 0     // 默认(绿色)
     const val COLOR_COLORFUL = 1    // 彩色
 
-    private const val DEFAULT_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasDefault"
-    private const val COLORFUL_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasColorful"
+    private const val DEFAULT_ACTIVITY_ALIAS = "me.huidou.event.MainActivityAliasDefault"
+    private const val COLORFUL_ACTIVITY_ALIAS = "me.huidou.event.MainActivityAliasColorful"
 
     /**
      * 获取当前图标颜色

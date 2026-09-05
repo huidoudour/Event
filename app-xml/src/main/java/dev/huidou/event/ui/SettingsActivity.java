@@ -1,4 +1,4 @@
-package me.huidoudour.event.ui;
+package dev.huidou.event.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,14 +20,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import me.huidoudour.event.MeActivity;
-import me.huidoudour.event.R;
-import me.huidoudour.event.data.DataImportExportHelper;
-import me.huidoudour.event.data.EventRepository;
-import me.huidoudour.event.utils.IconColorHelper;
-import me.huidoudour.event.utils.LocaleHelper;
-import me.huidoudour.event.utils.ThemeHelper;
-import me.huidoudour.event.utils.ViewModeHelper;
+import dev.huidou.event.MeActivity;
+import dev.huidou.event.R;
+import dev.huidou.event.data.DataImportExportHelper;
+import dev.huidou.event.data.EventRepository;
+import dev.huidou.event.utils.IconColorHelper;
+import dev.huidou.event.utils.LocaleHelper;
+import dev.huidou.event.utils.ThemeHelper;
+import dev.huidou.event.utils.ViewModeHelper;
 
 public class SettingsActivity extends AppCompatActivity {
 

@@ -1,11 +1,10 @@
-package me.huidoudour.event.ui;
+package dev.huidou.event.ui;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -15,10 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Set;
 
-import me.huidoudour.event.MainActivity;
-import me.huidoudour.event.R;
-import me.huidoudour.event.data.Event;
-import me.huidoudour.event.utils.LocaleHelper;
+import dev.huidou.event.MainActivity;
+import dev.huidou.event.R;
+import dev.huidou.event.data.Event;
+import dev.huidou.event.utils.LocaleHelper;
 
 public class EventListFragment extends Fragment {
 

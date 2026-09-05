@@ -1,4 +1,4 @@
-package me.huidoudour.event.data;
+package dev.huidou.event.data;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

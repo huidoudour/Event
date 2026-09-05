@@ -41,7 +41,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "me.huidoudour.event"
+        applicationId = "me.huidou.event"
         minSdk = 28
         targetSdk = 37
         versionCode = appVersionCode

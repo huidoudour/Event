@@ -1,4 +1,4 @@
-package me.huidoudour.event.utils;
+package dev.huidou.event.utils;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -20,16 +20,16 @@ public class IconColorHelper {
     public static final int COLOR_CYAN = 7;           // 青色
     public static final int COLOR_PINK = 8;           // 粉色
     
-    private static final String MAIN_ACTIVITY_CLASS = "me.huidoudour.event.MainActivity";
-    private static final String DEFAULT_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasDefault";
-    private static final String COLORFUL_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasColorful";
-    private static final String RED_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasRed";
-    private static final String BLUE_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasBlue";
-    private static final String YELLOW_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasYellow";
-    private static final String PURPLE_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasPurple";
-    private static final String ORANGE_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasOrange";
-    private static final String CYAN_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasCyan";
-    private static final String PINK_ACTIVITY_ALIAS = "me.huidoudour.event.MainActivityAliasPink";
+    private static final String MAIN_ACTIVITY_CLASS = "dev.huidou.event.MainActivity";
+    private static final String DEFAULT_ACTIVITY_ALIAS = "dev.huidou.event.MainActivityAliasDefault";
+    private static final String COLORFUL_ACTIVITY_ALIAS = "dev.huidou.event.MainActivityAliasColorful";
+    private static final String RED_ACTIVITY_ALIAS = "dev.huidou.event.MainActivityAliasRed";
+    private static final String BLUE_ACTIVITY_ALIAS = "dev.huidou.event.MainActivityAliasBlue";
+    private static final String YELLOW_ACTIVITY_ALIAS = "dev.huidou.event.MainActivityAliasYellow";
+    private static final String PURPLE_ACTIVITY_ALIAS = "dev.huidou.event.MainActivityAliasPurple";
+    private static final String ORANGE_ACTIVITY_ALIAS = "dev.huidou.event.MainActivityAliasOrange";
+    private static final String CYAN_ACTIVITY_ALIAS = "dev.huidou.event.MainActivityAliasCyan";
+    private static final String PINK_ACTIVITY_ALIAS = "dev.huidou.event.MainActivityAliasPink";
     
     /**
      * 获取当前图标颜色

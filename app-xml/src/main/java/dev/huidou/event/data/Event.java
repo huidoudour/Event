@@ -1,4 +1,4 @@
-package me.huidoudour.event.data;
+package dev.huidou.event.data;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;

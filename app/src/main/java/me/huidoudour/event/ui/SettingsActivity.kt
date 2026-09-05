@@ -313,6 +313,6 @@ class SettingsActivity : BaseActivity() {
     companion object {
         private const val TAG = "SettingsActivity"
         /** FileManager 文件管理器包名 */
-        private const val FILE_MANAGER_PACKAGE = "me.huidoudour.file.manager"
+        private const val FILE_MANAGER_PACKAGE = "me.huidou.file.manager"
     }
 }

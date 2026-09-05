@@ -1,4 +1,4 @@
-package me.huidoudour.event;
+package dev.huidou.event;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +11,8 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 
-import me.huidoudour.event.utils.LocaleHelper;
-import me.huidoudour.event.utils.ThemeHelper;
+import dev.huidou.event.utils.LocaleHelper;
+import dev.huidou.event.utils.ThemeHelper;
 
 public class MeActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package me.huidoudour.event.utils;
+package dev.huidou.event.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -45,11 +45,11 @@ public class ViewModeHelper {
     public static String getViewModeDisplayName(Context context, int mode) {
         switch (mode) {
             case VIEW_MODE_CARD:
-                return context.getString(me.huidoudour.event.R.string.card_view);
+                return context.getString(dev.huidou.event.R.string.card_view);
             case VIEW_MODE_LIST:
-                return context.getString(me.huidoudour.event.R.string.list_view);
+                return context.getString(dev.huidou.event.R.string.list_view);
             default:
-                return context.getString(me.huidoudour.event.R.string.card_view);
+                return context.getString(dev.huidou.event.R.string.card_view);
         }
     }
 }

@@ -1,4 +1,4 @@
-package me.huidoudour.event.ui;
+package dev.huidou.event.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,12 +22,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import me.huidoudour.event.MainActivity;
-import me.huidoudour.event.R;
-import me.huidoudour.event.data.Event;
-import me.huidoudour.event.utils.LocaleHelper;
-import me.huidoudour.event.utils.ThemeHelper;
-import me.huidoudour.event.utils.ViewModeHelper;
+import dev.huidou.event.MainActivity;
+import dev.huidou.event.R;
+import dev.huidou.event.data.Event;
+import dev.huidou.event.utils.LocaleHelper;
+import dev.huidou.event.utils.ThemeHelper;
+import dev.huidou.event.utils.ViewModeHelper;
 
 public class ListViewActivity extends AppCompatActivity {
 

@@ -145,7 +145,7 @@ fun EventTheme(
 fun isDarkColorScheme(): Boolean = LocalDarkTheme.current
 
 /**
- * 博客风格淡蓝→淡粉渐变背景（参考 huidoudour.github.io body 渐变），
+ * 博客风格淡蓝→淡粉渐变背景（参考 huidou.github.io body 渐变），
  * 仅亮色模式生效；深色模式返回 null，由调用方回退到默认背景色。
  */
 @Composable

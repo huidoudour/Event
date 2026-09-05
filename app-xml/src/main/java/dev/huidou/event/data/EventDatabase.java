@@ -1,4 +1,4 @@
-package me.huidoudour.event.data;
+package dev.huidou.event.data;
 
 import android.content.Context;
 import androidx.room.Database;

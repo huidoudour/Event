@@ -1,4 +1,4 @@
-package me.huidoudour.event.ui;
+package dev.huidou.event.ui;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import me.huidoudour.event.data.Event;
-import me.huidoudour.event.data.EventDao;
-import me.huidoudour.event.data.EventDatabase;
-import me.huidoudour.event.data.EventRepository;
+import dev.huidou.event.data.Event;
+import dev.huidou.event.data.EventDao;
+import dev.huidou.event.data.EventDatabase;
+import dev.huidou.event.data.EventRepository;
 
 public class EventViewModel extends AndroidViewModel {
     private final EventRepository repository;

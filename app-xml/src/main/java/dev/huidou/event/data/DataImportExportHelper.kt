@@ -1,4 +1,4 @@
-package me.huidoudour.event.data
+package dev.huidou.event.data
 
 import android.content.Context
 import android.net.Uri
@@ -6,6 +6,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 /**
@@ -37,7 +38,7 @@ class DataImportExportHelper(private val context: Context) {
             val obj = JSONObject().apply {
                 put(KEY_TITLE, event.title ?: "")
                 put(KEY_DETAIL, event.description ?: "")
-                put(KEY_TIME, DATE_FORMAT.format(java.util.Date(event.eventTime)))
+                put(KEY_TIME, DATE_FORMAT.format(Date(event.eventTime)))
                 // 保存 createdAt 和 updatedAt 以保持原始时间戳
                 put("createdAt", event.createdAt)
                 put("updatedAt", event.updatedAt)

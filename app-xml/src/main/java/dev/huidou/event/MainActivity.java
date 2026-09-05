@@ -1,4 +1,4 @@
-package me.huidoudour.event;
+package dev.huidou.event;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -8,10 +8,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -29,15 +27,15 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
-import me.huidoudour.event.data.Event;
-import me.huidoudour.event.ui.EventListFragment;
-import me.huidoudour.event.ui.EventTableFragment;
-import me.huidoudour.event.ui.EventViewModel;
-import me.huidoudour.event.ui.SettingsActivity;
-import me.huidoudour.event.utils.IconColorHelper;
-import me.huidoudour.event.utils.LocaleHelper;
-import me.huidoudour.event.utils.ThemeHelper;
-import me.huidoudour.event.utils.ViewModeHelper;
+import dev.huidou.event.data.Event;
+import dev.huidou.event.ui.EventListFragment;
+import dev.huidou.event.ui.EventTableFragment;
+import dev.huidou.event.ui.EventViewModel;
+import dev.huidou.event.ui.SettingsActivity;
+import dev.huidou.event.utils.IconColorHelper;
+import dev.huidou.event.utils.LocaleHelper;
+import dev.huidou.event.utils.ThemeHelper;
+import dev.huidou.event.utils.ViewModeHelper;
 
 public class MainActivity extends AppCompatActivity {
 

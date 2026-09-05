@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "me.huidoudour.event"
+    namespace = "dev.huidou.event"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -11,7 +11,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "me.huidoudour.event"
+        applicationId = "dev.huidou.event"
         minSdk = 28
         //noinspection OldTargetApi
         targetSdk = 36

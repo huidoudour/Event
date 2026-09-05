@@ -1,4 +1,4 @@
-package me.huidoudour.event.utils;
+package dev.huidou.event.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -157,15 +157,15 @@ public class LocaleHelper {
             case LANG_SYSTEM:
                 return "跟随系统";
             case LANG_CHINESE:
-                return context.getString(me.huidoudour.event.R.string.chinese);
+                return context.getString(dev.huidou.event.R.string.chinese);
             case LANG_TRADITIONAL_CHINESE:
-                return context.getString(me.huidoudour.event.R.string.traditional_chinese);
+                return context.getString(dev.huidou.event.R.string.traditional_chinese);
             case LANG_ENGLISH:
-                return context.getString(me.huidoudour.event.R.string.english);
+                return context.getString(dev.huidou.event.R.string.english);
             case LANG_RUSSIAN:
-                return context.getString(me.huidoudour.event.R.string.russian);
+                return context.getString(dev.huidou.event.R.string.russian);
             case LANG_JAPANESE:
-                return context.getString(me.huidoudour.event.R.string.japanese);
+                return context.getString(dev.huidou.event.R.string.japanese);
             default:
                 return "跟随系统";
         }

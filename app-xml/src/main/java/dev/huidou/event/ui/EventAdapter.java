@@ -1,4 +1,4 @@
-package me.huidoudour.event.ui;
+package dev.huidou.event.ui;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +19,8 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import me.huidoudour.event.R;
-import me.huidoudour.event.data.Event;
+import dev.huidou.event.R;
+import dev.huidou.event.data.Event;
 
 public class EventAdapter extends ListAdapter<Event, EventAdapter.EventViewHolder> {
 
