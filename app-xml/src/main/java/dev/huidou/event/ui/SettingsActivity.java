@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,7 +23,6 @@ import dev.huidou.event.MeActivity;
 import dev.huidou.event.R;
 import dev.huidou.event.data.DataImportExportHelper;
 import dev.huidou.event.data.EventRepository;
-import dev.huidou.event.utils.IconColorHelper;
 import dev.huidou.event.utils.LocaleHelper;
 import dev.huidou.event.utils.ThemeHelper;
 import dev.huidou.event.utils.ViewModeHelper;
@@ -39,7 +37,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        // 应用语言设置
+        // 应用默认回退语言（简体中文）
         super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
     }
 
@@ -76,7 +74,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // 在 onCreate 开始时初始化主题
+        // 在 onCreate 开始时初始化主题（固定浅色）
         ThemeHelper.initTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
@@ -141,101 +139,20 @@ public class SettingsActivity extends AppCompatActivity {
 
 
 
-    /** 语言设置 */
+    /** 语言设置（多语言已移除，保留入口但禁用） */
     private void setupLanguageSettings() {
         MaterialCardView cardLanguage = findViewById(R.id.card_language_settings);
-        cardLanguage.setOnClickListener(v -> showLanguageDialog());
+        // 多语言已移除，语言固定为默认回退语言，禁用切换入口
+        cardLanguage.setEnabled(false);
+        cardLanguage.setAlpha(0.5f);
     }
-    
-    /** 显示语言选择对话框 */
-    private void showLanguageDialog() {
-        String[] languages = LocaleHelper.getSupportedLanguages();
-        String[] languageNames = new String[languages.length];
-        
-        // 获取当前语言
-        String currentLanguage = LocaleHelper.getLanguage(this);
-        int checkedItem = 0;
-        
-        // 构建语言名称列表
-        for (int i = 0; i < languages.length; i++) {
-            languageNames[i] = LocaleHelper.getLanguageDisplayName(this, languages[i]);
-            if (languages[i].equals(currentLanguage)) {
-                checkedItem = i;
-            }
-        }
-        
-        new MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.select_language)
-            .setSingleChoiceItems(languageNames, checkedItem, (dialog, which) -> {
-                String selectedLanguage = languages[which];
-                
-                // 如果选择的语言和当前语言相同，不做任何操作
-                if (selectedLanguage.equals(currentLanguage)) {
-                    dialog.dismiss();
-                    return;
-                }
-                
-                // 保存并应用语言设置
-                LocaleHelper.setLanguage(this, selectedLanguage);
-                
-                dialog.dismiss();
-                
-                // 显示Toast提示
-                Toast.makeText(this, R.string.language_changed, Toast.LENGTH_SHORT).show();
-                
-                // 延迟重建Activity以应用新的语言设置
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    recreate();
-                }, 300);
-            })
-            .setNegativeButton(R.string.cancel, null)
-            .show();
-    }
-    
-    /** 主题设置 */
+
+    /** 主题设置（深色主题已移除，保留入口但禁用） */
     private void setupThemeSettings() {
         MaterialCardView cardTheme = findViewById(R.id.card_theme_settings);
-        cardTheme.setOnClickListener(v -> showThemeDialog());
-    }
-    
-    /** 显示主题选择对话框 */
-    private void showThemeDialog() {
-        int[] themes = ThemeHelper.getSupportedThemes();
-        String[] themeNames = new String[themes.length];
-        
-        // 获取当前主题
-        int currentTheme = ThemeHelper.getTheme(this);
-        int checkedItem = 0;
-        
-        // 构建主题名称列表
-        for (int i = 0; i < themes.length; i++) {
-            themeNames[i] = ThemeHelper.getThemeDisplayName(this, themes[i]);
-            if (themes[i] == currentTheme) {
-                checkedItem = i;
-            }
-        }
-        
-        new MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.select_theme)
-            .setSingleChoiceItems(themeNames, checkedItem, (dialog, which) -> {
-                int selectedTheme = themes[which];
-                
-                // 如果选择的主题和当前主题相同，不做任何操作
-                if (selectedTheme == currentTheme) {
-                    dialog.dismiss();
-                    return;
-                }
-                
-                // 保存并应用主题设置
-                ThemeHelper.setTheme(this, selectedTheme);
-                
-                dialog.dismiss();
-                
-                // 显示Toast提示
-                Toast.makeText(this, R.string.theme_changed, Toast.LENGTH_SHORT).show();
-            })
-            .setNegativeButton(R.string.cancel, null)
-            .show();
+        // 深色主题已移除，主题固定为浅色，禁用切换入口
+        cardTheme.setEnabled(false);
+        cardTheme.setAlpha(0.5f);
     }
 
     /** 数据展示模式设置 */
@@ -332,81 +249,10 @@ public class SettingsActivity extends AppCompatActivity {
 
     /** 关于开发者 */
     private void setupAboutDeveloper() {
-        // 获取"关于"标题TextView
-        TextView aboutTitle = findViewById(R.id.aboutTitle);
-        
-        // 设置长按事件显示切换图标颜色对话框
-        aboutTitle.setOnLongClickListener(v -> {
-            showIconColorDialog();
-            return true;
-        });
-        
         MaterialCardView cardAbout = findViewById(R.id.card_about_developer);
         cardAbout.setOnClickListener(v -> {
             Intent intent = new Intent(SettingsActivity.this, MeActivity.class);
             startActivity(intent);
         });
-    }
-    
-    /** 显示图标颜色选择对话框 */
-    private void showIconColorDialog() {
-        int[] colors = {
-            IconColorHelper.COLOR_DEFAULT,
-            IconColorHelper.COLOR_COLORFUL,
-            IconColorHelper.COLOR_RED,
-            IconColorHelper.COLOR_BLUE,
-            IconColorHelper.COLOR_YELLOW,
-            IconColorHelper.COLOR_PURPLE,
-            IconColorHelper.COLOR_ORANGE,
-            IconColorHelper.COLOR_CYAN,
-            IconColorHelper.COLOR_PINK
-        };
-        
-        String[] colorNames = {
-            getString(R.string.default_icon),
-            getString(R.string.colorful_icon),
-            getString(R.string.red_icon),
-            getString(R.string.blue_icon),
-            getString(R.string.yellow_icon),
-            getString(R.string.purple_icon),
-            getString(R.string.orange_icon),
-            getString(R.string.cyan_icon),
-            getString(R.string.pink_icon)
-        };
-        
-        // 获取当前图标颜色
-        int currentColor = IconColorHelper.getIconColor(this);
-        int checkedItem = 0;
-        
-        // 找到当前选中项
-        for (int i = 0; i < colors.length; i++) {
-            if (colors[i] == currentColor) {
-                checkedItem = i;
-                break;
-            }
-        }
-        
-        new MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.select_icon_color)
-            .setSingleChoiceItems(colorNames, checkedItem, (dialog, which) -> {
-                int selectedColor = colors[which];
-                
-                // 如果选择的颜色和当前相同，不做任何操作
-                if (selectedColor == currentColor) {
-                    dialog.dismiss();
-                    return;
-                }
-                
-                // 保存并应用图标颜色
-                IconColorHelper.setIconColor(this, selectedColor);
-                IconColorHelper.applyIconColor(this, selectedColor);
-                
-                dialog.dismiss();
-                
-                // 显示Toast提示
-                Toast.makeText(this, R.string.icon_color_changed, Toast.LENGTH_SHORT).show();
-            })
-            .setNegativeButton(R.string.cancel, null)
-            .show();
     }
 }

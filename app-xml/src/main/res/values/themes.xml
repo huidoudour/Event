@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Event" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.Event" parent="Theme.Material3.Light.NoActionBar">
         <!-- Material Design 3 Colors -->
         <item name="colorPrimary">@color/md_theme_light_primary</item>
         <item name="colorOnPrimary">@color/md_theme_light_onPrimary</item>

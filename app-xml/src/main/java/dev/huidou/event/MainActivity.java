@@ -32,7 +32,6 @@ import dev.huidou.event.ui.EventListFragment;
 import dev.huidou.event.ui.EventTableFragment;
 import dev.huidou.event.ui.EventViewModel;
 import dev.huidou.event.ui.SettingsActivity;
-import dev.huidou.event.utils.IconColorHelper;
 import dev.huidou.event.utils.LocaleHelper;
 import dev.huidou.event.utils.ThemeHelper;
 import dev.huidou.event.utils.ViewModeHelper;
@@ -67,9 +66,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         ThemeHelper.initTheme(this);
         super.onCreate(savedInstanceState);
-        
-        // 恢复图标颜色状态（确保alias与SharedPreferences一致）
-        IconColorHelper.applyIconColor(this, IconColorHelper.getIconColor(this));
         
         setContentView(R.layout.activity_main);
 
