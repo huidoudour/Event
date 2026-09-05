@@ -1,0 +1,129 @@
+<resources>
+    <string name="app_name">Event</string>
+    <string name="add_event">添加事件</string>
+    <string name="no_events">暂无事件</string>
+    <string name="event_title">事件标题</string>
+    <string name="event_description">事件描述</string>
+    <string name="event_time">事件时间</string>
+    <string name="event_time_millis">时间戳（毫秒）</string>
+    <string name="now">现在</string>
+    <string name="custom">自定义</string>
+    <string name="save">保存</string>
+    <string name="cancel">取消</string>
+    <string name="edit">编辑</string>
+    <string name="delete">删除</string>
+    <string name="clear_all">清空全部</string>
+    <string name="confirm_delete">确认删除</string>
+    <string name="delete_confirmation_message">此操作不可恢复。请输入 "d" 以确认删除。</string>
+    <string name="please_type_del">请输入 "d"</string>
+    <string name="confirm_clear">确认清空</string>
+    <string name="clear_confirmation_message">此操作将删除所有事件。请输入 "clear" 以确认清空。</string>
+    <string name="please_type_clear">请输入 "clear"</string>
+    <string name="invalid_input">输入无效，请重试</string>
+    <string name="event_saved">事件已保存</string>
+    <string name="event_deleted">事件已删除</string>
+    <string name="all_events_cleared">所有事件已清空</string>
+    <string name="event_detail">事件详情</string>
+    <string name="ok">确定</string>
+    <string name="event_options">事件操作</string>
+    <string-array name="event_options_array">
+        <item>修改日期时间</item>
+        <item>编辑事件</item>
+        <item>删除事件</item>
+    </string-array>
+
+    <!--  MeActiivity use  -->
+    <string name="hello_world">Hello World</string>
+    <string name="about_description">你保护世界，我保护你</string>
+    <string name="about_developer">亻尔女子，我是 huidoudour（慧兜兜）</string>
+    <string name="visit_github">ω寻找我ω</string>
+        
+    <!-- Settings -->
+    <string name="settings">设置</string>
+    <string name="data_management">数据</string>
+    <string name="export_data">导出数据</string>
+    <string name="import_data">导入数据</string>
+    <string name="auto_backup">自动备份</string>
+    <string name="language_settings">语言设置</string>
+    <string name="theme_settings">主题设置</string>
+    <string name="select_language">选择语言</string>
+    <string name="select_theme">选择主题</string>
+    <string name="chinese">简体中文</string>
+    <string name="traditional_chinese">繁體中文</string>
+    <string name="english">English</string>
+    <string name="russian">Русский</string>
+    <string name="japanese">日本語</string>
+    <string name="light_theme">浅色主题</string>
+    <string name="dark_theme">深色主题</string>
+    <string name="system_theme">跟随系统</string>
+    <string name="export_success">导出成功</string>
+    <string name="import_success">导入成功</string>
+    <string name="export_failed">导出失败</string>
+    <string name="import_failed">导入失败</string>
+    <string name="no_data_to_export">没有可导出的数据</string>
+    <string name="confirm_import">确认导入</string>
+    <string name="import_warning">导入数据将覆盖当前数据，是否继续？</string>
+    <string name="about">关于</string>
+    <string name="about_app">关于应用</string>
+    <string name="refresh_order">刷新顺序</string>
+    <string name="order_refreshed">顺序已刷新</string>
+    <string name="toggle_sort_order">切换排序</string>
+    <string name="sort_order_settings">数据排序</string>
+    <string name="sort_ascending">正序排列</string>
+    <string name="sort_descending">倒序排列</string>
+    <string name="refresh">刷新</string>
+    <string name="refreshed">已刷新</string>
+
+    <!-- 批量管理 -->
+    <string name="multi_select">批量管理</string>
+    <string name="select_all">全选</string>
+    <string name="deselect_all">取消全选</string>
+    <string name="delete_selected">删除所选</string>
+    <string name="selected_count_0">未选择任何项目</string>
+    <string name="selected_count_format">已选 %d 项</string>
+    <string name="confirm_delete_selected">确认批量删除</string>
+    <string name="confirm_delete_selected_message">将删除已选中的 %d 个事件，此操作不可恢复。</string>
+    <string name="deleted_selected">已删除所选事件</string>
+    <string name="exit_multi_select">退出多选</string>
+    <string name="exit_multi_select_first">请先退出批量管理模式</string>
+
+    <!-- 日期时间 -->
+    <string name="change_datetime">修改日期时间</string>
+    <string name="event_datetime_changed">日期时间已更新</string>>
+
+    <!-- 语言切换 -->
+    <string name="language_changed">语言已更改</string>
+    <string name="language_changed_restart">语言已更改，应用即将重启…</string>
+
+    <!-- 清除按钮提示 -->
+    <string name="long_press_to_clear">长按此按钮可清空全部数据</string>
+    <string name="confirm">确认</string>
+    <string name="confirm_clear_all_message">确定要清空所有事件吗？此操作不可恢复。</string>
+    <string name="type_clear_to_confirm">请输入 "clear" 以确认</string>
+
+    <!-- 主题切换 -->
+    <string name="theme_changed">主题已更改</string>
+
+    <!-- 图标颜色选择 -->
+    <string name="select_icon_color">选择图标颜色</string>
+    <string name="default_icon">默认图标</string>
+    <string name="colorful_icon">彩色图标</string>
+    <string name="red_icon">红色图标</string>
+    <string name="blue_icon">蓝色图标</string>
+    <string name="yellow_icon">黄色图标</string>
+    <string name="purple_icon">紫色图标</string>
+    <string name="orange_icon">橙色图标</string>
+    <string name="cyan_icon">青色图标</string>
+    <string name="pink_icon">粉色图标</string>
+    <string name="icon_color_changed">图标颜色已更改</string>
+
+    <!-- 数据展示视图 -->
+    <string name="data_view">视图</string>
+    <string name="table_id">ID</string>
+    <string name="data_display_mode">数据视图</string>
+    <string name="card_view">条目视图</string>
+    <string name="list_view">列表视图</string>
+    <string name="view_mode_changed">视图已更改</string>
+
+
+</resources>

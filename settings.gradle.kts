@@ -30,3 +30,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Event"
 include(":app")
+include(":app-xml")

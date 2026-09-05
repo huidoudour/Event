@@ -1,0 +1,412 @@
+package me.huidoudour.event.ui;
+
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import me.huidoudour.event.MeActivity;
+import me.huidoudour.event.R;
+import me.huidoudour.event.data.DataImportExportHelper;
+import me.huidoudour.event.data.EventRepository;
+import me.huidoudour.event.utils.IconColorHelper;
+import me.huidoudour.event.utils.LocaleHelper;
+import me.huidoudour.event.utils.ThemeHelper;
+import me.huidoudour.event.utils.ViewModeHelper;
+
+public class SettingsActivity extends AppCompatActivity {
+
+    private EventViewModel viewModel;
+    private EventRepository repository;
+    private DataImportExportHelper dataHelper;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        // 应用语言设置
+        super.attachBaseContext(LocaleHelper.applyLanguage(newBase));
+    }
+
+    // 导出文件选择器
+    private final ActivityResultLauncher<String> exportFileLauncher =
+        registerForActivityResult(
+            new ActivityResultContracts.CreateDocument("application/json"),
+            uri -> {
+                if (uri != null) {
+                    executor.execute(() -> {
+                        boolean success = dataHelper.exportDataToUri(repository, uri);
+                        mainHandler.post(() -> {
+                            if (success) {
+                                Toast.makeText(this, R.string.export_success, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(this, R.string.no_data_to_export, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    });
+                }
+            }
+        );
+
+    // 导入文件选择器
+    private final ActivityResultLauncher<String> importFileLauncher =
+        registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> {
+                if (uri != null) {
+                    showImportConfirmDialog(uri);
+                }
+            }
+        );
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // 在 onCreate 开始时初始化主题
+        ThemeHelper.initTheme(this);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
+
+        viewModel = new ViewModelProvider(this, new EventViewModel.Factory(getApplication()))
+                .get(EventViewModel.class);
+        repository = viewModel.getRepository();
+        dataHelper = new DataImportExportHelper(this);
+
+        setupToolbar();
+        setupExportData();
+        setupImportData();
+        setupLanguageSettings();
+        setupThemeSettings();
+        setupDataDisplayMode();
+        setupSortSettings();
+        setupAboutDeveloper();
+    }
+
+    private void setupToolbar() {
+        com.google.android.material.appbar.MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+    }
+
+    /** 导出数据 */
+    private void setupExportData() {
+        MaterialCardView cardExportData = findViewById(R.id.card_export_data);
+        cardExportData.setOnClickListener(v ->
+            exportFileLauncher.launch("events_backup_" + System.currentTimeMillis() + ".json")
+        );
+    }
+
+    /** 导入数据 */
+    private void setupImportData() {
+        MaterialCardView cardImportData = findViewById(R.id.card_import_data);
+        cardImportData.setOnClickListener(v ->
+            importFileLauncher.launch("application/json")
+        );
+    }
+
+    /** 显示导入确认对话框 */
+    private void showImportConfirmDialog(Uri uri) {
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.confirm_import)
+            .setMessage(R.string.import_warning)
+            .setPositiveButton(R.string.ok, (dialog, which) -> {
+                executor.execute(() -> {
+                    boolean success = dataHelper.importDataFromUri(repository, uri, true);
+                    mainHandler.post(() -> {
+                        if (success) {
+                            Toast.makeText(this, R.string.import_success, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, R.string.import_failed, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                });
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
+    }
+
+
+
+    /** 语言设置 */
+    private void setupLanguageSettings() {
+        MaterialCardView cardLanguage = findViewById(R.id.card_language_settings);
+        cardLanguage.setOnClickListener(v -> showLanguageDialog());
+    }
+    
+    /** 显示语言选择对话框 */
+    private void showLanguageDialog() {
+        String[] languages = LocaleHelper.getSupportedLanguages();
+        String[] languageNames = new String[languages.length];
+        
+        // 获取当前语言
+        String currentLanguage = LocaleHelper.getLanguage(this);
+        int checkedItem = 0;
+        
+        // 构建语言名称列表
+        for (int i = 0; i < languages.length; i++) {
+            languageNames[i] = LocaleHelper.getLanguageDisplayName(this, languages[i]);
+            if (languages[i].equals(currentLanguage)) {
+                checkedItem = i;
+            }
+        }
+        
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.select_language)
+            .setSingleChoiceItems(languageNames, checkedItem, (dialog, which) -> {
+                String selectedLanguage = languages[which];
+                
+                // 如果选择的语言和当前语言相同，不做任何操作
+                if (selectedLanguage.equals(currentLanguage)) {
+                    dialog.dismiss();
+                    return;
+                }
+                
+                // 保存并应用语言设置
+                LocaleHelper.setLanguage(this, selectedLanguage);
+                
+                dialog.dismiss();
+                
+                // 显示Toast提示
+                Toast.makeText(this, R.string.language_changed, Toast.LENGTH_SHORT).show();
+                
+                // 延迟重建Activity以应用新的语言设置
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    recreate();
+                }, 300);
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
+    }
+    
+    /** 主题设置 */
+    private void setupThemeSettings() {
+        MaterialCardView cardTheme = findViewById(R.id.card_theme_settings);
+        cardTheme.setOnClickListener(v -> showThemeDialog());
+    }
+    
+    /** 显示主题选择对话框 */
+    private void showThemeDialog() {
+        int[] themes = ThemeHelper.getSupportedThemes();
+        String[] themeNames = new String[themes.length];
+        
+        // 获取当前主题
+        int currentTheme = ThemeHelper.getTheme(this);
+        int checkedItem = 0;
+        
+        // 构建主题名称列表
+        for (int i = 0; i < themes.length; i++) {
+            themeNames[i] = ThemeHelper.getThemeDisplayName(this, themes[i]);
+            if (themes[i] == currentTheme) {
+                checkedItem = i;
+            }
+        }
+        
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.select_theme)
+            .setSingleChoiceItems(themeNames, checkedItem, (dialog, which) -> {
+                int selectedTheme = themes[which];
+                
+                // 如果选择的主题和当前主题相同，不做任何操作
+                if (selectedTheme == currentTheme) {
+                    dialog.dismiss();
+                    return;
+                }
+                
+                // 保存并应用主题设置
+                ThemeHelper.setTheme(this, selectedTheme);
+                
+                dialog.dismiss();
+                
+                // 显示Toast提示
+                Toast.makeText(this, R.string.theme_changed, Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
+    }
+
+    /** 数据展示模式设置 */
+    private void setupDataDisplayMode() {
+        MaterialCardView cardDataDisplayMode = findViewById(R.id.card_data_display_mode);
+        
+        cardDataDisplayMode.setOnClickListener(v -> showViewModeDialog());
+    }
+    
+    /** 显示视图模式选择对话框 */
+    private void showViewModeDialog() {
+        int[] modes = {ViewModeHelper.VIEW_MODE_CARD, ViewModeHelper.VIEW_MODE_LIST};
+        String[] modeNames = {
+            getString(R.string.card_view),
+            getString(R.string.list_view)
+        };
+        
+        // 获取当前视图模式
+        int currentMode = ViewModeHelper.getViewMode(this);
+        int checkedItem = 0;
+        
+        // 找到当前选中项
+        for (int i = 0; i < modes.length; i++) {
+            if (modes[i] == currentMode) {
+                checkedItem = i;
+                break;
+            }
+        }
+        
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.data_display_mode)
+            .setSingleChoiceItems(modeNames, checkedItem, (dialog, which) -> {
+                int selectedMode = modes[which];
+                
+                // 如果选择的模式和当前模式相同，不做任何操作
+                if (selectedMode == currentMode) {
+                    dialog.dismiss();
+                    return;
+                }
+                
+                // 保存视图模式设置
+                ViewModeHelper.setViewMode(this, selectedMode);
+                
+                dialog.dismiss();
+                
+                // 显示Toast提示
+                android.widget.Toast.makeText(this, R.string.view_mode_changed, android.widget.Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
+    }
+
+    /** 排序设置 */
+    private void setupSortSettings() {
+        MaterialCardView cardSortSettings = findViewById(R.id.card_sort_settings);
+        cardSortSettings.setOnClickListener(v -> showSortOrderDialog());
+    }
+    
+    /** 显示排序顺序选择对话框 */
+    private void showSortOrderDialog() {
+        boolean isAscending = viewModel.getRepository().isAscending();
+        int checkedItem = isAscending ? 0 : 1;
+        
+        String[] sortOrderNames = {
+            getString(R.string.sort_ascending),
+            getString(R.string.sort_descending)
+        };
+        
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.sort_order_settings)
+            .setSingleChoiceItems(sortOrderNames, checkedItem, (dialog, which) -> {
+                boolean selectedAscending = (which == 0);
+                
+                // 如果选择的排序和当前相同，不做任何操作
+                if (selectedAscending == isAscending) {
+                    dialog.dismiss();
+                    return;
+                }
+                
+                // 更新排序顺序
+                viewModel.toggleSortOrder();
+                
+                dialog.dismiss();
+                
+                // 显示Toast提示
+                String sortOrder = selectedAscending
+                    ? getString(R.string.sort_ascending)
+                    : getString(R.string.sort_descending);
+                Toast.makeText(this, sortOrder, Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
+    }
+
+    /** 关于开发者 */
+    private void setupAboutDeveloper() {
+        // 获取"关于"标题TextView
+        TextView aboutTitle = findViewById(R.id.aboutTitle);
+        
+        // 设置长按事件显示切换图标颜色对话框
+        aboutTitle.setOnLongClickListener(v -> {
+            showIconColorDialog();
+            return true;
+        });
+        
+        MaterialCardView cardAbout = findViewById(R.id.card_about_developer);
+        cardAbout.setOnClickListener(v -> {
+            Intent intent = new Intent(SettingsActivity.this, MeActivity.class);
+            startActivity(intent);
+        });
+    }
+    
+    /** 显示图标颜色选择对话框 */
+    private void showIconColorDialog() {
+        int[] colors = {
+            IconColorHelper.COLOR_DEFAULT,
+            IconColorHelper.COLOR_COLORFUL,
+            IconColorHelper.COLOR_RED,
+            IconColorHelper.COLOR_BLUE,
+            IconColorHelper.COLOR_YELLOW,
+            IconColorHelper.COLOR_PURPLE,
+            IconColorHelper.COLOR_ORANGE,
+            IconColorHelper.COLOR_CYAN,
+            IconColorHelper.COLOR_PINK
+        };
+        
+        String[] colorNames = {
+            getString(R.string.default_icon),
+            getString(R.string.colorful_icon),
+            getString(R.string.red_icon),
+            getString(R.string.blue_icon),
+            getString(R.string.yellow_icon),
+            getString(R.string.purple_icon),
+            getString(R.string.orange_icon),
+            getString(R.string.cyan_icon),
+            getString(R.string.pink_icon)
+        };
+        
+        // 获取当前图标颜色
+        int currentColor = IconColorHelper.getIconColor(this);
+        int checkedItem = 0;
+        
+        // 找到当前选中项
+        for (int i = 0; i < colors.length; i++) {
+            if (colors[i] == currentColor) {
+                checkedItem = i;
+                break;
+            }
+        }
+        
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.select_icon_color)
+            .setSingleChoiceItems(colorNames, checkedItem, (dialog, which) -> {
+                int selectedColor = colors[which];
+                
+                // 如果选择的颜色和当前相同，不做任何操作
+                if (selectedColor == currentColor) {
+                    dialog.dismiss();
+                    return;
+                }
+                
+                // 保存并应用图标颜色
+                IconColorHelper.setIconColor(this, selectedColor);
+                IconColorHelper.applyIconColor(this, selectedColor);
+                
+                dialog.dismiss();
+                
+                // 显示Toast提示
+                Toast.makeText(this, R.string.icon_color_changed, Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton(R.string.cancel, null)
+            .show();
+    }
+}

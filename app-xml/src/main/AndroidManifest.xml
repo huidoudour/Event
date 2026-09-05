@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Event">
+        
+        <!-- 主Activity - 不直接显示在桌面，通过alias控制入口 -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:enabled="true" />
+        
+        <!-- 默认绿色图标 -->
+        <activity-alias
+            android:name=".MainActivityAliasDefault"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+        <!-- 多彩图标 -->
+        <activity-alias
+            android:name=".MainActivityAliasColorful"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_colorful"
+            android:roundIcon="@mipmap/ic_launcher_round_colorful"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+        <!-- 红色图标 -->
+        <activity-alias
+            android:name=".MainActivityAliasRed"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_red"
+            android:roundIcon="@mipmap/ic_launcher_round_red"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+        <!-- 蓝色图标 -->
+        <activity-alias
+            android:name=".MainActivityAliasBlue"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_blue"
+            android:roundIcon="@mipmap/ic_launcher_round_blue"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+        <!-- 黄色图标 -->
+        <activity-alias
+            android:name=".MainActivityAliasYellow"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_yellow"
+            android:roundIcon="@mipmap/ic_launcher_round_yellow"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+        <!-- 紫色图标 -->
+        <activity-alias
+            android:name=".MainActivityAliasPurple"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_purple"
+            android:roundIcon="@mipmap/ic_launcher_round_purple"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+        <!-- 橙色图标 -->
+        <activity-alias
+            android:name=".MainActivityAliasOrange"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_orange"
+            android:roundIcon="@mipmap/ic_launcher_round_orange"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+        <!-- 青色图标 -->
+        <activity-alias
+            android:name=".MainActivityAliasCyan"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_cyan"
+            android:roundIcon="@mipmap/ic_launcher_round_cyan"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+        <!-- 粉色图标 -->
+        <activity-alias
+            android:name=".MainActivityAliasPink"
+            android:targetActivity=".MainActivity"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_pink"
+            android:roundIcon="@mipmap/ic_launcher_round_pink"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>        
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="true"
+            android:label="@string/settings" />
+        
+        <activity
+            android:name=".MeActivity"
+            android:exported="false"
+            android:label="@string/about_developer" />
+
+        <activity
+            android:name=".ui.ListViewActivity"
+            android:exported="false"
+            android:label="@string/list_view" />
+
+        <meta-data
+            android:name="me.huidoudour.core"
+            android:value="true" />
+        <meta-data
+            android:name="me.huidoudour.core.version"
+            android:value="23" />
+
+    </application>
+
+</manifest>
