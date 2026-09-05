@@ -27,11 +27,11 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // 在super.onCreate前设置本地夜间模式（delegate实例方法，确保对当前Activity生效）
         val themeMode = ThemeHelper.getTheme(this)
-        delegate.setLocalNightMode(when (themeMode) {
+        delegate.localNightMode = when (themeMode) {
             ThemeHelper.THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
             ThemeHelper.THEME_DARK -> AppCompatDelegate.MODE_NIGHT_YES
             else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        })
+        }
         super.onCreate(savedInstanceState)
         // 在super.onCreate后应用主题色overlay（必须在setContentView前）
         ThemeHelper.applyThemeColor(this)

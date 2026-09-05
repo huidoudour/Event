@@ -40,12 +40,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import dev.jeziellago.compose.markdowntext.MarkdownText
 import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
 import me.huidoudour.event.ui.theme.cancelButtonBorder
 import me.huidoudour.event.ui.theme.confirmButtonColors
 import me.huidoudour.event.ui.theme.softOutlinedButtonColors
-import dev.jeziellago.compose.markdowntext.MarkdownText
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -517,7 +517,7 @@ fun BatchDeleteConfirmDialog(
  * 普通文本（无上述语法）返回 false，仍按纯文本显示。
  */
 private val MARKDOWN_STRUCTURE = Regex("(?m)^\\s{0,3}(#{1,6}\\s|[-*+]\\s|\\d+\\.\\s|>\\s?|`{3})")
-private val MARKDOWN_PAIRED = Regex("\\*\\*.+?\\*\\*|__.+?__|`[^`\\n]+`|\\[[^\\]]+]\\([^)]+\\)")
+private val MARKDOWN_PAIRED = Regex("\\*\\*.+?\\*\\*|__.+?__|`[^`\\n]+`|\\[[^]]+]\\([^)]+\\)")
 private val MARKDOWN_DIVIDER = Regex("(?m)^\\s{0,3}(\\*{3,}|-{3,}|_{3,})\\s*$")
 
 private fun containsMarkdown(text: String): Boolean {

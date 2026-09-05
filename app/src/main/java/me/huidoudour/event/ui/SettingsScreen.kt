@@ -39,7 +39,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -51,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -112,6 +112,7 @@ fun SettingsScreenContent(
     onNeedsRecreate: () -> Unit = {}
 ) {
     val context = LocalContext.current
+    val resources = LocalResources.current
     Scaffold(
         // 博客风格淡蓝→淡粉渐变背景（深色模式回退默认背景色）
         modifier = Modifier
@@ -239,7 +240,7 @@ fun SettingsScreenContent(
                         if (idx != currentMode) {
                             val mode = if (idx == 0) ViewModeHelper.VIEW_MODE_CARD else ViewModeHelper.VIEW_MODE_LIST
                             ViewModeHelper.setViewMode(context, mode)
-                            Toast.makeText(context, context.getString(R.string.view_mode_changed_format, modeNames[idx]), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, resources.getString(R.string.view_mode_changed_format, modeNames[idx]), Toast.LENGTH_SHORT).show()
                         }
                         showViewModeDialog = false
                     }
@@ -256,7 +257,7 @@ fun SettingsScreenContent(
                         val newAscending = idx == 0
                         if (newAscending != isAscending) {
                             onSortOrderChanged(newAscending)
-                            Toast.makeText(context, context.getString(R.string.sort_order_changed_format, sortOptions[idx]), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, resources.getString(R.string.sort_order_changed_format, sortOptions[idx]), Toast.LENGTH_SHORT).show()
                         }
                         showSortDialog = false
                     }
@@ -316,7 +317,7 @@ fun SettingsScreenContent(
                     onConfirm = { idx ->
                         if (themes[idx] != currentTheme) {
                             onThemeChanged(themes[idx])
-                            Toast.makeText(context, context.getString(R.string.theme_changed_format, themeNames[idx]), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, resources.getString(R.string.theme_changed_format, themeNames[idx]), Toast.LENGTH_SHORT).show()
                         }
                         showThemeDialog = false
                     }

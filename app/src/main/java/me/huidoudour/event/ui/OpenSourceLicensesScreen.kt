@@ -1,7 +1,6 @@
 package me.huidoudour.event.ui
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -48,6 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.kotlin.subscribeBy
@@ -334,7 +334,7 @@ private fun LicenseRow(item: LicenseItem) {
                 // 外链按钮：淡蓝圆底，跳转项目主页（自带圆形波纹，不与其他区域冲突）
                 Surface(
                     onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
+                        val intent = Intent(Intent.ACTION_VIEW, item.url.toUri())
                         context.startActivity(intent)
                     },
                     shape = CircleShape,
@@ -360,8 +360,7 @@ private fun LicenseRow(item: LicenseItem) {
                 color = if (isDarkColorScheme()) MaterialTheme.colorScheme.outline else Color.Black.copy(alpha = 0.12f),
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-            val text = if (licenseText.isNotEmpty()) licenseText
-            else stringResource(R.string.license_not_provided)
+            val text = licenseText.ifEmpty { stringResource(R.string.license_not_provided) }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

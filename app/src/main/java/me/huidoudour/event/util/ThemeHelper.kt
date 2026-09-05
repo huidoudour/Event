@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.view.ContextThemeWrapper
-import androidx.core.content.edit
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.edit
 import me.huidoudour.event.R
 
 /**
@@ -36,6 +36,7 @@ object ThemeHelper {
     /**
      * 保存主题设置并立即应用
      */
+    @Suppress("unused")
     fun setTheme(context: Context, themeMode: Int) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit { putInt(KEY_THEME, themeMode) }
@@ -73,6 +74,7 @@ object ThemeHelper {
     /**
      * 在应用启动时初始化主题设置
      */
+    @Suppress("unused")
     fun initTheme(context: Context) {
         val themeMode = getTheme(context)
         applyTheme(themeMode)
@@ -86,6 +88,7 @@ object ThemeHelper {
      * XML 主题（values-night）、原生日期/时间选择器和 AlertDialog 等
      * 非 Compose 元素才能正确跟随应用内的深色模式设置。
      */
+    @Suppress("unused")
     fun applyNightMode(context: Context): Context {
         val nightFlag = when (getTheme(context)) {
             THEME_LIGHT -> Configuration.UI_MODE_NIGHT_NO
@@ -139,6 +142,7 @@ object ThemeHelper {
     /**
      * 保存主题色设置
      */
+    @Suppress("unused")
     fun setThemeColor(context: Context, color: Int) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         prefs.edit { putInt(KEY_THEME_COLOR, color) }
@@ -179,6 +183,7 @@ object ThemeHelper {
     /**
      * 获取主题色显示名称
      */
+    @Suppress("unused")
     fun getThemeColorDisplayName(context: Context, color: Int): String {
         return when (color) {
             COLOR_DEFAULT -> context.getString(R.string.default_color)
@@ -195,6 +200,7 @@ object ThemeHelper {
     /**
      * 获取所有支持的主题色列表
      */
+    @Suppress("unused")
     fun getSupportedThemeColors(): IntArray = intArrayOf(
         COLOR_DEFAULT, COLOR_PINK, COLOR_BLUE, COLOR_GREEN,
         COLOR_ORANGE, COLOR_RED, COLOR_CYAN
