@@ -8,7 +8,7 @@ plugins {
 }
 
 val baseVersionCode = 10
-val baseVersionName = "1.4-beta1"
+val baseVersionName = "1.5"
 val backVersionCode = 95
 
 fun Project.gitCommitCount(): Int = try {
@@ -112,7 +112,6 @@ kotlin {
 }
 
 dependencies {
-    // Compose BOM
     val composeBom = platform(libs.compose.bom)
     implementation(composeBom)
     
@@ -121,8 +120,7 @@ dependencies {
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.livedata)
     implementation(libs.room.runtime)
-    //noinspection KspUsageInsteadOfKapt
-    ksp("androidx.room:room-compiler:${libs.versions.room.get()}")
+    ksp(libs.room.compiler)
 
     implementation(libs.fragment.ktx)
     
@@ -157,18 +155,11 @@ dependencies {
         exclude(group = "org.jetbrains.compose.animation")
     }
 
-    // Compose Markdown - 详情对话框 Markdown 渲染
     implementation(libs.compose.markdown)
-
-    // RxJava / RxKotlin / RxAndroid - 异步线程调度（Schedulers.io + AndroidSchedulers.mainThread）
-    // RxKotlin 提供 Kotlin 扩展（subscribeBy / addTo / toCompletable），让 RxJava 调用更符合 Kotlin 习惯
     implementation(libs.rxjava)
     implementation(libs.rxkotlin)
     implementation(libs.rxandroid)
-    // debugImplementation(libs.rxjava.preview)
-    // debugImplementation("com.github.ReactiveX:RxJava:4.0.0-alpha-21")
 
-    // 本地依赖，仅用于调试（仅在文件存在时添加）
     val localSqliteFile = file("libs/android.aar")
     if (localSqliteFile.exists()) {
         debugImplementation(files(localSqliteFile))
