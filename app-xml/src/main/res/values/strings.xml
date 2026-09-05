@@ -95,5 +95,11 @@
     <string name="list_view">列表视图</string>
     <string name="view_mode_changed">视图已更改</string>
 
-
+    <!-- 开源许可 -->
+    <string name="open_source_licenses">开源许可</string>
+    <string name="licenses_this_app">本项目</string>
+    <string name="licenses_third_party">第三方开源依赖</string>
+    <string name="licenses_build_tools">构建工具</string>
+    <string name="licenses_notice">本应用使用了以下开源项目。各项目的完整许可证文本请参见对应项目主页或源代码仓库。</string>
+    <string name="license_not_provided">未提供</string>
 </resources>

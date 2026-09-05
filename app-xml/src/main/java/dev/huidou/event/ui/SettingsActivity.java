@@ -92,6 +92,7 @@ public class SettingsActivity extends AppCompatActivity {
         setupDataDisplayMode();
         setupSortSettings();
         setupAboutDeveloper();
+        setupLicenses();
     }
 
     private void setupToolbar() {
@@ -252,6 +253,15 @@ public class SettingsActivity extends AppCompatActivity {
         MaterialCardView cardAbout = findViewById(R.id.card_about_developer);
         cardAbout.setOnClickListener(v -> {
             Intent intent = new Intent(SettingsActivity.this, MeActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    /** 开源许可 */
+    private void setupLicenses() {
+        MaterialCardView cardLicenses = findViewById(R.id.card_licenses);
+        cardLicenses.setOnClickListener(v -> {
+            Intent intent = new Intent(SettingsActivity.this, OpenSourceLicensesActivity.class);
             startActivity(intent);
         });
     }
