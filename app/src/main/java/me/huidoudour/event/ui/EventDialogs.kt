@@ -267,7 +267,7 @@ fun EventDetailDialog(
         text = {
             Column {
                 if (!event.description.isNullOrBlank()) {
-                    val desc = event.description!!
+                    val desc = event.description
                     if (containsMarkdown(desc)) {
                         // 含 Markdown 语法：按 Markdown 渲染
                         MarkdownText(

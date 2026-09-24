@@ -6,6 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
@@ -39,11 +41,29 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
     @Suppress("unused")
     fun isAscending(): Boolean = repository.isAscending
 
-    fun addEvent(title: String, description: String?, eventTime: Long) {
-        runOnIo {
-            val event = Event(title = title, description = description, eventTime = eventTime)
-            repository.insert(event)
+    fun addEvent(
+        title: String,
+        description: String?,
+        eventTime: Long,
+        createdAt: Long,
+        onInserted: (Long) -> Unit
+    ) {
+        Single.fromCallable {
+            Event(
+                title = title,
+                description = description,
+                eventTime = eventTime,
+                createdAt = createdAt,
+                updatedAt = createdAt
+            ).let(repository::insert)
         }
+            .subscribeOn(Schedulers.single())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onSuccess = onInserted,
+                onError = { e -> Log.e(TAG, "adding event failed", e) }
+            )
+            .addTo(disposables)
     }
 
     fun updateEvent(event: Event) {

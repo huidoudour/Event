@@ -55,7 +55,10 @@ fun MeScreenContent() {
                 modifier = Modifier.align(Alignment.Center),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // app_name
+                Text(text = stringResource(R.string.app_name))
                 // textView1 - hello_world
+                Spacer(Modifier.height(16.dp))
                 Text(text = stringResource(R.string.hello_world))
                 // textView3 - about_description
                 Spacer(Modifier.height(16.dp))

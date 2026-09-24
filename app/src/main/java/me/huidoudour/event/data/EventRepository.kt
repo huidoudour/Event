@@ -39,7 +39,7 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
         currentSource?.let { sortedEvents.removeSource(it) }
         currentSource = newSource
         // Room 在主线程回调 LiveData；直接赋值可避免 postValue 再排一次主线程消息，
-        // 并确保每次数据库失效都会让 Compose 立即收到新的列表实例。
+        // 并确保每次数据库失效都会让 Compose 立即收到新地列表实例。
         sortedEvents.addSource(newSource) { sortedEvents.value = it }
     }
 

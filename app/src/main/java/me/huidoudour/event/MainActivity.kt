@@ -114,6 +114,9 @@ class MainActivity : BaseActivity() {
         var showDateTime by remember { mutableStateOf<Event?>(null) }
         var multiSelect by remember { mutableStateOf(false) }
         var selIds by remember { mutableStateOf(setOf<Long>()) }
+        // 新增完成后把该 ID 交给列表：滚动到新条目，并仅在卡片模式播放一次进入动画。
+        var newlyAddedEventId by remember { mutableStateOf<Long?>(null) }
+        var newlyAddedEventCreatedAt by remember { mutableStateOf<Long?>(null) }
 
         // 搜索状态
         var isSearchActive by remember { mutableStateOf(false) }
@@ -130,6 +133,12 @@ class MainActivity : BaseActivity() {
             viewMode = viewMode,
             isSearchActive = isSearchActive,
             searchQuery = searchQuery,
+            newlyAddedEventId = newlyAddedEventId,
+            newlyAddedEventCreatedAt = newlyAddedEventCreatedAt,
+            onNewEventDisplayed = {
+                newlyAddedEventId = null
+                newlyAddedEventCreatedAt = null
+            },
             onSearchToggle = {
                 if (isSearchActive) {
                     isSearchActive = false
@@ -190,7 +199,11 @@ class MainActivity : BaseActivity() {
             AddEventDialog(
                 onDismiss = { showAdd = false },
                 onConfirm = { title, desc ->
-                    viewModel.addEvent(title, desc, System.currentTimeMillis())
+                    val createdAt = System.currentTimeMillis()
+                    newlyAddedEventCreatedAt = createdAt
+                    viewModel.addEvent(title, desc, createdAt, createdAt) { eventId ->
+                        newlyAddedEventId = eventId
+                    }
                     Toast.makeText(this, R.string.event_saved, Toast.LENGTH_SHORT).show()
                 }
             )

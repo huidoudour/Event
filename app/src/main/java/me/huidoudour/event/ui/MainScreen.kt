@@ -1,7 +1,13 @@
 package me.huidoudour.event.ui
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -24,6 +30,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
@@ -52,7 +59,9 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -71,6 +80,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.animation.core.tween
+import kotlinx.coroutines.delay
 import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
 import me.huidoudour.event.ui.theme.BlogCardBlue
@@ -90,6 +101,7 @@ import me.huidoudour.event.util.ViewModeHelper
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * 主界面 Compose 组件：对齐原 XML 布局 activity_main.xml
@@ -103,6 +115,9 @@ fun MainScreenContent(
     viewMode: Int,
     isSearchActive: Boolean,
     searchQuery: String,
+    newlyAddedEventId: Long?,
+    newlyAddedEventCreatedAt: Long?,
+    onNewEventDisplayed: () -> Unit,
     onSearchToggle: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
     onSettings: () -> Unit,
@@ -117,8 +132,25 @@ fun MainScreenContent(
     onToggleSelection: (Long) -> Unit
 ) {
     val context = LocalContext.current
+    val cardListState = rememberLazyListState()
+    val tableListState = rememberLazyListState()
     // 整个主界面复用一个日期格式实例，避免每个卡片/行都创建 SimpleDateFormat
     val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()) }
+    // Room 发出包含新 ID 的列表后，才执行滚动，确保无论当前排序方向如何都能看到新条目。
+    LaunchedEffect(newlyAddedEventId, events, viewMode) {
+        val eventId = newlyAddedEventId ?: return@LaunchedEffect
+        val index = events.indexOfFirst { it.id == eventId }
+        if (index >= 0) {
+            if (viewMode == ViewModeHelper.VIEW_MODE_CARD) {
+                cardListState.animateScrollToItem(index)
+            } else {
+                tableListState.animateScrollToItem(index)
+            }
+            // 保留目标状态直至卡片完成首帧进入，避免首项滚动无需位移时动画被立即取消。
+            delay(300.milliseconds)
+            onNewEventDisplayed()
+        }
+    }
     Scaffold(
         // 博客风格淡蓝→淡粉渐变背景（深色模式回退默认背景色）
         modifier = Modifier
@@ -136,7 +168,7 @@ fun MainScreenContent(
                             onQueryChange = onSearchQueryChange
                         )
                     } else {
-                        Text(stringResource(R.string.dis_name))
+                        Text(stringResource(R.string.app_name))
                     }
                 },
                 colors = topAppBarColors(),
@@ -287,12 +319,14 @@ fun MainScreenContent(
                 if (viewMode == ViewModeHelper.VIEW_MODE_CARD) {
                     // ── 卡片视图 ── 对齐 fragment_event_list.xml padding
                     LazyColumn(
+                        state = cardListState,
                         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 88.dp),
                         verticalArrangement = Arrangement.spacedBy(0.dp)
                     ) {
                         items(events, key = { it.id }) { event ->
                             EventCard(
                                 event = event,
+                                animateIn = event.createdAt == newlyAddedEventCreatedAt,
                                 isMultiSelectMode = isMultiSelectMode,
                                 isSelected = selectedIds.contains(event.id),
                                 onClick = {
@@ -337,7 +371,10 @@ fun MainScreenContent(
                                     colWidths = colWidths
                                 )
                                 // 数据行 — 交替背景
-                                LazyColumn(modifier = Modifier.fillMaxHeight()) {
+                                LazyColumn(
+                                    state = tableListState,
+                                    modifier = Modifier.fillMaxHeight()
+                                ) {
                                     itemsIndexed(events, key = { _, event -> event.id }) { index, event ->
                                         TableRow(
                                             event = event,
@@ -410,12 +447,17 @@ fun MainScreenContent(
 @Composable
 private fun EventCard(
     event: Event,
+    animateIn: Boolean,
     isMultiSelectMode: Boolean,
     isSelected: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     dateFormat: SimpleDateFormat
 ) {
+    var isVisible by remember(event.id) { mutableStateOf(!animateIn) }
+    LaunchedEffect(animateIn) {
+        if (animateIn) isVisible = true
+    }
     // 亮色下用博客风淡蓝卡片底，深色回退默认 surface；
     // 选中时：用不透明的混合色填充（半透明色会透出卡片阴影，在边缘形成一圈深色"粗框"）
     val base = if (isDarkColorScheme()) MaterialTheme.colorScheme.surface else BlogCardBlue
@@ -427,58 +469,73 @@ private fun EventCard(
         label = "eventCardColor"
     )
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            ),
-        shape = MaterialTheme.shapes.medium, // 12dp
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = containerColor),
-        border = if (isSelected) null else BorderStroke(1.dp, cardBorderColor())
+    AnimatedVisibility(
+        visible = isVisible,
+        enter = fadeIn(animationSpec = tween(220)) + expandVertically(animationSpec = tween(280))
     ) {
-        Row(
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = onLongClick
+                ),
+            shape = MaterialTheme.shapes.medium, // 12dp
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            colors = CardDefaults.cardColors(containerColor = containerColor),
+            border = if (isSelected) null else BorderStroke(1.dp, cardBorderColor())
         ) {
-            // 多选 CheckBox
-            if (isMultiSelectMode) {
-                Checkbox(
-                    checked = isSelected,
-                    onCheckedChange = { onClick() },
-                    modifier = Modifier
-                        .size(24.dp)
-                        .padding(end = 12.dp)
-                )
-            }
-            // 事件内容
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = event.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                val desc = event.description
-                if (!desc.isNullOrBlank()) {
-                    Text(
-                        text = desc,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(top = 4.dp),
-                        maxLines = 3,
-                        overflow = TextOverflow.Ellipsis
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // 多选 CheckBox
+                if (isMultiSelectMode) {
+                    Checkbox(
+                        checked = isSelected,
+                        onCheckedChange = { onClick() },
+                        modifier = Modifier
+                            .size(24.dp)
+                            .padding(end = 12.dp)
                     )
                 }
-                Text(
-                    text = dateFormat.format(Date(event.eventTime)),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = cardSubTextColor(),
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                // 标题和时间保持稳定；只有描述区增减时播放展开/收起，并让卡片高度同步过度。
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .animateContentSize(animationSpec = tween(260))
+                ) {
+                    Text(
+                        text = event.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    val desc = event.description
+                    AnimatedVisibility(
+                        visible = !desc.isNullOrBlank(),
+                        enter = fadeIn(animationSpec = tween(180)) + expandVertically(animationSpec = tween(260)),
+                        exit = fadeOut(animationSpec = tween(80)) + shrinkVertically(animationSpec = tween(160))
+                    ) {
+                        if (!desc.isNullOrBlank()) {
+                            Text(
+                                text = desc,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(top = 4.dp),
+                                maxLines = 3,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                    Text(
+                        text = dateFormat.format(Date(event.eventTime)),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = cardSubTextColor(),
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
             }
         }
     }
