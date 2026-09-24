@@ -50,6 +50,10 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
         runOnIo { repository.update(event) }
     }
 
+    fun refreshEvents() {
+        repository.refresh()
+    }
+
     fun deleteEvent(event: Event) {
         runOnIo { repository.delete(event) }
     }
@@ -64,10 +68,12 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getRepository(): EventRepository = repository
 
-    /** 在 io 线程池执行数据库写操作（替代手写单线程 Executor，线程池可复用） */
+    /** 在后台串行调度器执行数据库写操作，保持用户操作的提交顺序。 */
     private fun runOnIo(action: () -> Unit) {
         action.toCompletable()
-            .subscribeOn(Schedulers.io())
+            // 同一事件被连续编辑时，必须按提交顺序写入；Schedulers.io() 会并发执行，
+            // 可能让较早的写入在较晚的写入之后完成并覆盖最新内容。
+            .subscribeOn(Schedulers.single())
             .subscribeBy(
                 onError = { e -> Log.e(TAG, "database operation failed", e) }
             )

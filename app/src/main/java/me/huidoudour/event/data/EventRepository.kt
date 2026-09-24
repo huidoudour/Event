@@ -38,7 +38,9 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
         }
         currentSource?.let { sortedEvents.removeSource(it) }
         currentSource = newSource
-        sortedEvents.addSource(newSource, sortedEvents::postValue)
+        // Room 在主线程回调 LiveData；直接赋值可避免 postValue 再排一次主线程消息，
+        // 并确保每次数据库失效都会让 Compose 立即收到新的列表实例。
+        sortedEvents.addSource(newSource) { sortedEvents.value = it }
     }
 
     fun insert(event: Event): Long = eventDao.insert(event)
@@ -47,9 +49,7 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
     fun insertAll(events: List<Event>) = eventDao.insertAll(events)
 
     fun update(event: Event) {
-        // 只在内容变化时更新时间戳
-        event.updatedAt = System.currentTimeMillis()
-        eventDao.update(event)
+        eventDao.update(event.copy(updatedAt = System.currentTimeMillis()))
     }
 
     fun delete(event: Event) = eventDao.delete(event)
@@ -65,6 +65,9 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
     fun getAllEventsSync(): List<Event> = eventDao.getAllEventsSync()
 
     fun getSortedEvents(): LiveData<List<Event>> = sortedEvents
+
+    /** 重新订阅当前查询，供用户主动刷新时立即读取数据库中的最新快照。 */
+    fun refresh() = reloadSource()
 
     fun setSearchQuery(query: String) {
         val normalized = escapeLike(query.trim())

@@ -7,12 +7,12 @@ import java.util.Objects
 @Entity(tableName = "events")
 data class Event(
     @PrimaryKey(autoGenerate = true)
-    var id: Long = 0,
-    var title: String,
-    var description: String?,
-    var eventTime: Long,
-    var createdAt: Long = System.currentTimeMillis(),
-    var updatedAt: Long = System.currentTimeMillis()
+    val id: Long = 0,
+    val title: String,
+    val description: String?,
+    val eventTime: Long,
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis()
 ) {
     constructor(title: String, description: String?, eventTime: Long) : this(
         title = title,

@@ -15,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
@@ -88,12 +89,7 @@ class MainActivity : BaseActivity() {
 
     @Composable
     private fun MainScreen(viewModel: EventViewModel) {
-        val events = remember { mutableStateOf<List<Event>>(emptyList()) }
-        LaunchedEffect(viewModel) {
-            viewModel.getSortedEvents().observe(this@MainActivity) { list ->
-                events.value = list
-            }
-        }
+        val events by viewModel.getSortedEvents().observeAsState(emptyList())
         val context = this@MainActivity
         var viewMode by remember { mutableIntStateOf(ViewModeHelper.getViewMode(context)) }
         val lifecycleOwner = LocalLifecycleOwner.current
@@ -128,7 +124,7 @@ class MainActivity : BaseActivity() {
         }
 
         MainScreenContent(
-            events = events.value,
+            events = events,
             isMultiSelectMode = multiSelect,
             selectedIds = selIds,
             viewMode = viewMode,
@@ -151,8 +147,8 @@ class MainActivity : BaseActivity() {
                 selIds = emptySet()
             },
             onSelectAll = {
-                selIds = if (selIds.size == events.value.size) emptySet()
-                else events.value.map { it.id }.toSet()
+                selIds = if (selIds.size == events.size) emptySet()
+                else events.map { it.id }.toSet()
             },
             onDeleteSelected = {
                 if (selIds.isEmpty()) {
@@ -178,6 +174,7 @@ class MainActivity : BaseActivity() {
                 selIds = if (id in selIds) selIds - id else selIds + id
             },
             onRefresh = {
+                viewModel.refreshEvents()
                 Toast.makeText(this, R.string.refreshed, Toast.LENGTH_SHORT).show()
             },
             onClearAll = {
@@ -204,9 +201,7 @@ class MainActivity : BaseActivity() {
                 event = event,
                 onDismiss = { showEdit = null },
                 onConfirm = { title, desc ->
-                    event.title = title
-                    event.description = desc
-                    viewModel.updateEvent(event)
+                    viewModel.updateEvent(event.copy(title = title, description = desc))
                     Toast.makeText(this, R.string.event_saved, Toast.LENGTH_SHORT).show()
                 }
             )
@@ -263,11 +258,11 @@ class MainActivity : BaseActivity() {
                         cal.set(Calendar.HOUR_OF_DAY, h)
                         cal.set(Calendar.MINUTE, mi)
                         cal.set(Calendar.SECOND, 0)
-                        event.eventTime = cal.timeInMillis
-                        viewModel.updateEvent(event)
+                        val updatedEvent = event.copy(eventTime = cal.timeInMillis)
+                        viewModel.updateEvent(updatedEvent)
                         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
                         Toast.makeText(this,
-                            getString(R.string.event_datetime_changed_format, sdf.format(Date(event.eventTime))),
+                            getString(R.string.event_datetime_changed_format, sdf.format(Date(updatedEvent.eventTime))),
                             Toast.LENGTH_LONG).show()
                     }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true)
                     timePicker.show()
