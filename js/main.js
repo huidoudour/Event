@@ -48,7 +48,7 @@ function initNavbarScroll() {
         const currentScroll = window.pageYOffset;
         
         if (currentScroll > 100) {
-            navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
+            navbar.style.boxShadow = '0 4px 20px rgba(74, 133, 189, 0.15)';
         } else {
             navbar.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.08)';
         }
@@ -141,10 +141,10 @@ document.addEventListener('visibilitychange', function () {
 });
 
 // 添加控制台欢迎信息
-console.log("%c🌟 Event - 轻量级记事本应用", "font-size: 20px; font-weight: bold; color: #4facfe;");
-console.log("%c📝 简洁高效，专注记录", "font-size: 14px; color: #00f2fe;");
-console.log("%c💡 GitHub: https://github.com/huidoudour/Event", "font-size: 12px; color: #636e72;");
-console.log("%c☕ 感谢访问，记得给个 Star 哦~", "font-size: 12px; color: #43e97b;");
+console.log("%c🌟 Event - 轻量级记事本应用", "font-size: 20px; font-weight: bold; color: #4a85bd;");
+console.log("%c📝 简洁高效，专注记录", "font-size: 14px; color: #e28aa6;");
+console.log("%c💡 GitHub: https://github.com/huidoudour/Event", "font-size: 12px; color: #6b7b8c;");
+console.log("%c☕ 感谢访问，记得给个 Star 哦~", "font-size: 12px; color: #4a85bd;");
 
 // 添加鼠标点击特效
 document.addEventListener('click', function(e) {
@@ -156,7 +156,7 @@ document.addEventListener('click', function(e) {
         heart.style.left = (e.clientX - 10) + 'px';
         heart.style.top = (e.clientY - 20) + 'px';
         heart.style.fontSize = '20px';
-        heart.style.color = '#ff6b6b';
+        heart.style.color = '#e28aa6';
         heart.style.pointerEvents = 'none';
         heart.style.zIndex = '9999';
         heart.style.userSelect = 'none';
