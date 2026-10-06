@@ -16,3 +16,9 @@
 # RxJava 自带 consumer 规则仅有 -dontwarn，不会保留类名。
 -keep class io.reactivex.rxjava3.** { *; }
 -keep class io.reactivex.android.** { *; }
+
+# ── androidx.profileinstaller ──
+# 保留类名与成员，确保 Baseline Profile 采集（非 debuggable 变体）时
+# ProfileInstallReceiver 不被混淆，避免宏基准报
+# "save profile / install broadcast was not received"。
+-keep class androidx.profileinstaller.** { *; }
