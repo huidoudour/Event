@@ -30,4 +30,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Event"
 include(":app")
+include(":lib-mtprovider")
 include(":baselineprofile")
