@@ -105,6 +105,22 @@ android {
     buildFeatures {
         compose = true
     }
+
+    // 语言资源配置：
+    // 1. generateLocaleConfig 自动生成 LocaleConfig，使 Android 13+ 系统设置中可单独为应用设置语言（默认语言由 res/resources.properties 指定）
+    // 2. localeFilters 仅打包应用当前支持的语言资源（含第三方库翻译），未列出的语言资源会被剔除
+    // 注意：语言代码格式需与 res/values-* 资源目录保持一致（如 values-zh-rCN ↔ "zh-rCN"），新增语言时需同步维护
+    @Suppress("UnstableApiUsage")
+    androidResources {
+        generateLocaleConfig = true
+        localeFilters += listOf(
+            "en-rUS",   // 英语（美国）
+            "ja-rJP",   // 日语
+            "ru-rRU",   // 俄语
+            "zh-rCN",   // 简体中文
+            "zh-rTW"    // 繁体中文
+        )
+    }
     
     // 配置 NDK 版本
     ndkVersion = "27.0.12077973"

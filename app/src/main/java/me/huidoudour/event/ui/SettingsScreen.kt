@@ -1,5 +1,9 @@
 package me.huidoudour.event.ui
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -267,7 +271,7 @@ fun SettingsScreenContent(
             // ==================== 设置 ====================
             var showLangDialog by remember { mutableStateOf(false) }
             val languages = LocaleHelper.getSupportedLanguages()
-            val currentLang = LocaleHelper.getLanguage(context)
+            val currentLang = LocaleHelper.getLanguage()
             var showThemeDialog by remember { mutableStateOf(false) }
             val themes = ThemeHelper.getSupportedThemes()
             val currentTheme = ThemeHelper.getTheme(context)
@@ -275,7 +279,22 @@ fun SettingsScreenContent(
                 SettingsCard(
                     iconRes = R.drawable.ic_language,
                     titleRes = R.string.language_settings,
-                    onClick = { showLangDialog = true },
+                    onClick = {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            // Android 13+：优先跳转系统"应用语言"界面，与系统设置双向同步
+                            try {
+                                context.startActivity(
+                                    Intent(Settings.ACTION_APP_LOCALE_SETTINGS)
+                                        .setData(Uri.fromParts("package", context.packageName, null))
+                                )
+                            } catch (_: Exception) {
+                                // 系统界面不可用时回退到应用内对话框
+                                showLangDialog = true
+                            }
+                        } else {
+                            showLangDialog = true
+                        }
+                    },
                     modifier = Modifier.padding(horizontal = 12.dp),
                     shape = segmentedShape(0, 2)
                 )
@@ -301,7 +320,11 @@ fun SettingsScreenContent(
                     checkedIndex = checkedIdx,
                     onDismiss = { showLangDialog = false },
                     onConfirm = { idx ->
-                        if (languages[idx] != currentLang) { LocaleHelper.setLanguage(context, languages[idx]); onNeedsRecreate() }
+                        if (languages[idx] != currentLang) {
+                            Toast.makeText(context, resources.getString(R.string.language_changed), Toast.LENGTH_SHORT).show()
+                            // AppCompat 会持久化语言并自动重建界面，无需手动 recreate
+                            LocaleHelper.setLanguage(languages[idx])
+                        }
                         showLangDialog = false
                     }
                 )

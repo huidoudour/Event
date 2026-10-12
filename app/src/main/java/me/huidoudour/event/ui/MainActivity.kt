@@ -1,9 +1,11 @@
-package me.huidoudour.event
+package me.huidoudour.event.ui
 
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
@@ -13,9 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
@@ -23,17 +25,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
-import me.huidoudour.event.ui.AddEventDialog
-import me.huidoudour.event.ui.BatchDeleteConfirmDialog
-import me.huidoudour.event.ui.ClearAllConfirmDialog
-import me.huidoudour.event.ui.DeleteConfirmDialog
-import me.huidoudour.event.ui.EditEventDialog
-import me.huidoudour.event.ui.EventDetailDialog
-import me.huidoudour.event.ui.EventLongClickMenu
-import me.huidoudour.event.ui.EventViewModel
-import me.huidoudour.event.ui.MainScreenContent
-import me.huidoudour.event.ui.SettingsActivity
 import me.huidoudour.event.ui.theme.EventTheme
 import me.huidoudour.event.util.BaseActivity
 import me.huidoudour.event.util.IconColorHelper
@@ -63,7 +56,7 @@ class MainActivity : BaseActivity() {
                 themeColor = ThemeHelper.getThemeColor(this),
                 darkTheme = ThemeHelper.getTheme(this) == ThemeHelper.THEME_DARK ||
                         (ThemeHelper.getTheme(this) == ThemeHelper.THEME_SYSTEM &&
-                         isNightMode())
+                                isNightMode())
             ) {
                 MainScreen(viewModel = viewModel)
             }
@@ -77,8 +70,8 @@ class MainActivity : BaseActivity() {
 
     private fun isNightMode(): Boolean {
         val mode = resources.configuration.uiMode and
-                android.content.res.Configuration.UI_MODE_NIGHT_MASK
-        return mode == android.content.res.Configuration.UI_MODE_NIGHT_YES
+                Configuration.UI_MODE_NIGHT_MASK
+        return mode == Configuration.UI_MODE_NIGHT_YES
     }
 
     override fun onResume() {
@@ -255,7 +248,7 @@ class MainActivity : BaseActivity() {
             // 系统日期/时间选择器按钮颜色取自 ROM 的 colorAccent，不跟随 Compose 主题，
             // 这里弹出后强制设为当前主题的 primary 色
             val pickerAccent = MaterialTheme.colorScheme.primary.toArgb()
-            fun android.app.AlertDialog.tintButtons() {
+            fun AlertDialog.tintButtons() {
                 getButton(DialogInterface.BUTTON_POSITIVE)?.setTextColor(pickerAccent)
                 getButton(DialogInterface.BUTTON_NEGATIVE)?.setTextColor(pickerAccent)
             }
@@ -274,9 +267,14 @@ class MainActivity : BaseActivity() {
                         val updatedEvent = event.copy(eventTime = cal.timeInMillis)
                         viewModel.updateEvent(updatedEvent)
                         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-                        Toast.makeText(this,
-                            getString(R.string.event_datetime_changed_format, sdf.format(Date(updatedEvent.eventTime))),
-                            Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this,
+                            getString(
+                                R.string.event_datetime_changed_format,
+                                sdf.format(Date(updatedEvent.eventTime))
+                            ),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true)
                     timePicker.show()
                     timePicker.tintButtons()

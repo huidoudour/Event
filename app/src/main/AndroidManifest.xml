@@ -13,6 +13,7 @@
     </queries>
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -23,13 +24,13 @@
         android:theme="@style/Theme.Event">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="false"
             android:enabled="true" />
 
         <activity-alias
             android:name=".MainActivityAliasDefault"
-            android:targetActivity=".MainActivity"
+            android:targetActivity=".ui.MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher"
             android:roundIcon="@mipmap/ic_launcher_round"
@@ -42,7 +43,7 @@
 
         <activity-alias
             android:name=".MainActivityAliasColorful"
-            android:targetActivity=".MainActivity"
+            android:targetActivity=".ui.MainActivity"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_colorful"
             android:roundIcon="@mipmap/ic_launcher_round_colorful"
@@ -59,7 +60,7 @@
             android:label="@string/settings" />
         
         <activity
-            android:name=".MeActivity"
+            android:name=".ui.MeActivity"
             android:exported="false"
             android:label="@string/about" />
 
@@ -84,6 +85,16 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <!-- Android 12 及以下：由 AppCompat 自动持久化应用语言设置（Android 13+ 由系统 LocaleManager 管理） -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
 
     </application>
 

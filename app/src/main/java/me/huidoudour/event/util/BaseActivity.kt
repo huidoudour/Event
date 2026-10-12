@@ -1,6 +1,5 @@
 package me.huidoudour.event.util
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -20,10 +19,6 @@ abstract class BaseActivity : AppCompatActivity() {
     private var currentThemeColor: Int = 0
     protected var isRestarting = false
 
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(LocaleHelper.applyLanguage(newBase))
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         // 在super.onCreate前设置本地夜间模式（delegate实例方法，确保对当前Activity生效）
         val themeMode = ThemeHelper.getTheme(this)
@@ -37,7 +32,7 @@ abstract class BaseActivity : AppCompatActivity() {
         ThemeHelper.applyThemeColor(this)
 
         // 记录当前设置值，用于onResume检测变化
-        currentLanguage = LocaleHelper.getLanguage(this)
+        currentLanguage = LocaleHelper.getLanguage()
         currentTheme = ThemeHelper.getTheme(this)
         currentThemeColor = ThemeHelper.getThemeColor(this)
     }
@@ -46,7 +41,7 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onResume()
         if (isRestarting) return
         // 检测语言、主题模式或主题色是否在外部被修改
-        val newLanguage = LocaleHelper.getLanguage(this)
+        val newLanguage = LocaleHelper.getLanguage()
         val newTheme = ThemeHelper.getTheme(this)
         val newThemeColor = ThemeHelper.getThemeColor(this)
 
