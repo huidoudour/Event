@@ -55,29 +55,13 @@ jobs:
           -Pandroid.injected.signing.key.alias="${{ secrets.SIGN_KEY_ALIAS }}" \
           -Pandroid.injected.signing.key.password="${{ secrets.SIGN_KEY_ALIAS_PASSWD }}"
 
-    - name: Rename APK with version
-      run: |
-        mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/Event-${{ steps.get_version.outputs.VERSION }}.apk
-
-    - name: Prepare baseline profile .dm files
-      run: |
-        cd app/build/outputs/apk/release
-        mkdir -p dm
-        jq -r '.baselineProfiles[] | "\(.minApi)\t\(.maxApi)\t\(.baselineProfiles[0])"' output-metadata.json \
-        | while IFS=$'\t' read -r min max src; do
-            if [ "$max" -ge 2147483647 ]; then range="${min}+"; else range="${min}-${max}"; fi
-            cp "$src" "dm/Event-${{ steps.get_version.outputs.VERSION }}-api${range}.dm"
-          done
-        ls -l dm
-
     - name: Upload Signed Release APK
       uses: actions/upload-artifact@v7
       if: success()
       with:
         name: app-signed-release
-        path: |
-          app/build/outputs/apk/release/Event-${{ steps.get_version.outputs.VERSION }}.apk
-          app/build/outputs/apk/release/dm/*.dm
+        # 上传 release 输出目录下的全部产物：APK、baselineProfiles 文件夹、output-metadata.json
+        path: app/build/outputs/apk/release/
         retention-days: 30
 
     - name: Get git commit messages
@@ -99,8 +83,7 @@ jobs:
       if: success()
       with:
         files: |
-          app/build/outputs/apk/release/Event-${{ steps.get_version.outputs.VERSION }}.apk
-          app/build/outputs/apk/release/dm/*.dm
+          app/build/outputs/apk/release/**/*.apk
         name: Release ${{ steps.get_version.outputs.VERSION }}
         tag_name: ${{ github.ref_name }}
         draft: false

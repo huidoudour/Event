@@ -142,6 +142,18 @@ android {
     }
 }
 
+androidComponents {
+    onVariants { variant ->
+        // 构建产物命名格式：Event-<基础版本名>.<提交数量>.<hash>-<最终版本号>-<Release/Debug>.apk
+        // 即 Event-<versionName>-<versionCode>-<BuildType>.apk
+        val buildTypeLabel = variant.buildType.orEmpty().replaceFirstChar { it.uppercaseChar() }
+        val outputName = "Event-${appVersionName}-${appVersionCode}-${buildTypeLabel}.apk"
+        variant.outputs.forEach { output ->
+            output.outputFileName.set(outputName)
+        }
+    }
+}
+
 kotlin {
     jvmToolchain(17)
 }
