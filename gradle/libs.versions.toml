@@ -61,7 +61,6 @@ profileinstaller = { group = "androidx.profileinstaller", name = "profileinstall
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
