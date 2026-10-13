@@ -20,15 +20,15 @@ class DataImportExportHelper(private val context: Context) {
     private fun buildJsonString(events: List<Event>): String? {
         if (events.isEmpty()) return null
         val array = JSONArray()
-        for (event in events) {
+        for ((_, title, description, eventTime, createdAt, updatedAt) in events) {
             val obj = JSONObject()
             try {
-                obj.put(KEY_TITLE, event.title)
-                obj.put(KEY_DETAIL, event.description ?: "")
-                obj.put(KEY_TIME, DATE_FORMAT.get()!!.format(Date(event.eventTime)))
+                obj.put(KEY_TITLE, title)
+                obj.put(KEY_DETAIL, description ?: "")
+                obj.put(KEY_TIME, DATE_FORMAT.get()!!.format(Date(eventTime)))
                 // 保存 createdAt 和 updatedAt 以保持原始时间戳
-                obj.put("createdAt", event.createdAt)
-                obj.put("updatedAt", event.updatedAt)
+                obj.put("createdAt", createdAt)
+                obj.put("updatedAt", updatedAt)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
