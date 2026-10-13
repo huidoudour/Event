@@ -28,8 +28,6 @@ val appVersionCode = baseVersionCode + gitCommitCount()
 val appVersionName = "${baseVersionName}.${gitCommitCount()}.${gitHash()}"
 
 tasks.matching { it.name.startsWith("assemble") || it.name.startsWith("bundle") }.configureEach {
-    // 提前将脚本级属性读取为局部变量：doLast 闭包若直接引用 appVersionName/appVersionCode
-    // 会捕获 Gradle 脚本对象引用，无法通过配置缓存的序列化校验
     val printedVersionName = appVersionName
     val printedVersionCode = appVersionCode
     doLast {
@@ -106,10 +104,6 @@ android {
         compose = true
     }
 
-    // 语言资源配置：
-    // 1. generateLocaleConfig 自动生成 LocaleConfig，使 Android 13+ 系统设置中可单独为应用设置语言（默认语言由 res/resources.properties 指定）
-    // 2. localeFilters 仅打包应用当前支持的语言资源（含第三方库翻译），未列出的语言资源会被剔除
-    // 注意：语言代码格式需与 res/values-* 资源目录保持一致（如 values-zh-rCN ↔ "zh-rCN"），新增语言时需同步维护
     @Suppress("UnstableApiUsage")
     androidResources {
         generateLocaleConfig = true
@@ -121,17 +115,12 @@ android {
             "zh-rTW"    // 繁体中文
         )
     }
-    
-    // 配置 NDK 版本
+
     ndkVersion = "27.0.12077973"
 
-    // 配置警告的忽略
     lint {
-        // 将警告视为警告,不要作为错误
         warningsAsErrors = false
-        // 出现错误时终止构建
         abortOnError = true
-        // 禁用某些检查
         disable += setOf(
             "HardcodedText",           // 允许硬编码文本(调试阶段)
             "SetTextI18n",             // 允许文本拼接
@@ -147,7 +136,6 @@ android {
             "GradleDependency",        // 不强制更新依赖
             "NewerVersionAvailable"    // 不强制更新到最新版本
         )
-        // 仅检查致命错误
         checkOnly += setOf(
             "NotSibling",              // 必须检查布局引用错误
             "DuplicateIds",            // 必须检查重复ID
