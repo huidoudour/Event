@@ -247,7 +247,6 @@ private val LicBtnLight = Color(0xFFD0E6F3)   // 外链按钮圆底：淡蓝（�
 private val LicBtnDark = Color(0xFF364954)    // 外链按钮圆底：深蓝灰
 
 /** 单个依赖条目：独立圆角卡片，点击行展开/收起协议全文，行尾外链按钮跳转项目主页 */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LicenseRow(item: LicenseItem) {
     val context = LocalContext.current
