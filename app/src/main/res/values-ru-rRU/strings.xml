@@ -145,6 +145,7 @@
     <string name="licenses_build_tools">Инструменты сборки</string>
     <string name="licenses_notice">Это приложение использует следующие проекты с открытым исходным кодом. Полный текст лицензии каждого проекта доступен на его домашней странице или в репозитории исходного кода.</string>
     <string name="license_not_provided">Не указано</string>
+    <string name="license_source_implementation">Реализация в исходном коде</string>
 
     <!-- Дополнительные локализованные строки -->
     <string name="edit_event">Редактировать событие</string>

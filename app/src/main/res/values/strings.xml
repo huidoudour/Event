@@ -147,6 +147,7 @@
     <string name="licenses_build_tools">构建工具</string>
     <string name="licenses_notice">本应用使用了以下开源项目。各项目的完整许可证文本请参见对应项目主页或源代码仓库。</string>
     <string name="license_not_provided">未提供</string>
+    <string name="license_source_implementation">源代码实现</string>
 
     <!-- 补充本地化文本 -->
     <string name="edit_event">编辑事件</string>

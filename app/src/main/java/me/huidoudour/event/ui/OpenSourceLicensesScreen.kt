@@ -76,6 +76,7 @@ private const val URL_RXANDROID = "https://github.com/ReactiveX/RxAndroid"
 private const val URL_MTFILES = "https://github.com/L-JINBIN/MTDataFilesProvider"
 private const val URL_JUNIT = "https://github.com/junit-team/junit4"
 private const val URL_TEST = "https://developer.android.com/training/testing"
+private const val URL_GRADLE = "https://github.com/gradle/gradle"
 private const val URL_KOTLIN = "https://github.com/JetBrains/kotlin"
 private const val URL_AGP = "https://developer.android.com/build/releases/gradle-plugin"
 private const val URL_KSP = "https://github.com/google/ksp"
@@ -183,19 +184,20 @@ fun OpenSourceLicensesScreenContent(onBack: () -> Unit) {
             LicenseGroup(
                 titleRes = R.string.licenses_third_party,
                 items = listOf(
-                    LicenseItem("Jetpack Compose", "BOM 2026.08.00", "Apache License 2.0", URL_COMPOSE, LIC_APACHE),
+                    // MT 文件提供器为本地源码模块（lib-mtprovider）实现，置于列表最上方
+                    LicenseItem("MTDataFilesProvider", "v1.0.0", stringResource(R.string.license_source_implementation), URL_MTFILES),
+                    LicenseItem("Jetpack Compose", "BOM 2026.09.00", "Apache License 2.0", URL_COMPOSE, LIC_APACHE),
                     LicenseItem("AndroidX AppCompat", "1.8.0", "Apache License 2.0", URL_APPCOMPAT, LIC_APACHE),
                     LicenseItem("AndroidX Activity Compose", "1.13.0", "Apache License 2.0", URL_ACTIVITY, LIC_APACHE),
-                    LicenseItem("AndroidX Fragment KTX", "1.9.0", "Apache License 2.0", URL_FRAGMENT, LIC_APACHE),
+                    LicenseItem("AndroidX Fragment KTX", "1.9.1", "Apache License 2.0", URL_FRAGMENT, LIC_APACHE),
                     LicenseItem("AndroidX Lifecycle (ViewModel / LiveData)", "2.11.0", "Apache License 2.0", URL_LIFECYCLE, LIC_APACHE),
-                    LicenseItem("AndroidX Room", "2.8.4", "Apache License 2.0", URL_ROOM, LIC_APACHE),
+                    LicenseItem("AndroidX Room", "2.8.5", "Apache License 2.0", URL_ROOM, LIC_APACHE),
                     LicenseItem("Material Components for Android", "1.14.0", "Apache License 2.0", URL_MATERIAL, LIC_APACHE),
-                    LicenseItem("MaterialKolor", "5.0.0", "MIT License", URL_MATERIALKOLOR, LIC_MIT_MATERIALKOLOR),
+                    LicenseItem("MaterialKolor", "5.0.1", "MIT License", URL_MATERIALKOLOR, LIC_MIT_MATERIALKOLOR),
                     LicenseItem("SQLite", "3.49.0 (via requery/sqlite-android)", "Public Domain", URL_SQLITE, LIC_SQLITE_PD),
                     LicenseItem("Compose Markdown", "0.7.2", "MIT License", URL_COMPOSE_MARKDOWN, LIC_MIT_COMPOSE_MARKDOWN),
                     LicenseItem("RxJava", "3.1.12", "Apache License 2.0", URL_RXJAVA, LIC_APACHE),
                     LicenseItem("RxAndroid", "3.0.2", "Apache License 2.0", URL_RXANDROID, LIC_APACHE),
-                    LicenseItem("MTDataFilesProvider", "v1.0.0", stringResource(R.string.license_not_provided), URL_MTFILES),
                     LicenseItem("JUnit", "4.13.2", "Eclipse Public License 1.0", URL_JUNIT, LIC_EPL),
                     LicenseItem("AndroidX Test (JUnit Ext / Espresso)", "1.3.0 / 3.7.0", "Apache License 2.0", URL_TEST, LIC_APACHE)
                 )
@@ -207,9 +209,10 @@ fun OpenSourceLicensesScreenContent(onBack: () -> Unit) {
             LicenseGroup(
                 titleRes = R.string.licenses_build_tools,
                 items = listOf(
-                    LicenseItem("Kotlin", "2.4.10", "Apache License 2.0", URL_KOTLIN, LIC_APACHE),
-                    LicenseItem("Android Gradle Plugin", "9.3.1", "Apache License 2.0", URL_AGP, LIC_APACHE),
-                    LicenseItem("KSP (Kotlin Symbol Processing)", "2.3.10", "Apache License 2.0", URL_KSP, LIC_APACHE)
+                    LicenseItem("Gradle", "9.8.0", "Apache License 2.0", URL_GRADLE, LIC_APACHE),
+                    LicenseItem("Kotlin", "2.4.20", "Apache License 2.0", URL_KOTLIN, LIC_APACHE),
+                    LicenseItem("Android Gradle Plugin", "9.4.0", "Apache License 2.0", URL_AGP, LIC_APACHE),
+                    LicenseItem("KSP (Kotlin Symbol Processing)", "2.3.12", "Apache License 2.0", URL_KSP, LIC_APACHE)
                 )
             )
         }

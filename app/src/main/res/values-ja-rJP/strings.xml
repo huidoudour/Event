@@ -145,6 +145,7 @@
     <string name="licenses_build_tools">ビルドツール</string>
     <string name="licenses_notice">本アプリは以下のオープンソースプロジェクトを使用しています。各プロジェクトの完全なライセンス文は、各プロジェクトのホームページまたはソースコードリポジトリで確認できます。</string>
     <string name="license_not_provided">未提供</string>
+    <string name="license_source_implementation">ソースコード実装</string>
 
     <!-- 追加ローカライズ文字列 -->
     <string name="edit_event">イベントを編集</string>

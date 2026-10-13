@@ -139,6 +139,7 @@
     <string name="licenses_build_tools">建置工具</string>
     <string name="licenses_notice">本應用程式使用了以下開放原始碼專案。各專案的完整授權條款請參閱對應專案首頁或原始碼儲存庫。</string>
     <string name="license_not_provided">未提供</string>
+    <string name="license_source_implementation">原始碼實作</string>
 
     <!-- 補充本地化文字 -->
     <string name="edit_event">編輯事件</string>

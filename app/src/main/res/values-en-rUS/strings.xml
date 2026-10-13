@@ -145,6 +145,7 @@
     <string name="licenses_build_tools">Build Tools</string>
     <string name="licenses_notice">This app is built with the following open source projects. The full license text of each project is available on its homepage or source repository.</string>
     <string name="license_not_provided">Not provided</string>
+    <string name="license_source_implementation">Source code implementation</string>
 
     <!-- Additional localized strings -->
     <string name="edit_event">Edit Event</string>
