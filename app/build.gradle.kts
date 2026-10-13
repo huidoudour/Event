@@ -8,9 +8,8 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-val baseVersionCode = 10
-val baseVersionName = "1.6"
-val backVersionCode = 95
+val baseVersionName = "1.7-alpha1"
+val backVersionCode = 112
 
 fun Project.gitCommitCount(): Int = try {
     providers.exec { commandLine("git", "rev-list", "--count", "HEAD") }
@@ -24,7 +23,7 @@ fun Project.gitHash(): String = try {
     SimpleDateFormat("MMddHHmm").format(Date())
 }
 
-val appVersionCode = baseVersionCode + gitCommitCount()
+val appVersionCode = gitCommitCount()
 val appVersionName = "${baseVersionName}.${gitCommitCount()}.${gitHash()}"
 
 tasks.matching { it.name.startsWith("assemble") || it.name.startsWith("bundle") }.configureEach {
@@ -189,7 +188,8 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     // MTDataFilesProvider
-    implementation(libs.mt.data.files.provider)
+    // implementation(libs.mt.data.files.provider)
+    implementation(project(":lib-mtprovider"))
 
     // SQLite Android - 增强版 SQLite 库
     implementation(libs.sqlite.android)
