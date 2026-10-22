@@ -739,17 +739,20 @@ data class TableColumnWidths(
     val time: Dp,
 )
 
-/** 根据数据内容计算各列宽度（每字符 ≈8dp，取 min 下限 + 数据最长值） */
+/** 根据数据内容计算各列宽度（每字符 ≈8dp，取 min 下限 + 数据最长值，并以 max 上限截断）
+ *  单元格本身已有 2 行省略/分号换行，列宽无需随最长文本无限增长 */
 private fun calculateColumnWidths(events: List<Event>, dateFormat: SimpleDateFormat): TableColumnWidths {
     fun maxLen(selector: (Event) -> String): Int =
         if (events.isEmpty()) 1 else events.maxOf { selector(it).length }
     fun toDp(n: Int): Dp = (n * 8).coerceAtLeast(0).dp
+    // 列宽上下限：下限保证表头/短内容可读，上限防止长描述撑爆横向空间
+    fun clamp(len: Int, min: Dp, max: Dp): Dp = toDp(len).coerceIn(min, max)
 
     return TableColumnWidths(
-        id    = maxOf(60.dp,  toDp(maxLen { "${it.id}" })),
-        title = maxOf(140.dp, toDp(maxLen { it.title })),
-        desc  = maxOf(120.dp, toDp(maxLen { it.description?.takeIf { d -> d.isNotBlank() } ?: "-" })),
-        time  = maxOf(150.dp, toDp(maxLen { dateFormat.format(Date(it.eventTime)) })),
+        id    = clamp(maxLen { "${it.id}" }, 60.dp, 100.dp),
+        title = clamp(maxLen { it.title }, 140.dp, 240.dp),
+        desc  = clamp(maxLen { it.description?.takeIf { d -> d.isNotBlank() } ?: "-" }, 120.dp, 260.dp),
+        time  = clamp(maxLen { dateFormat.format(Date(it.eventTime)) }, 150.dp, 180.dp),
     )
 }
 
