@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           # versionName / versionCode 由提交数量与短 hash 推导，需要完整历史
           fetch-depth: 0
