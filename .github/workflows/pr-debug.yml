@@ -1,0 +1,65 @@
+name: PR Debug Build
+
+# 仅用于 PR 验证构建：构建 Debug APK 并上传为构建产物
+# 不依赖任何签名密钥，fork 来的 PR 也能正常跑通（使用 AGP 自动生成的 debug keystore）
+on:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+
+# 同一 PR 推送新提交时，取消上一次仍在进行的构建
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-debug:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          # versionName / versionCode 由提交数量与短 hash 推导，需要完整历史
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Accept Android SDK licenses
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
+
+      - name: Build debug APK
+        run: ./gradlew :app:assembleDebug --stacktrace
+
+      - name: Resolve debug APK
+        id: apk
+        run: |
+          ls -lh app/build/outputs/apk/debug/
+          # 产物名由 androidComponents 统一为 Event-<versionName>-<versionCode>-Debug.apk
+          apk_name="$(basename "$(ls app/build/outputs/apk/debug/*.apk | head -n1)" .apk)"
+          echo "name=${apk_name}" >> "$GITHUB_OUTPUT"
+          echo "path=app/build/outputs/apk/debug/${apk_name}.apk" >> "$GITHUB_OUTPUT"
+          echo "Resolved APK: ${apk_name}.apk"
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v5
+        with:
+          # 直接复用 AGP 生成的产物名（内含 versionName 与 versionCode），不在工作流里重复维护版本号
+          name: ${{ steps.apk.outputs.name }}
+          path: ${{ steps.apk.outputs.path }}
+          retention-days: 14
+          if-no-files-found: error

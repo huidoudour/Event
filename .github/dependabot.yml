@@ -1,0 +1,29 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+      time: "12:00"  # UTC 12:00 = 北京时间 20:00
+    labels: [ github_actions ]
+
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: daily
+      time: "12:00"  # UTC 12:00 = 北京时间 20:00
+    labels: [ dependencies ]
+    registries: "*"
+    ignore:
+      - dependency-name: "self.*"
+    cooldown:
+      exclude:
+        - "com.android.*"
+        - "com.google.*"
+        - "androidx.*"
+
+registries:
+  maven-google:
+    type: maven-repository
+    url: https://maven.google.com
