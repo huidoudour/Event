@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,8 +44,10 @@ import androidx.compose.ui.unit.dp
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
+import me.huidoudour.event.ui.theme.BlogBtnBlue
 import me.huidoudour.event.ui.theme.cancelButtonBorder
 import me.huidoudour.event.ui.theme.confirmButtonColors
+import me.huidoudour.event.ui.theme.isDarkColorScheme
 import me.huidoudour.event.ui.theme.softOutlinedButtonColors
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -324,6 +327,9 @@ fun EventLongClickMenu(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
+        // API 29 的对话框窗口宽度固定为屏幕宽度的一部分，内容窄于此宽度时会被左对齐，
+        // 导致卡片偏左、右侧菜单项贴边；用 fillMaxWidth 撑满窗口保证水平居中
+        modifier = Modifier.fillMaxWidth(),
         title = {
             Text(
                 text = event.title,
@@ -348,7 +354,7 @@ fun EventLongClickMenu(
                 LongClickMenuItem(
                     icon = Icons.Outlined.Delete,
                     label = stringResource(R.string.delete),
-                    containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.45f),
+                    containerColor = longClickMenuDeleteContainerColor(),
                     contentColor = MaterialTheme.colorScheme.error,
                     iconTint = MaterialTheme.colorScheme.error,
                     onClick = { onDismiss(); onDelete() }
@@ -373,7 +379,7 @@ fun EventLongClickMenu(
 private fun LongClickMenuItem(
     icon: ImageVector,
     label: String,
-    containerColor: Color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.45f),
+    containerColor: Color = longClickMenuContainerColor(),
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     iconTint: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit
@@ -404,6 +410,22 @@ private fun LongClickMenuItem(
         }
     }
 }
+
+/**
+ * 长按菜单项底色：固定博客风淡蓝，不随主题动态取色变化。
+ * secondaryContainer 在 API 31+ 取系统壁纸色（淡蓝），而 API<31 由 materialkolor 生成（接近白色），
+ * 直接用主题色会导致同一菜单在不同系统版本上底色不一致。
+ */
+@Composable
+private fun longClickMenuContainerColor(): Color =
+    if (isDarkColorScheme()) Color(0xFF303030)
+    else lerp(Color.White, BlogBtnBlue, 0.35f)
+
+/** 长按菜单中的删除项底色：同样固定色值，避免 errorContainer 在各系统版本上的差异 */
+@Composable
+private fun longClickMenuDeleteContainerColor(): Color =
+    if (isDarkColorScheme()) Color(0xFF4A2A29)
+    else lerp(Color.White, Color(0xFFB3261E), 0.12f)
 
 /**
  * 清空所有确认对话框 - 对齐 dialog_confirm_clear.xml

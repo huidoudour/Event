@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: [ "master" , "compose-ui" ]
+    branches: [ "master" ]
     paths:
       - 'app/src/**'
       - 'app/build.gradle.kts'
