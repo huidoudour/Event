@@ -13,7 +13,8 @@ import java.util.Locale
 
 /**
  * 数据导入导出助手类
- * JSON 格式：{ "事件标题": "...", "事件详情": "...", "事件时间": "yyyy-MM-dd HH:mm" }
+ * JSON 格式：{ "事件标题": "...", "事件详情": "...", "事件时间": "yyyy-MM-dd HH:mm:ss" }
+ * 导入时兼容旧版仅到分钟的 "yyyy-MM-dd HH:mm" 格式。
  */
 class DataImportExportHelper(private val context: Context) {
 
@@ -127,7 +128,8 @@ class DataImportExportHelper(private val context: Context) {
 
     /**
      * 解析时间字符串，支持：
-     * - "yyyy-MM-dd HH:mm"（全角或半角冒号/空格均可）
+     * - "yyyy-MM-dd HH:mm:ss"（全角或半角冒号/空格均可）
+     * - 旧版 "yyyy-MM-dd HH:mm"（秒默认为 00）
      * - 毫秒时间戳字符串
      */
     private fun parseTime(raw: String?): Long {
@@ -136,15 +138,19 @@ class DataImportExportHelper(private val context: Context) {
         val normalized = raw.trim()
             .replace('：', ':')
             .replace('\u3000', ' ')
-        return try {
-            DATE_FORMAT.get()!!.parse(normalized)?.time ?: System.currentTimeMillis()
-        } catch (_: ParseException) {
-            // 尝试当作毫秒时间戳
+        // 新格式（含秒）优先；旧备份只到分钟，依次回退兼容
+        for (format in listOf(DATE_FORMAT.get()!!, LEGACY_DATE_FORMAT.get()!!)) {
             try {
-                normalized.toLong()
-            } catch (_: NumberFormatException) {
-                System.currentTimeMillis()
+                format.parse(normalized)?.let { return it.time }
+            } catch (_: ParseException) {
+                // 当前格式不匹配，尝试下一种
             }
+        }
+        // 尝试当作毫秒时间戳
+        return try {
+            normalized.toLong()
+        } catch (_: NumberFormatException) {
+            System.currentTimeMillis()
         }
     }
 
@@ -216,8 +222,13 @@ class DataImportExportHelper(private val context: Context) {
         private const val KEY_DETAIL = "事件详情"
         private const val KEY_TIME = "事件时间"
         // 数据交换格式固定用 Locale.US，避免随系统语言变化导致导出/导入不一致。
+        // 精确到秒，保证备份/恢复与库内毫秒级 eventTime 的秒信息一致。
         // SimpleDateFormat 非线程安全，使用 ThreadLocal 避免并发导入/导出时共享状态。
         private val DATE_FORMAT = ThreadLocal.withInitial {
+            SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+        }
+        // 旧版备份仅有到分钟的时间，解析时作为回退格式
+        private val LEGACY_DATE_FORMAT = ThreadLocal.withInitial {
             SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US)
         }
     }

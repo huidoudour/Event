@@ -229,7 +229,8 @@ class SettingsActivity : BaseActivity() {
     private fun buildExportJson(events: List<me.huidoudour.event.data.Event>): String? {
         if (events.isEmpty()) return null
         // 每个导出任务只创建一个日期格式实例，避免在循环中反复 new
-        val dateFormat = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.US)
+        // 精确到秒，与库内 eventTime 的秒信息保持一致
+        val dateFormat = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US)
         val sb = StringBuilder("[\n")
         events.forEachIndexed { index, event ->
             if (index > 0) sb.append(",\n")

@@ -135,6 +135,8 @@ fun MainScreenContent(
     val tableListState = rememberLazyListState()
     // 整个主界面复用一个日期格式实例，避免每个卡片/行都创建 SimpleDateFormat
     val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()) }
+    // 表格视图时间列精确到秒；旧数据若本身未记录秒（如旧版导入/改时间产生的整分时间）会自然显示为 00 秒
+    val tableDateFormat = remember { SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()) }
     // Room 发出包含新 ID 的列表后，才执行滚动，确保无论当前排序方向如何都能看到新条目。
     LaunchedEffect(newlyAddedEventId, events, viewMode) {
         val eventId = newlyAddedEventId ?: return@LaunchedEffect
@@ -340,7 +342,7 @@ fun MainScreenContent(
                     }
                 } else {
                     // ── 表格视图 ── 保留卡片边框，左右保留 6dp 边距，横向可滑动查看完整数据
-                    val colWidths = remember(events) { calculateColumnWidths(events, dateFormat) }
+                    val colWidths = remember(events) { calculateColumnWidths(events, tableDateFormat) }
                     val horizontalScrollState = rememberScrollState()
                     Box(
                         modifier = Modifier
@@ -386,7 +388,7 @@ fun MainScreenContent(
                                             },
                                             onLongClick = { onEventLongClick(event) },
                                             colWidths = colWidths,
-                                            dateFormat = dateFormat
+                                            dateFormat = tableDateFormat
                                         )
                                     }
                                 }
@@ -752,7 +754,8 @@ private fun calculateColumnWidths(events: List<Event>, dateFormat: SimpleDateFor
         id    = clamp(maxLen { "${it.id}" }, 60.dp, 100.dp),
         title = clamp(maxLen { it.title }, 140.dp, 240.dp),
         desc  = clamp(maxLen { it.description?.takeIf { d -> d.isNotBlank() } ?: "-" }, 120.dp, 260.dp),
-        time  = clamp(maxLen { dateFormat.format(Date(it.eventTime)) }, 150.dp, 180.dp),
+        // 时间列含秒共 19 字符（≈152dp），再预留左右各 12dp 内边距，避免被压缩换行
+        time  = clamp(maxLen { dateFormat.format(Date(it.eventTime)) }, 176.dp, 200.dp),
     )
 }
 
