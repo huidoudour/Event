@@ -3,7 +3,6 @@ package me.huidoudour.event.ui
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import me.huidoudour.event.ui.theme.EventTheme
 import me.huidoudour.event.util.BaseActivity
 import me.huidoudour.event.util.ThemeHelper
 

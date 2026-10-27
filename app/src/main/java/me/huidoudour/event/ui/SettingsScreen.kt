@@ -60,14 +60,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import me.huidoudour.event.R
-import me.huidoudour.event.ui.theme.BlogCardBlue
-import me.huidoudour.event.ui.theme.blogBackground
-import me.huidoudour.event.ui.theme.cancelButtonBorder
-import me.huidoudour.event.ui.theme.cardBorderColor
-import me.huidoudour.event.ui.theme.confirmButtonColors
-import me.huidoudour.event.ui.theme.isDarkColorScheme
-import me.huidoudour.event.ui.theme.softOutlinedButtonColors
-import me.huidoudour.event.ui.theme.topAppBarColors
 import me.huidoudour.event.util.IconColorHelper
 import me.huidoudour.event.util.LocaleHelper
 import me.huidoudour.event.util.ThemeHelper

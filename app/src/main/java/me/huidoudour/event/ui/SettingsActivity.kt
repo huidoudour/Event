@@ -26,7 +26,6 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import me.huidoudour.event.R
 import me.huidoudour.event.data.DataImportExportHelper
-import me.huidoudour.event.ui.theme.EventTheme
 import me.huidoudour.event.util.BaseActivity
 import me.huidoudour.event.util.ThemeHelper
 import java.io.File

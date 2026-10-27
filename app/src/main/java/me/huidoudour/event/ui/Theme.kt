@@ -1,4 +1,4 @@
-package me.huidoudour.event.ui.theme
+package me.huidoudour.event.ui
 
 import android.app.Activity
 import android.os.Build
@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
@@ -46,7 +47,7 @@ val LocalDarkTheme = compositionLocalOf { false }
 fun eventColorScheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     themeColor: Int = 0
-): androidx.compose.material3.ColorScheme {
+): ColorScheme {
     // 索引 0：跟随系统壁纸取色
     if (themeColor == 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         val context = LocalContext.current

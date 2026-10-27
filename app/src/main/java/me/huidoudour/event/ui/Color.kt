@@ -1,4 +1,4 @@
-package me.huidoudour.event.ui.theme
+package me.huidoudour.event.ui
 
 import androidx.compose.ui.graphics.Color
 

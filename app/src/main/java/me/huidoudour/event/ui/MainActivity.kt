@@ -27,7 +27,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
-import me.huidoudour.event.ui.theme.EventTheme
 import me.huidoudour.event.util.BaseActivity
 import me.huidoudour.event.util.IconColorHelper
 import me.huidoudour.event.util.ThemeHelper

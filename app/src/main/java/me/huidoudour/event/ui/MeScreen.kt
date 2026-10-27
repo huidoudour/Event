@@ -23,8 +23,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import me.huidoudour.event.R
-import me.huidoudour.event.ui.theme.blogBackground
-import me.huidoudour.event.ui.theme.isDarkColorScheme
 
 /**
  * 关于页面 Compose 组件：对齐原 XML 布局 activity_me.xml

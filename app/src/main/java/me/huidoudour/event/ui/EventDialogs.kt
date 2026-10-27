@@ -44,11 +44,6 @@ import androidx.compose.ui.unit.dp
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
-import me.huidoudour.event.ui.theme.BlogBtnBlue
-import me.huidoudour.event.ui.theme.cancelButtonBorder
-import me.huidoudour.event.ui.theme.confirmButtonColors
-import me.huidoudour.event.ui.theme.isDarkColorScheme
-import me.huidoudour.event.ui.theme.softOutlinedButtonColors
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
