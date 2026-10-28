@@ -147,6 +147,16 @@
     <string name="license_not_provided">未提供</string>
     <string name="license_source_implementation">ソースコード実装</string>
 
+    <!-- アップデート確認 -->
+    <string name="check_update">アップデートを確認</string>
+    <string name="checking_update">確認中…</string>
+    <string name="up_to_date">最新バージョンです</string>
+    <string name="update_check_failed">アップデートの確認に失敗しました</string>
+    <string name="new_version_available">新しいバージョンがあります: %1$s</string>
+    <string name="go_to_download">ダウンロードへ</string>
+    <string name="cannot_open_link">リンクを開けません</string>
+    <string name="update_check_release_only">アップデート確認は正式版でのみ利用できます</string>
+
     <!-- 追加ローカライズ文字列 -->
     <string name="edit_event">イベントを編集</string>
     <string name="delete_event_message">イベント"%1$s"を削除します。確認のため "d" と入力してください：</string>

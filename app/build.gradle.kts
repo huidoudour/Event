@@ -49,6 +49,9 @@ android {
         versionCode = appVersionCode
         versionName = appVersionName
 
+        // 检查更新用的基础版本号（不含 commitCount / gitHash），与 Release tag 对齐
+        resValue("string", "base_version_name", baseVersionName)
+
         ndk {
             // "armeabi-v7a","arm64-v8a","x86","x86_64"
             abiFilters += listOf( "arm64-v8a" , "x86_64" )
@@ -101,6 +104,8 @@ android {
     
     buildFeatures {
         compose = true
+        // 仅启用 resValues（构建时注入 base_version_name），不启用 buildConfig 以免额外生成 Java 源
+        resValues = true
     }
 
     @Suppress("UnstableApiUsage")

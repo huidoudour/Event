@@ -47,9 +47,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -59,10 +61,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.huidoudour.event.R
 import me.huidoudour.event.util.IconColorHelper
 import me.huidoudour.event.util.LocaleHelper
 import me.huidoudour.event.util.ThemeHelper
+import me.huidoudour.event.util.UpdateChecker
 import me.huidoudour.event.util.ViewModeHelper
 
 // ═══════════════════════════════════════════════════
@@ -371,7 +377,7 @@ fun SettingsScreenContent(
                     titleRes = R.string.about_app,
                     onClick = onAboutDeveloper,
                     modifier = Modifier.padding(horizontal = 12.dp),
-                    shape = segmentedShape(0, 2)
+                    shape = segmentedShape(0, 3)
                 )
                 Spacer(Modifier.height(SegGap))
                 SettingsCard(
@@ -379,8 +385,93 @@ fun SettingsScreenContent(
                     titleRes = R.string.open_source_licenses,
                     onClick = onOpenLicenses,
                     modifier = Modifier.padding(horizontal = 12.dp),
-                    shape = segmentedShape(1, 2)
+                    shape = segmentedShape(1, 3)
                 )
+                Spacer(Modifier.height(SegGap))
+                // 检查更新：是否可用由 debug/release 清单中的 isRelease 决定；
+                // 检测中显示副标题并防止重复触发，结果用 Toast / 对话框反馈
+                val updateCheckEnabled = remember { UpdateChecker.isEnabled(context) }
+                var checkingUpdate by remember { mutableStateOf(false) }
+                var newVersionInfo by remember { mutableStateOf<UpdateChecker.UpdateInfo?>(null) }
+                val updateScope = rememberCoroutineScope()
+                val releaseOnlyHint = stringResource(R.string.update_check_release_only)
+                // 构建时注入的基础版本号（不含 commitCount / gitHash）
+                val localBaseVersion = stringResource(R.string.base_version_name)
+                SettingsCard(
+                    iconRes = R.drawable.ic_update,
+                    titleRes = R.string.check_update,
+                    onClick = {
+                        when {
+                            // 非正式版不发起网络请求，仅提示原因
+                            !updateCheckEnabled -> Toast.makeText(
+                                context, releaseOnlyHint, Toast.LENGTH_SHORT
+                            ).show()
+
+                            !checkingUpdate -> {
+                                checkingUpdate = true
+                                updateScope.launch {
+                                    val result = withContext(Dispatchers.IO) {
+                                        UpdateChecker.check(localBaseVersion)
+                                    }
+                                    checkingUpdate = false
+                                    when (result) {
+                                        is UpdateChecker.UpdateCheckResult.NewVersion -> newVersionInfo = result.info
+                                        UpdateChecker.UpdateCheckResult.UpToDate -> Toast.makeText(
+                                            context, R.string.up_to_date, Toast.LENGTH_SHORT
+                                        ).show()
+
+                                        is UpdateChecker.UpdateCheckResult.Failed -> Toast.makeText(
+                                            context, R.string.update_check_failed, Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    subtitle = when {
+                        !updateCheckEnabled -> releaseOnlyHint
+                        checkingUpdate -> stringResource(R.string.checking_update)
+                        else -> null
+                    },
+                    enabled = updateCheckEnabled,
+                    shape = segmentedShape(2, 3)
+                )
+
+                // 发现新版本：提示并跳转 GitHub Releases（不下载、不安装）
+                newVersionInfo?.let { info ->
+                    AlertDialog(
+                        onDismissRequest = { newVersionInfo = null },
+                        title = { Text(stringResource(R.string.check_update)) },
+                        text = { Text(stringResource(R.string.new_version_available, info.latestVersion)) },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    newVersionInfo = null
+                                    try {
+                                        context.startActivity(
+                                            Intent(Intent.ACTION_VIEW, Uri.parse(info.releaseUrl))
+                                        )
+                                    } catch (_: Exception) {
+                                        Toast.makeText(context, R.string.cannot_open_link, Toast.LENGTH_SHORT).show()
+                                    }
+                                },
+                                shape = RoundedCornerShape(12.dp),
+                                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp),
+                                colors = confirmButtonColors()
+                            ) { Text(stringResource(R.string.go_to_download), fontSize = 16.sp) }
+                        },
+                        dismissButton = {
+                            OutlinedButton(
+                                onClick = { newVersionInfo = null },
+                                shape = RoundedCornerShape(12.dp),
+                                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp),
+                                border = cancelButtonBorder(),
+                                colors = softOutlinedButtonColors()
+                            ) { Text(stringResource(R.string.cancel), fontSize = 16.sp) }
+                        }
+                    )
+                }
             }
 
             Spacer(Modifier.height(32.dp))
@@ -420,11 +511,14 @@ private fun SettingsCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
+    enabled: Boolean = true,
     shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(12.dp)
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
+            // 不可用时整体淡出，点击仍由调用方给出原因提示
+            .alpha(if (enabled) 1f else 0.4f)
             .clip(shape)
             .clickable(onClick = onClick),
         shape = shape,

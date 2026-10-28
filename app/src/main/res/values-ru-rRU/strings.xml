@@ -147,6 +147,16 @@
     <string name="license_not_provided">Не указано</string>
     <string name="license_source_implementation">Реализация в исходном коде</string>
 
+    <!-- Проверка обновлений -->
+    <string name="check_update">Проверить обновления</string>
+    <string name="checking_update">Проверка…</string>
+    <string name="up_to_date">Установлена последняя версия</string>
+    <string name="update_check_failed">Не удалось проверить обновления</string>
+    <string name="new_version_available">Доступна новая версия: %1$s</string>
+    <string name="go_to_download">Перейти к загрузке</string>
+    <string name="cannot_open_link">Не удалось открыть ссылку</string>
+    <string name="update_check_release_only">Проверка обновлений доступна только в release-сборке</string>
+
     <!-- Дополнительные локализованные строки -->
     <string name="edit_event">Редактировать событие</string>
     <string name="delete_event_message">Удалить событие "%1$s". Введите "d" для подтверждения:</string>

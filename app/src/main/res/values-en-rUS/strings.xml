@@ -147,6 +147,16 @@
     <string name="license_not_provided">Not provided</string>
     <string name="license_source_implementation">Source code implementation</string>
 
+    <!-- Check for updates -->
+    <string name="check_update">Check for Updates</string>
+    <string name="checking_update">Checking…</string>
+    <string name="up_to_date">You are on the latest version</string>
+    <string name="update_check_failed">Update check failed</string>
+    <string name="new_version_available">New version available: %1$s</string>
+    <string name="go_to_download">Go to Download</string>
+    <string name="cannot_open_link">Unable to open link</string>
+    <string name="update_check_release_only">Update check is available in release builds only</string>
+
     <!-- Additional localized strings -->
     <string name="edit_event">Edit Event</string>
     <string name="delete_event_message">Delete event "%1$s". Please type "d" to confirm:</string>

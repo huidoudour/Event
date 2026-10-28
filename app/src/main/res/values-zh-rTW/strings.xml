@@ -141,6 +141,16 @@
     <string name="license_not_provided">未提供</string>
     <string name="license_source_implementation">原始碼實作</string>
 
+    <!-- 檢查更新 -->
+    <string name="check_update">檢查更新</string>
+    <string name="checking_update">正在檢查…</string>
+    <string name="up_to_date">已是最新版本</string>
+    <string name="update_check_failed">檢查更新失敗</string>
+    <string name="new_version_available">發現新版本 %1$s</string>
+    <string name="go_to_download">前往下載</string>
+    <string name="cannot_open_link">無法開啟連結</string>
+    <string name="update_check_release_only">僅正式版支援檢查更新</string>
+
     <!-- 補充本地化文字 -->
     <string name="edit_event">編輯事件</string>
     <string name="delete_event_message">刪除事件"%1$s"，請輸入 d 確認：</string>
