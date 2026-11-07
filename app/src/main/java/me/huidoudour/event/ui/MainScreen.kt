@@ -108,6 +108,8 @@ fun MainScreenContent(
     onSearchToggle: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
     onSettings: () -> Unit,
+    // 非 Release 构建下长按设置按钮的快捷操作（快速切换条目/列表视图），为 null 时长按无效
+    onSettingsLongClick: (() -> Unit)?,
     onRefresh: () -> Unit,
     onClearAll: () -> Unit,
     onToggleMultiSelect: () -> Unit,
@@ -263,17 +265,24 @@ fun MainScreenContent(
                         }
                     }
                     // 设置按钮（最右）— 对齐XML：btnSettings（第一个ImageButton，最右）
-                    // 底色圆 40dp，触摸区域保持 48dp
-                    IconButton(
-                        onClick = {
-                            onSettings()
-                        },
-                        modifier = Modifier.padding(horizontal = 2.dp)
+                    // 底色圆 40dp，触摸区域保持 48dp；非 Release 构建额外支持长按快捷切换视图
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 2.dp)
+                            .size(48.dp)
+                            .clip(CircleShape),
+                        contentAlignment = Alignment.Center
                     ) {
                         Box(
                             modifier = Modifier
+                                .minimumInteractiveComponentSize()
                                 .size(40.dp)
-                                .background(softIconButtonBg(), CircleShape),
+                                .clip(CircleShape)
+                                .background(softIconButtonBg(), CircleShape)
+                                .combinedClickable(
+                                    onClick = onSettings,
+                                    onLongClick = onSettingsLongClick
+                                ),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(painterResource(R.drawable.ic_settings), contentDescription = stringResource(R.string.settings))

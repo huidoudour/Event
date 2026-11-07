@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
@@ -84,6 +85,9 @@ class MainActivity : BaseActivity() {
     private fun MainScreen(viewModel: EventViewModel) {
         val events by viewModel.getSortedEvents().observeAsState(emptyList())
         val context = this@MainActivity
+        // 非 Release 构建：debug 变体 debuggable=true，正式包为 false
+        val isNonReleaseBuild =
+            (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
         var viewMode by remember { mutableIntStateOf(ViewModeHelper.getViewMode(context)) }
         val lifecycleOwner = LocalLifecycleOwner.current
         DisposableEffect(lifecycleOwner) {
@@ -211,7 +215,28 @@ class MainActivity : BaseActivity() {
             },
             onSettings = {
                 startActivity(Intent(this, SettingsActivity::class.java))
-            }
+            },
+            // 非 Release 构建：长按设置按钮快速切换条目/列表视图，便于开发调试
+            onSettingsLongClick = if (isNonReleaseBuild) {
+                {
+                    val nextMode = if (viewMode == ViewModeHelper.VIEW_MODE_CARD) {
+                        ViewModeHelper.VIEW_MODE_LIST
+                    } else {
+                        ViewModeHelper.VIEW_MODE_CARD
+                    }
+                    ViewModeHelper.setViewMode(this, nextMode)
+                    viewMode = nextMode
+                    val modeName = getString(
+                        if (nextMode == ViewModeHelper.VIEW_MODE_CARD) R.string.card_view
+                        else R.string.list_view
+                    )
+                    Toast.makeText(
+                        this,
+                        getString(R.string.view_mode_changed_format, modeName),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } else null
         )
 
         // ── 对话框 ──
