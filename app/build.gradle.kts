@@ -36,9 +36,10 @@ tasks.matching { it.name.startsWith("assemble") || it.name.startsWith("bundle") 
 
 android {
     namespace = "me.huidoudour.event"
+    buildToolsVersion = "37.0.0"
     compileSdk {
         version = release(37) {
-            minorApiLevel = 1
+            minorApiLevel = 2
         }
     }
 

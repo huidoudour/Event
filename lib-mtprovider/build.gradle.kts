@@ -4,9 +4,10 @@ plugins {
 
 android {
     namespace = "cn.mt2.datafilesprovider"
+    buildToolsVersion = "37.0.0"
     compileSdk {
         version = release(37) {
-            minorApiLevel = 1
+            minorApiLevel = 2
         }
     }
 
