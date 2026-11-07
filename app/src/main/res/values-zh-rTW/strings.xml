@@ -186,6 +186,11 @@
     <string name="event_done_at_format">完成於 %1$s</string>
     <string name="event_marked_done">已標記完成</string>
     <string name="event_marked_undone">已取消完成</string>
+    <string name="complete_selected">完成所選</string>
+    <string name="completed_selected_format">已標記完成 %1$d 項</string>
+    <string name="selected_all_done">所選事件均已完成</string>
+    <string name="confirm_unmark_done">確認取消完成</string>
+    <string name="confirm_unmark_done_message">確定將事件"%1$s"標記為未完成嗎？</string>
     <string name="done">已完成</string>
 
 </resources>

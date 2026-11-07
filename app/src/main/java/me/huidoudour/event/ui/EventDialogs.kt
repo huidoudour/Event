@@ -309,7 +309,7 @@ fun EventDetailDialog(
                                 dateFormat.format(Date(doneAt))
                             ),
                             style = MaterialTheme.typography.labelSmall,
-                            color = doneMarkColor()
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -367,7 +367,6 @@ fun EventLongClickMenu(
                 LongClickMenuItem(
                     icon = if (event.isDone) Icons.Outlined.RadioButtonUnchecked else Icons.Outlined.CheckCircle,
                     label = stringResource(if (event.isDone) R.string.mark_undone else R.string.mark_done),
-                    iconTint = if (event.isDone) MaterialTheme.colorScheme.onSurfaceVariant else doneMarkColor(),
                     onClick = { onDismiss(); onToggleDone() }
                 )
                 LongClickMenuItem(
@@ -537,6 +536,45 @@ fun BatchDeleteConfirmDialog(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                 colors = confirmButtonColors()
             ) { Text(stringResource(R.string.delete)) }
+        },
+        dismissButton = {
+            OutlinedButton(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(12.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                border = cancelButtonBorder(),
+                colors = softOutlinedButtonColors(),
+            ) { Text(stringResource(R.string.cancel)) }
+        }
+    )
+}
+
+/**
+ * 取消完成二次确认对话框：防止误触长按菜单时误取消完成标记
+ */
+@Composable
+fun UnmarkDoneConfirmDialog(
+    eventTitle: String,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.confirm_unmark_done)) },
+        text = {
+            Text(
+                stringResource(R.string.confirm_unmark_done_message, eventTitle),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = { onConfirm(); onDismiss() },
+                shape = RoundedCornerShape(12.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+                colors = confirmButtonColors()
+            ) { Text(stringResource(R.string.confirm)) }
         },
         dismissButton = {
             OutlinedButton(

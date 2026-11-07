@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
@@ -104,6 +105,7 @@ class MainActivity : BaseActivity() {
         var showClear by remember { mutableStateOf(false) }
         var showBatchDelete by remember { mutableStateOf(false) }
         var showDateTime by remember { mutableStateOf<Event?>(null) }
+        var showUnmarkConfirm by remember { mutableStateOf<Event?>(null) }
         var multiSelect by remember { mutableStateOf(false) }
         var selIds by remember { mutableStateOf(setOf<Long>()) }
         // 新增完成后把该 ID 交给列表：滚动到新条目，并仅在卡片模式播放一次进入动画。
@@ -116,6 +118,12 @@ class MainActivity : BaseActivity() {
         // 进入/退出搜索或输入关键词时，实时刷新搜索结果
         LaunchedEffect(isSearchActive, searchQuery) {
             viewModel.setSearchQuery(if (isSearchActive) searchQuery else "")
+        }
+
+        // 多选模式下系统返回键先退出批量管理，再次按返回才退出应用
+        BackHandler(enabled = multiSelect) {
+            multiSelect = false
+            selIds = emptySet()
         }
 
         MainScreenContent(
@@ -150,6 +158,26 @@ class MainActivity : BaseActivity() {
             onSelectAll = {
                 selIds = if (selIds.size == events.size) emptySet()
                 else events.map { it.id }.toSet()
+            },
+            onCompleteSelected = {
+                // 已完成的事件无需重复标记，仅处理所选中的未完成项
+                val targets = events.filter { it.id in selIds && !it.isDone }
+                when {
+                    selIds.isEmpty() ->
+                        Toast.makeText(this, R.string.selected_count_0, Toast.LENGTH_SHORT).show()
+                    targets.isEmpty() ->
+                        Toast.makeText(this, R.string.selected_all_done, Toast.LENGTH_SHORT).show()
+                    else -> {
+                        viewModel.completeEvents(targets)
+                        Toast.makeText(
+                            this,
+                            getString(R.string.completed_selected_format, targets.size),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        multiSelect = false
+                        selIds = emptySet()
+                    }
+                }
             },
             onDeleteSelected = {
                 if (selIds.isEmpty()) {
@@ -227,6 +255,17 @@ class MainActivity : BaseActivity() {
             EventDetailDialog(event = event, onDismiss = { showDetail = null })
         }
 
+        showUnmarkConfirm?.let { event ->
+            UnmarkDoneConfirmDialog(
+                eventTitle = event.title,
+                onDismiss = { showUnmarkConfirm = null },
+                onConfirm = {
+                    viewModel.setEventDone(event, false)
+                    Toast.makeText(this, R.string.event_marked_undone, Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
+
         showMenu?.let { event ->
             EventLongClickMenu(
                 event = event,
@@ -238,13 +277,13 @@ class MainActivity : BaseActivity() {
                     showEdit = event
                 },
                 onToggleDone = {
-                    val done = !event.isDone
-                    viewModel.setEventDone(event, done)
-                    Toast.makeText(
-                        this,
-                        if (done) R.string.event_marked_done else R.string.event_marked_undone,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    if (event.isDone) {
+                        // 取消完成需二次确认，避免长按菜单误触直接取消标记
+                        showUnmarkConfirm = event
+                    } else {
+                        viewModel.setEventDone(event, true)
+                        Toast.makeText(this, R.string.event_marked_done, Toast.LENGTH_SHORT).show()
+                    }
                 },
                 onDelete = {
                     showDelete = event

@@ -64,6 +64,17 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
         )
     }
 
+    /** 批量标记完成：同一批操作共用同一个完成时间 */
+    fun markDone(events: List<Event>) {
+        if (events.isEmpty()) return
+        val now = System.currentTimeMillis()
+        eventDao.updateAll(
+            events.map {
+                it.copy(isDone = true, doneAt = now, updatedAt = now)
+            }
+        )
+    }
+
     fun delete(event: Event) = eventDao.delete(event)
 
     fun deleteAll() {

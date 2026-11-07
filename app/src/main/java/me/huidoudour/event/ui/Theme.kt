@@ -182,14 +182,6 @@ fun cardSubTextColor(): Color =
     if (isDarkColorScheme()) MaterialTheme.colorScheme.onSurfaceVariant
     else Color.Black
 
-/**
- * 完成标记色：固定粉色（与粉色主题种子色一致），不随主题色切换。
- * 深色模式用更亮的粉色，保证在深色卡片上依然醒目。
- */
-@Composable
-fun doneMarkColor(): Color =
-    if (isDarkColorScheme()) Color(0xFFF48FB1) else Color(0xFFDE5C9D)
-
 /** 工具栏图标按钮底色：亮色为淡蓝圆底，深色回退到 surfaceContainerHighest */
 @Composable
 fun softIconButtonBg(): Color =
@@ -243,6 +235,15 @@ fun selectAllFabContainerColor(): Color =
 @Composable
 fun selectAllFabContentColor(): Color =
     if (isDarkColorScheme()) MaterialTheme.colorScheme.onSecondaryContainer else Color.Black
+
+/** 多选-批量完成 FAB：亮色淡粉底，深色 primaryContainer，与完成标记呼应 */
+@Composable
+fun completeFabContainerColor(): Color =
+    if (isDarkColorScheme()) MaterialTheme.colorScheme.primaryContainer else BlogBtnPink.copy(alpha = 0.55f)
+
+@Composable
+fun completeFabContentColor(): Color =
+    if (isDarkColorScheme()) MaterialTheme.colorScheme.onPrimaryContainer else Color.Black
 
 /** 多选-删除 FAB：亮色淡红底，深色 errorContainer */
 @Composable

@@ -75,6 +75,11 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
         runOnIo { repository.setDone(event, done) }
     }
 
+    /** 批量标记完成（调用方应先过滤掉已完成的事件） */
+    fun completeEvents(events: List<Event>) {
+        runOnIo { repository.markDone(events) }
+    }
+
     fun refreshEvents() {
         repository.refresh()
     }

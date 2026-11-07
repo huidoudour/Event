@@ -11,7 +11,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -40,6 +39,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.SelectAll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -112,6 +112,7 @@ fun MainScreenContent(
     onClearAll: () -> Unit,
     onToggleMultiSelect: () -> Unit,
     onSelectAll: () -> Unit,
+    onCompleteSelected: () -> Unit,
     onDeleteSelected: () -> Unit,
     onAddEvent: () -> Unit,
     onEventClick: (Event) -> Unit,
@@ -410,6 +411,21 @@ fun MainScreenContent(
                             contentDescription = stringResource(R.string.select_all)
                         )
                     }
+                    // 批量完成按钮 - 56dp 圆形，与完成标记同粉色系
+                    FloatingActionButton(
+                        onClick = {
+                            onCompleteSelected()
+                        },
+                        modifier = Modifier.size(56.dp),
+                        containerColor = completeFabContainerColor(),
+                        contentColor = completeFabContentColor(),
+                        elevation = FloatingActionButtonDefaults.elevation(0.dp)
+                    ) {
+                        Icon(
+                            Icons.Outlined.CheckCircle,
+                            contentDescription = stringResource(R.string.complete_selected)
+                        )
+                    }
                     // 删除所选按钮 - 56dp 圆形
                     FloatingActionButton(
                         onClick = {
@@ -534,21 +550,25 @@ private fun EventCard(
     }
 }
 
-/** 完成标记：粉色描边圆圈内包裹粉色对勾，颜色固定不随主题色变化 */
+/**
+ * 完成标记：沿用顶部工具栏 ic 图标圆形区域的底色（softIconButtonBg），
+ * 内嵌与工具栏图标一致的前景色对勾，仅已完成时显示。
+ */
 @Composable
 private fun DoneMark(modifier: Modifier = Modifier) {
-    val markColor = doneMarkColor()
+    val containerColor = softIconButtonBg()
+    val contentColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.onSurface else Color.Black
     Box(
         modifier = modifier
             .size(22.dp)
-            .border(1.5.dp, markColor, CircleShape)
+            .background(containerColor, CircleShape)
             .padding(4.dp),
         contentAlignment = Alignment.Center
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_check),
             contentDescription = stringResource(R.string.done),
-            tint = markColor,
+            tint = contentColor,
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -734,7 +754,7 @@ private fun TableRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
-            // 完成状态 — 已完成显示 OK（粉色加粗），未完成显示 -
+            // 完成状态 — 已完成显示 OK（加粗），未完成显示 -
             Text(
                 text = if (event.isDone) stringResource(R.string.done_short) else "-",
                 modifier = Modifier
@@ -742,7 +762,7 @@ private fun TableRow(
                     .padding(start = 12.dp, end = 12.dp),
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = if (event.isDone) FontWeight.Bold else FontWeight.Normal,
-                color = if (event.isDone) doneMarkColor() else MaterialTheme.colorScheme.onSurfaceVariant,
+                color = if (event.isDone) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
         }

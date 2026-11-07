@@ -185,6 +185,11 @@
     <string name="event_done_at_format">Выполнено: %1$s</string>
     <string name="event_marked_done">Отмечено как выполненное</string>
     <string name="event_marked_undone">Отметка о выполнении снята</string>
+    <string name="complete_selected">Завершить выбранные</string>
+    <string name="completed_selected_format">Отмечено как выполненное: %1$d</string>
+    <string name="selected_all_done">Все выбранные события уже выполнены</string>
+    <string name="confirm_unmark_done">Снять отметку о выполнении</string>
+    <string name="confirm_unmark_done_message">Снять отметку о выполнении с события "%1$s"?</string>
     <string name="done">Выполнено</string>
 
 </resources>

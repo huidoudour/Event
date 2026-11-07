@@ -185,6 +185,11 @@
     <string name="event_done_at_format">Done at %1$s</string>
     <string name="event_marked_done">Marked as done</string>
     <string name="event_marked_undone">Marked as not done</string>
+    <string name="complete_selected">Complete selected</string>
+    <string name="completed_selected_format">Marked %1$d item(s) as done</string>
+    <string name="selected_all_done">All selected events are already done</string>
+    <string name="confirm_unmark_done">Unmark as done</string>
+    <string name="confirm_unmark_done_message">Mark event "%1$s" as not done?</string>
     <string name="done">Completed</string>
 
 </resources>

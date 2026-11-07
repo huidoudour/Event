@@ -185,6 +185,11 @@
     <string name="event_done_at_format">完了日時: %1$s</string>
     <string name="event_marked_done">完了にしました</string>
     <string name="event_marked_undone">未完了に戻しました</string>
+    <string name="complete_selected">選択項目を完了</string>
+    <string name="completed_selected_format">%1$d 件を完了にしました</string>
+    <string name="selected_all_done">選択したイベントはすべて完了済みです</string>
+    <string name="confirm_unmark_done">完了の取り消し</string>
+    <string name="confirm_unmark_done_message">イベント"%1$s"を未完了に戻しますか？</string>
     <string name="done">完了</string>
 
 </resources>
