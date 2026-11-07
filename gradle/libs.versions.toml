@@ -59,7 +59,7 @@ profileinstaller = { group = "androidx.profileinstaller", name = "profileinstall
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version = "2.3.12" }
+ksp = { id = "com.google.devtools.ksp", version = "2.3.13" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
 android-library = { id = "com.android.library", version.ref = "agp" }
