@@ -8,7 +8,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import io.requery.android.database.sqlite.RequerySQLiteOpenHelperFactory
 
-@Database(entities = [Event::class], version = 3, exportSchema = false)
+@Database(entities = [Event::class], version = 4, exportSchema = false)
 abstract class EventDatabase : RoomDatabase() {
     abstract fun eventDao(): EventDao
 
@@ -26,6 +26,21 @@ abstract class EventDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // v3 仅为 Compose 迁移时的版本号提升，表结构未变化，
+                // 补齐该空迁移以保证更早安装的 v2 数据库可以逐级升级到新版本
+            }
+        }
+
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // 添加完成标记列：旧数据默认未完成，完成时间默认为 NULL
+                db.execSQL("ALTER TABLE events ADD COLUMN isDone INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE events ADD COLUMN doneAt INTEGER")
+            }
+        }
+
         fun getDatabase(context: Context): EventDatabase {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: Room.databaseBuilder(
@@ -33,7 +48,7 @@ abstract class EventDatabase : RoomDatabase() {
                     EventDatabase::class.java,
                     "event_database"
                 )
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .fallbackToDestructiveMigration(false)
                     .openHelperFactory(RequerySQLiteOpenHelperFactory())
                     .build()

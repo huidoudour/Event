@@ -52,6 +52,18 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
         eventDao.update(event.copy(updatedAt = System.currentTimeMillis()))
     }
 
+    /** 切换完成标记：完成时记录完成时间，取消完成时清空该时间 */
+    fun setDone(event: Event, done: Boolean) {
+        val now = System.currentTimeMillis()
+        eventDao.update(
+            event.copy(
+                isDone = done,
+                doneAt = if (done) now else null,
+                updatedAt = now
+            )
+        )
+    }
+
     fun delete(event: Event) = eventDao.delete(event)
 
     fun deleteAll() {

@@ -182,6 +182,14 @@ fun cardSubTextColor(): Color =
     if (isDarkColorScheme()) MaterialTheme.colorScheme.onSurfaceVariant
     else Color.Black
 
+/**
+ * 完成标记色：固定粉色（与粉色主题种子色一致），不随主题色切换。
+ * 深色模式用更亮的粉色，保证在深色卡片上依然醒目。
+ */
+@Composable
+fun doneMarkColor(): Color =
+    if (isDarkColorScheme()) Color(0xFFF48FB1) else Color(0xFFDE5C9D)
+
 /** 工具栏图标按钮底色：亮色为淡蓝圆底，深色回退到 surfaceContainerHighest */
 @Composable
 fun softIconButtonBg(): Color =

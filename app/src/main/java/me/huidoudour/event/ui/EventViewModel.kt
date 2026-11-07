@@ -70,6 +70,11 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
         runOnIo { repository.update(event) }
     }
 
+    /** 设置事件的完成标记（done=true 时同时记录完成时间） */
+    fun setEventDone(event: Event, done: Boolean) {
+        runOnIo { repository.setDone(event, done) }
+    }
+
     fun refreshEvents() {
         repository.refresh()
     }

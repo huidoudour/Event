@@ -12,7 +12,11 @@ data class Event(
     val description: String?,
     val eventTime: Long,
     val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
+    /** 完成标记：true 表示该事件已做完 */
+    val isDone: Boolean = false,
+    /** 完成时间戳；未完成时为 null */
+    val doneAt: Long? = null
 ) {
     constructor(title: String, description: String?, eventTime: Long) : this(
         title = title,
@@ -31,10 +35,12 @@ data class Event(
                 createdAt == event.createdAt &&
                 updatedAt == event.updatedAt &&
                 title == event.title &&
-                description == event.description
+                description == event.description &&
+                isDone == event.isDone &&
+                doneAt == event.doneAt
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(id, title, description, eventTime, createdAt, updatedAt)
+        return Objects.hash(id, title, description, eventTime, createdAt, updatedAt, isDone, doneAt)
     }
 }

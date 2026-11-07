@@ -177,4 +177,13 @@
     <string name="close_search">关闭搜索</string>
     <string name="no_search_results">未找到匹配的事件</string>
 
+    <!-- 完成标记 -->
+    <string name="event_status">状态</string>
+    <string name="mark_done">标记完成</string>
+    <string name="mark_undone">取消完成</string>
+    <string name="event_done_at_format">完成于 %1$s</string>
+    <string name="event_marked_done">已标记完成</string>
+    <string name="event_marked_undone">已取消完成</string>
+    <string name="done">已完成</string>
+
 </resources>

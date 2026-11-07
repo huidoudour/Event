@@ -178,4 +178,13 @@
     <string name="close_search">Close search</string>
     <string name="no_search_results">No matching events found</string>
 
+    <!-- Completion mark -->
+    <string name="event_status">Status</string>
+    <string name="mark_done">Mark as done</string>
+    <string name="mark_undone">Mark as not done</string>
+    <string name="event_done_at_format">Done at %1$s</string>
+    <string name="event_marked_done">Marked as done</string>
+    <string name="event_marked_undone">Marked as not done</string>
+    <string name="done">Completed</string>
+
 </resources>

@@ -178,4 +178,13 @@
     <string name="close_search">検索を閉じる</string>
     <string name="no_search_results">一致するイベントが見つかりません</string>
 
+    <!-- 完了マーク -->
+    <string name="event_status">ステータス</string>
+    <string name="mark_done">完了にする</string>
+    <string name="mark_undone">未完了に戻す</string>
+    <string name="event_done_at_format">完了日時: %1$s</string>
+    <string name="event_marked_done">完了にしました</string>
+    <string name="event_marked_undone">未完了に戻しました</string>
+    <string name="done">完了</string>
+
 </resources>

@@ -237,6 +237,15 @@ class MainActivity : BaseActivity() {
                 onEdit = {
                     showEdit = event
                 },
+                onToggleDone = {
+                    val done = !event.isDone
+                    viewModel.setEventDone(event, done)
+                    Toast.makeText(
+                        this,
+                        if (done) R.string.event_marked_done else R.string.event_marked_undone,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                },
                 onDelete = {
                     showDelete = event
                 }

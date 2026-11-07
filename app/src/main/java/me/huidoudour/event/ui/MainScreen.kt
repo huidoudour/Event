@@ -11,6 +11,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -523,8 +524,33 @@ private fun EventCard(
                         modifier = Modifier.padding(top = 8.dp)
                     )
                 }
+                // 完成标记 — 仅已完成时显示，位于卡片右侧，不改变卡片高度
+                if (event.isDone) {
+                    Spacer(Modifier.width(12.dp))
+                    DoneMark()
+                }
             }
         }
+    }
+}
+
+/** 完成标记：粉色描边圆圈内包裹粉色对勾，颜色固定不随主题色变化 */
+@Composable
+private fun DoneMark(modifier: Modifier = Modifier) {
+    val markColor = doneMarkColor()
+    Box(
+        modifier = modifier
+            .size(22.dp)
+            .border(1.5.dp, markColor, CircleShape)
+            .padding(4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_check),
+            contentDescription = stringResource(R.string.done),
+            tint = markColor,
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
 
@@ -598,6 +624,17 @@ private fun TableHeaderRow(
                 text = stringResource(R.string.event_time),
                 modifier = Modifier
                     .width(colWidths.time)
+                    .padding(start = 12.dp, end = 12.dp),
+                textAlign = TextAlign.Center,
+                color = headerFg,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp
+            )
+            // 完成状态
+            Text(
+                text = stringResource(R.string.event_status),
+                modifier = Modifier
+                    .width(colWidths.status)
                     .padding(start = 12.dp, end = 12.dp),
                 textAlign = TextAlign.Center,
                 color = headerFg,
@@ -697,6 +734,17 @@ private fun TableRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
+            // 完成状态 — 已完成显示 OK（粉色加粗），未完成显示 -
+            Text(
+                text = if (event.isDone) stringResource(R.string.done_short) else "-",
+                modifier = Modifier
+                    .width(colWidths.status)
+                    .padding(start = 12.dp, end = 12.dp),
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = if (event.isDone) FontWeight.Bold else FontWeight.Normal,
+                color = if (event.isDone) doneMarkColor() else MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
@@ -726,7 +774,11 @@ data class TableColumnWidths(
     val title: Dp,
     val desc: Dp,
     val time: Dp,
+    val status: Dp,
 )
+
+/** 表格状态列中"已完成"的文本标识，同时用于列宽估算 */
+private const val DONE_TEXT = "OK"
 
 /** 根据数据内容计算各列宽度（每字符 ≈8dp，取 min 下限 + 数据最长值，并以 max 上限截断）
  *  单元格本身已有 2 行省略/分号换行，列宽无需随最长文本无限增长 */
@@ -743,6 +795,8 @@ private fun calculateColumnWidths(events: List<Event>, dateFormat: SimpleDateFor
         desc  = clamp(maxLen { it.description?.takeIf { d -> d.isNotBlank() } ?: "-" }, 120.dp, 260.dp),
         // 时间列含秒共 19 字符（≈152dp），再预留左右各 12dp 内边距，避免被压缩换行
         time  = clamp(maxLen { dateFormat.format(Date(it.eventTime)) }, 176.dp, 200.dp),
+        // 状态列内容只有 OK / -，下限需容纳表头"状态"与英文 Status，避免被压缩换行
+        status = clamp(maxLen { if (it.isDone) DONE_TEXT else "-" }, 72.dp, 96.dp),
     )
 }
 

@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -292,11 +294,25 @@ fun EventDetailDialog(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = dateFormat.format(Date(event.eventTime)),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.outline
-                )
+                // 左下角：事件时间；已完成时额外显示完成时间（默认列表视图不展示）
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(
+                        text = dateFormat.format(Date(event.eventTime)),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                    val doneAt = event.doneAt
+                    if (event.isDone && doneAt != null) {
+                        Text(
+                            text = stringResource(
+                                R.string.event_done_at_format,
+                                dateFormat.format(Date(doneAt))
+                            ),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = doneMarkColor()
+                        )
+                    }
+                }
                 OutlinedButton(
                     onClick = onDismiss,
                     shape = RoundedCornerShape(12.dp),
@@ -318,6 +334,7 @@ fun EventLongClickMenu(
     onDismiss: () -> Unit,
     onChangeTime: () -> Unit,
     onEdit: () -> Unit,
+    onToggleDone: () -> Unit,
     onDelete: () -> Unit
 ) {
     AlertDialog(
@@ -345,6 +362,13 @@ fun EventLongClickMenu(
                     icon = Icons.Outlined.Edit,
                     label = stringResource(R.string.edit),
                     onClick = { onDismiss(); onEdit() }
+                )
+                // 卡片视图与列表视图共用此菜单：完成标记统一在这里切换
+                LongClickMenuItem(
+                    icon = if (event.isDone) Icons.Outlined.RadioButtonUnchecked else Icons.Outlined.CheckCircle,
+                    label = stringResource(if (event.isDone) R.string.mark_undone else R.string.mark_done),
+                    iconTint = if (event.isDone) MaterialTheme.colorScheme.onSurfaceVariant else doneMarkColor(),
+                    onClick = { onDismiss(); onToggleDone() }
                 )
                 LongClickMenuItem(
                     icon = Icons.Outlined.Delete,

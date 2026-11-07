@@ -21,7 +21,7 @@ class DataImportExportHelper(private val context: Context) {
     private fun buildJsonString(events: List<Event>): String? {
         if (events.isEmpty()) return null
         val array = JSONArray()
-        for ((_, title, description, eventTime, createdAt, updatedAt) in events) {
+        for ((_, title, description, eventTime, createdAt, updatedAt, isDone, doneAt) in events) {
             val obj = JSONObject()
             try {
                 obj.put(KEY_TITLE, title)
@@ -30,6 +30,9 @@ class DataImportExportHelper(private val context: Context) {
                 // 保存 createdAt 和 updatedAt 以保持原始时间戳
                 obj.put("createdAt", createdAt)
                 obj.put("updatedAt", updatedAt)
+                // 完成标记；未完成时不写入完成时间，避免空值语义不明确
+                obj.put(KEY_DONE, isDone)
+                doneAt?.let { obj.put(KEY_DONE_AT, DATE_FORMAT.get()!!.format(Date(it))) }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -101,19 +104,33 @@ class DataImportExportHelper(private val context: Context) {
                 val title: String
                 val detail: String?
                 val eventTime: Long
+                val isDone: Boolean
+                val doneAt: Long?
 
                 if (obj.has(KEY_TITLE)) {
                     // ── 新格式（中文字段）──
                     title = obj.optString(KEY_TITLE, "")
                     detail = obj.optString(KEY_DETAIL, "")
                     eventTime = parseTime(obj.optString(KEY_TIME, ""))
+                    isDone = obj.optBoolean(KEY_DONE, false)
+                    doneAt = parseOptionalTime(obj, KEY_DONE_AT)
                 } else {
                     // ── 旧格式（英文字段）──
                     title = obj.optString("title", "")
                     detail = obj.optString("description", "")
                     eventTime = obj.optLong("eventTime", System.currentTimeMillis())
+                    isDone = obj.optBoolean("isDone", false)
+                    doneAt = parseOptionalTime(obj, "doneAt")
                 }
-                eventsToImport.add(Event(title, detail, eventTime))
+                eventsToImport.add(
+                    Event(
+                        title = title,
+                        description = detail,
+                        eventTime = eventTime,
+                        isDone = isDone,
+                        doneAt = doneAt
+                    )
+                )
             }
 
             // 按时间升序排序（最旧的在前），ID会自动从1开始递增
@@ -152,6 +169,26 @@ class DataImportExportHelper(private val context: Context) {
         } catch (_: NumberFormatException) {
             System.currentTimeMillis()
         }
+    }
+
+    /**
+     * 解析可选的完成时间：字段缺失、为 null 或空串时返回 null。
+     * 兼容日期字符串（新格式）与毫秒时间戳（旧格式）。
+     */
+    private fun parseOptionalTime(obj: JSONObject, key: String): Long? {
+        if (!obj.has(key) || obj.isNull(key)) return null
+        val normalized = obj.optString(key).trim()
+            .replace('：', ':')
+            .replace('\u3000', ' ')
+        if (normalized.isEmpty()) return null
+        for (format in listOf(DATE_FORMAT.get()!!, LEGACY_DATE_FORMAT.get()!!)) {
+            try {
+                format.parse(normalized)?.let { return it.time }
+            } catch (_: ParseException) {
+                // 当前格式不匹配，尝试下一种
+            }
+        }
+        return normalized.toLongOrNull()?.takeIf { it > 0 }
     }
 
     /**
@@ -221,6 +258,8 @@ class DataImportExportHelper(private val context: Context) {
         private const val KEY_TITLE = "事件标题"
         private const val KEY_DETAIL = "事件详情"
         private const val KEY_TIME = "事件时间"
+        private const val KEY_DONE = "已完成"
+        private const val KEY_DONE_AT = "完成时间"
         // 数据交换格式固定用 Locale.US，避免随系统语言变化导致导出/导入不一致。
         // 精确到秒，保证备份/恢复与库内毫秒级 eventTime 的秒信息一致。
         // SimpleDateFormat 非线程安全，使用 ThreadLocal 避免并发导入/导出时共享状态。
