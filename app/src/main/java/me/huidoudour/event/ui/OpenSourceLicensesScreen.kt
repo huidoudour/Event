@@ -253,10 +253,11 @@ private fun LicenseRow(item: LicenseItem) {
     val expandable = item.licenseFile != null
     var expanded by remember { mutableStateOf(false) }
 
-    // 展开时从 assets 读取协议全文；读取放到 IO 线程，避免阻塞主线程
-    var licenseText by remember(item.licenseFile, expanded) { mutableStateOf("") }
+    // 展开时从 assets 读取协议全文；读取放到 IO 线程，避免阻塞主线程。
+    // null 表示尚未读取完成（加载中），"" 表示读取失败；读取成功后缓存，再次展开无需重读
+    var licenseText by remember(item.licenseFile) { mutableStateOf<String?>(null) }
     DisposableEffect(item.licenseFile, expanded) {
-        if (expanded && item.licenseFile != null) {
+        if (expanded && item.licenseFile != null && licenseText == null) {
             val disposable = Single.fromCallable {
                 context.assets.open("licenses/${item.licenseFile}")
                     .bufferedReader()
@@ -270,7 +271,6 @@ private fun LicenseRow(item: LicenseItem) {
                 )
             onDispose { disposable.dispose() }
         } else {
-            licenseText = ""
             onDispose { }
         }
     }
@@ -351,14 +351,15 @@ private fun LicenseRow(item: LicenseItem) {
             }
         }
 
-        // 展开区：协议全文
-        if (expanded) {
+        // 展开区：协议全文。首次读取完成前不渲染，避免闪现“未提供”占位；
+        // 仅当读取结果为空（读取失败）时才显示“未提供”
+        val text = licenseText
+        if (expanded && text != null) {
             HorizontalDivider(
                 thickness = 1.dp,
                 color = if (isDarkColorScheme()) MaterialTheme.colorScheme.outline else Color.Black.copy(alpha = 0.12f),
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
-            val text = licenseText.ifEmpty { stringResource(R.string.license_not_provided) }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -369,7 +370,7 @@ private fun LicenseRow(item: LicenseItem) {
                     .padding(12.dp)
             ) {
                 Text(
-                    text = text,
+                    text = text.ifEmpty { stringResource(R.string.license_not_provided) },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

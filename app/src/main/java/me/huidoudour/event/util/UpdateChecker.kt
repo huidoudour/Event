@@ -58,11 +58,14 @@ object UpdateChecker {
         } catch (_: PackageManager.NameNotFoundException) {
             return false
         }
-        val isRelease = when (val value = appInfo.metaData?.get(KEY_IS_RELEASE)) {
-            is Boolean -> value
-            is String -> value.toBoolean()
-            is Int -> value != 0
-            else -> false
+        // Bundle.get(String) 自 API 33 起弃用（类型不安全），改用类型化 getter；
+        // 清单中的 true/false 会解析为 Boolean，首个分支即命中，String/Int 仅作兼容。
+        val metaData = appInfo.metaData
+        val isRelease = when {
+            metaData == null -> false
+            metaData.getBoolean(KEY_IS_RELEASE, false) -> true
+            metaData.getInt(KEY_IS_RELEASE, 0) != 0 -> true
+            else -> metaData.getString(KEY_IS_RELEASE)?.toBoolean() == true
         }
         return isRelease && (appInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) == 0
     }
