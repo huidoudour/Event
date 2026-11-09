@@ -48,6 +48,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.lifecycle.Lifecycle
@@ -250,6 +252,12 @@ class MainActivity : BaseActivity() {
         // 叠加页面栈：设置 → 关于 / 开源许可。与参考项目 Installer 一致，子页面不再启动
         // 新的 Activity，而是叠在主界面之上，这样系统返回手势可以直接驱动页面退场动画。
         var overlayStack by rememberSaveable { mutableStateOf(emptyList<OverlayPage>()) }
+        // 叠加页面入栈：栈顶已是同一页面时直接忽略，避免快速连点把同一页压入多次
+        val pushOverlay: (OverlayPage) -> Unit = { page ->
+            if (overlayStack.lastOrNull() != page) {
+                overlayStack = overlayStack + page
+            }
+        }
         // 设置页的排序偏好：变更后立即写回并让仓库同步，返回主界面时已是新排序
         var isAscending by remember { mutableStateOf(viewModel.getRepository().isAscending) }
         // 长按设置按钮切换视图的过渡状态：强制播放 ContainedLoadingIndicator，
@@ -349,7 +357,7 @@ class MainActivity : BaseActivity() {
                     showClear = true
                 },
                 onSettings = {
-                    overlayStack = overlayStack + OverlayPage.Settings
+                    pushOverlay(OverlayPage.Settings)
                 },
                 // 长按设置按钮切换条目/列表视图：Release 版本同样可用。
                 // 切换强制经过 ContainedLoadingIndicator 过渡，过渡期间忽略重复触发。
@@ -415,10 +423,10 @@ class MainActivity : BaseActivity() {
                             OverlayPage.Settings -> SettingsScreenContent(
                                 onBack = requestBack,
                                 onAboutDeveloper = {
-                                    overlayStack = overlayStack + OverlayPage.Me
+                                    pushOverlay(OverlayPage.Me)
                                 },
                                 onOpenLicenses = {
-                                    overlayStack = overlayStack + OverlayPage.Licenses
+                                    pushOverlay(OverlayPage.Licenses)
                                 },
                                 onExport = { exportData() },
                                 onImport = { importData() },
@@ -811,7 +819,20 @@ private fun PredictiveBackLayer(
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            // 叠加页面在屏幕上时，所有触摸都归它：容器是整屏的、不随入场位移，
+            // 从第一帧起就命中本层，下层主界面（工具栏设置按钮等）不再接收事件。
+            // 否则入场滑入的那 500ms 里连点会穿透到下层，把同一页面压入多次。
+            .pointerInput(Unit) {
+                awaitPointerEventScope {
+                    while (true) {
+                        awaitPointerEvent(PointerEventPass.Main).changes.forEach { it.consume() }
+                    }
+                }
+            }
+    ) {
         // 遮罩：进场时随 enterProgress 压暗下层；返回时由 PredictiveBackPage 上报——
         // 手势期间恒为 1，确认返回后才淡到 0。
         Box(

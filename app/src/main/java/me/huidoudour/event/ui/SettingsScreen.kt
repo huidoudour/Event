@@ -346,10 +346,6 @@ fun SettingsScreenContent(
             // ==================== 关于 ====================
             var showIconColorDialog by remember { mutableStateOf(false) }
             val currentIconColor = IconColorHelper.getIconColor(context)
-            SectionHeader(
-                titleRes = R.string.about,
-                onLongClick = { showIconColorDialog = true }
-            )
             if (showIconColorDialog) {
                 val iconColorNames = arrayOf(
                     stringResource(R.string.default_icon),
@@ -371,7 +367,11 @@ fun SettingsScreenContent(
                 )
             }
 
-            SettingGroup(titleRes = R.string.about, showTitle = false) {
+            // 标题与上面两组共用 SettingGroup 的标题布局；长按标题打开图标颜色选择
+            SettingGroup(
+                titleRes = R.string.about,
+                onTitleLongClick = { showIconColorDialog = true }
+            ) {
                 SettingsCard(
                     iconRes = R.drawable.ic_version,
                     titleRes = R.string.about_app,
@@ -480,31 +480,6 @@ fun SettingsScreenContent(
 }
 
 @Composable
-private fun SectionHeader(
-    titleRes: Int,
-    onLongClick: (() -> Unit)? = null
-) {
-    val modifier = if (onLongClick != null) {
-        Modifier
-            .padding(start = 32.dp, top = 8.dp, bottom = 8.dp)
-            .combinedClickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = {},
-                onLongClick = onLongClick
-            )
-    } else {
-        Modifier.padding(start = 32.dp, top = 8.dp, bottom = 8.dp)
-    }
-    Text(
-        text = stringResource(titleRes),
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.onBackground,
-        modifier = modifier
-    )
-}
-
-@Composable
 private fun SettingsCard(
     iconRes: Int,
     titleRes: Int,
@@ -583,6 +558,7 @@ private fun SettingsCard(
 private fun SettingGroup(
     titleRes: Int,
     showTitle: Boolean = true,
+    onTitleLongClick: (() -> Unit)? = null,
     items: @Composable () -> Unit
 ) {
     Column(
@@ -595,7 +571,20 @@ private fun SettingGroup(
                 text = stringResource(titleRes),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
+                    .then(
+                        if (onTitleLongClick != null) {
+                            Modifier.combinedClickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = {},
+                                onLongClick = onTitleLongClick
+                            )
+                        } else {
+                            Modifier
+                        }
+                    )
             )
         }
         Column(
