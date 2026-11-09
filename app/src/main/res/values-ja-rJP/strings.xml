@@ -163,6 +163,7 @@
     <string name="cannot_launch_file_picker">ファイル選択を起動できません: %1$s</string>
     <string name="cannot_launch_file_manager">ファイルマネージャーを起動できません: %1$s</string>
     <string name="view_mode_changed_format">表示モードを変更しました: %1$s</string>
+    <string name="view_mode_change_failed">表示モードの変更に失敗しました</string>
     <string name="sort_order_changed_format">並び順を変更しました: %1$s</string>
     <string name="theme_changed_format">テーマを変更しました: %1$s</string>
     <string name="event_datetime_changed_format">日時を更新しました: %1$s</string>

@@ -163,6 +163,7 @@
     <string name="cannot_launch_file_picker">Unable to launch file picker: %1$s</string>
     <string name="cannot_launch_file_manager">Unable to launch file manager: %1$s</string>
     <string name="view_mode_changed_format">View mode changed: %1$s</string>
+    <string name="view_mode_change_failed">Failed to change view mode</string>
     <string name="sort_order_changed_format">Sort order changed: %1$s</string>
     <string name="theme_changed_format">Theme changed: %1$s</string>
     <string name="event_datetime_changed_format">Date &amp; time updated: %1$s</string>

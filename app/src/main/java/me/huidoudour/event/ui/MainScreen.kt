@@ -108,7 +108,7 @@ fun MainScreenContent(
     onSearchToggle: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
     onSettings: () -> Unit,
-    // 非 Release 构建下长按设置按钮的快捷操作（快速切换条目/列表视图），为 null 时长按无效
+    // 长按设置按钮的快捷操作（快速切换条目/列表视图），为 null 时长按无效
     onSettingsLongClick: (() -> Unit)?,
     onRefresh: () -> Unit,
     onClearAll: () -> Unit,
@@ -265,7 +265,7 @@ fun MainScreenContent(
                         }
                     }
                     // 设置按钮（最右）— 对齐XML：btnSettings（第一个ImageButton，最右）
-                    // 底色圆 40dp，触摸区域保持 48dp；非 Release 构建额外支持长按快捷切换视图
+                    // 底色圆 40dp，触摸区域保持 48dp；长按快捷切换条目/列表视图（Release 版本同样可用）
                     Box(
                         modifier = Modifier
                             .padding(horizontal = 2.dp)

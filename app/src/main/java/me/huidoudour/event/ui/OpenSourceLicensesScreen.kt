@@ -57,6 +57,8 @@ import me.huidoudour.event.R
 // ── 项目主页链接 ──
 private const val URL_EVENT = "https://github.com/huidoudour/Event"
 private const val URL_COMPOSE = "https://developer.android.com/jetpack/compose"
+// material3 已脱离 Compose BOM 单独指定版本（Expressive 组件所需），链接指向其独立发布页
+private const val URL_MATERIAL3 = "https://developer.android.com/jetpack/androidx/releases/compose-material3"
 private const val URL_APPCOMPAT = "https://developer.android.com/jetpack/androidx/releases/appcompat"
 private const val URL_ACTIVITY = "https://developer.android.com/jetpack/androidx/releases/activity"
 private const val URL_FRAGMENT = "https://developer.android.com/jetpack/androidx/releases/fragment"
@@ -183,6 +185,7 @@ fun OpenSourceLicensesScreenContent(onBack: () -> Unit) {
                     // MT 文件提供器为本地源码模块（lib-mtprovider）实现，置于列表最上方
                     LicenseItem("MTDataFilesProvider", "v1.0.0", stringResource(R.string.license_source_implementation), URL_MTFILES),
                     LicenseItem("Jetpack Compose", "BOM 2026.09.00", "Apache License 2.0", URL_COMPOSE, LIC_APACHE),
+                    LicenseItem("AndroidX Compose Material3", "1.5.0-rc01", "Apache License 2.0", URL_MATERIAL3, LIC_APACHE),
                     LicenseItem("AndroidX AppCompat", "1.8.0", "Apache License 2.0", URL_APPCOMPAT, LIC_APACHE),
                     LicenseItem("AndroidX Activity Compose", "1.13.0", "Apache License 2.0", URL_ACTIVITY, LIC_APACHE),
                     LicenseItem("AndroidX Fragment KTX", "1.9.1", "Apache License 2.0", URL_FRAGMENT, LIC_APACHE),

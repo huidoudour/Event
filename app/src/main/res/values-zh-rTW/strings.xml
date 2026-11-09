@@ -157,6 +157,7 @@
     <string name="cannot_launch_file_picker">無法啟動文件選擇器: %1$s</string>
     <string name="cannot_launch_file_manager">無法啟動文件管理器: %1$s</string>
     <string name="view_mode_changed_format">視圖已更改: %1$s</string>
+    <string name="view_mode_change_failed">視圖切換失敗</string>
     <string name="sort_order_changed_format">排序已更改: %1$s</string>
     <string name="theme_changed_format">主題已更改: %1$s</string>
     <string name="event_datetime_changed_format">日期時間已更新: %1$s</string>
