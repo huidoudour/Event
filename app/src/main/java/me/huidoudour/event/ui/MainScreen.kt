@@ -119,7 +119,9 @@ fun MainScreenContent(
     onAddEvent: () -> Unit,
     onEventClick: (Event) -> Unit,
     onEventLongClick: (Event) -> Unit,
-    onToggleSelection: (Long) -> Unit
+    onToggleSelection: (Long) -> Unit,
+    // 事件内容区是否可见：视图切换过渡期间整块淡出，等“假加载”结束、新模式生效后再显示
+    contentVisible: Boolean = true
 ) {
     val context = LocalContext.current
     val cardListState = rememberLazyListState()
@@ -312,82 +314,91 @@ fun MainScreenContent(
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             // ── 主内容 ──
-            if (events.isEmpty()) {
-                EmptyView(modifier = Modifier.fillMaxSize(), isSearchActive = isSearchActive)
-            } else {
-                if (viewMode == ViewModeHelper.VIEW_MODE_CARD) {
-                    // ── 卡片视图 ── 对齐 fragment_event_list.xml padding
-                    LazyColumn(
-                        state = cardListState,
-                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 88.dp),
-                        verticalArrangement = Arrangement.spacedBy(0.dp)
-                    ) {
-                        items(events, key = { it.id }) { event ->
-                            EventCard(
-                                event = event,
-                                animateIn = event.createdAt == newlyAddedEventCreatedAt,
-                                isMultiSelectMode = isMultiSelectMode,
-                                isSelected = selectedIds.contains(event.id),
-                                onClick = {
-                                    if (isMultiSelectMode) onToggleSelection(event.id)
-                                    else onEventClick(event)
-                                },
-                                onLongClick = { onEventLongClick(event) },
-                                dateFormat = dateFormat
-                            )
-                            Spacer(Modifier.height(8.dp))
-                        }
-                    }
+            // 视图切换过渡期间整块淡出：遮罩后不显示旧视图的卡片/表格，
+            // 等“假加载”走完、新模式生效后再淡入新内容
+            AnimatedVisibility(
+                visible = contentVisible,
+                modifier = Modifier.fillMaxSize(),
+                enter = fadeIn(animationSpec = tween(durationMillis = 220)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 180))
+            ) {
+                if (events.isEmpty()) {
+                    EmptyView(modifier = Modifier.fillMaxSize(), isSearchActive = isSearchActive)
                 } else {
-                    // ── 表格视图 ── 保留卡片边框，左右保留 6dp 边距，横向可滑动查看完整数据
-                    val colWidths = remember(events) { calculateColumnWidths(events, tableDateFormat) }
-                    val horizontalScrollState = rememberScrollState()
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(start = 6.dp, end = 6.dp, bottom = 16.dp)
-                            .horizontalScroll(horizontalScrollState)
-                    ) {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .wrapContentWidth(),
-                            shape = RoundedCornerShape(12.dp),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+                    if (viewMode == ViewModeHelper.VIEW_MODE_CARD) {
+                        // ── 卡片视图 ── 对齐 fragment_event_list.xml padding
+                        LazyColumn(
+                            state = cardListState,
+                            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 88.dp),
+                            verticalArrangement = Arrangement.spacedBy(0.dp)
                         ) {
-                            Column(
+                            items(events, key = { it.id }) { event ->
+                                EventCard(
+                                    event = event,
+                                    animateIn = event.createdAt == newlyAddedEventCreatedAt,
+                                    isMultiSelectMode = isMultiSelectMode,
+                                    isSelected = selectedIds.contains(event.id),
+                                    onClick = {
+                                        if (isMultiSelectMode) onToggleSelection(event.id)
+                                        else onEventClick(event)
+                                    },
+                                    onLongClick = { onEventLongClick(event) },
+                                    dateFormat = dateFormat
+                                )
+                                Spacer(Modifier.height(8.dp))
+                            }
+                        }
+                    } else {
+                        // ── 表格视图 ── 保留卡片边框，左右保留 6dp 边距，横向可滑动查看完整数据
+                        val colWidths = remember(events) { calculateColumnWidths(events, tableDateFormat) }
+                        val horizontalScrollState = rememberScrollState()
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(start = 6.dp, end = 6.dp, bottom = 16.dp)
+                                .horizontalScroll(horizontalScrollState)
+                        ) {
+                            Card(
                                 modifier = Modifier
                                     .fillMaxHeight()
-                                    .clip(RoundedCornerShape(12.dp))
+                                    .wrapContentWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                             ) {
-                                // 表头 — primary 背景，跟随主题色
-                                TableHeaderRow(
-                                    isMultiSelectMode = isMultiSelectMode,
-                                    isAllSelected = selectedIds.size == events.size && events.isNotEmpty(),
-                                    onToggleSelectAll = { onSelectAll() },
-                                    colWidths = colWidths
-                                )
-                                // 数据行 — 交替背景
-                                LazyColumn(
-                                    state = tableListState,
-                                    modifier = Modifier.fillMaxHeight()
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .clip(RoundedCornerShape(12.dp))
                                 ) {
-                                    itemsIndexed(events, key = { _, event -> event.id }) { index, event ->
-                                        TableRow(
-                                            event = event,
-                                            isMultiSelectMode = isMultiSelectMode,
-                                            isSelected = selectedIds.contains(event.id),
-                                            isEvenRow = index % 2 == 0,
-                                            onClick = {
-                                                if (isMultiSelectMode) onToggleSelection(event.id)
-                                                else onEventClick(event)
-                                            },
-                                            onLongClick = { onEventLongClick(event) },
-                                            colWidths = colWidths,
-                                            dateFormat = tableDateFormat
-                                        )
+                                    // 表头 — primary 背景，跟随主题色
+                                    TableHeaderRow(
+                                        isMultiSelectMode = isMultiSelectMode,
+                                        isAllSelected = selectedIds.size == events.size && events.isNotEmpty(),
+                                        onToggleSelectAll = { onSelectAll() },
+                                        colWidths = colWidths
+                                    )
+                                    // 数据行 — 交替背景
+                                    LazyColumn(
+                                        state = tableListState,
+                                        modifier = Modifier.fillMaxHeight()
+                                    ) {
+                                        itemsIndexed(events, key = { _, event -> event.id }) { index, event ->
+                                            TableRow(
+                                                event = event,
+                                                isMultiSelectMode = isMultiSelectMode,
+                                                isSelected = selectedIds.contains(event.id),
+                                                isEvenRow = index % 2 == 0,
+                                                onClick = {
+                                                    if (isMultiSelectMode) onToggleSelection(event.id)
+                                                    else onEventClick(event)
+                                                },
+                                                onLongClick = { onEventLongClick(event) },
+                                                colWidths = colWidths,
+                                                dateFormat = tableDateFormat
+                                            )
+                                        }
                                     }
                                 }
                             }

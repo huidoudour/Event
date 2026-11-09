@@ -91,8 +91,8 @@ private enum class OverlayPage {
     Licenses,
 }
 
-/** 视图切换前完整展示加载动画的时长：让 ContainedLoadingIndicator 走完一轮几何旋转变形。 */
-private const val VIEW_SWITCH_LOADING_MILLIS = 700L
+/** 视图切换前完整展示加载动画的时长：让 ContainedLoadingIndicator 走完一轮以上的几何旋转变形。 */
+private const val VIEW_SWITCH_LOADING_MILLIS = 900L
 
 /** 切换完成后保留加载动画的时长，避免新视图出现瞬间闪断。 */
 private const val VIEW_SWITCH_SETTLE_MILLIS = 320L
@@ -280,6 +280,8 @@ class MainActivity : BaseActivity() {
                 viewMode = viewMode,
                 isSearchActive = isSearchActive,
                 searchQuery = searchQuery,
+                // 过渡期间隐藏卡片/表格，等加载动画走完再显示新视图
+                contentVisible = !viewSwitchLoading,
                 newlyAddedEventId = newlyAddedEventId,
                 newlyAddedEventCreatedAt = newlyAddedEventCreatedAt,
                 onNewEventDisplayed = {

@@ -184,6 +184,7 @@
     <string name="event_status">狀態</string>
     <string name="mark_done">標記完成</string>
     <string name="mark_undone">取消完成</string>
+    <string name="event_created_at_format">創建於 %1$s</string>
     <string name="event_done_at_format">完成於 %1$s</string>
     <string name="event_marked_done">已標記完成</string>
     <string name="event_marked_undone">已取消完成</string>

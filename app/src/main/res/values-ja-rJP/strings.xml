@@ -183,6 +183,7 @@
     <string name="event_status">ステータス</string>
     <string name="mark_done">完了にする</string>
     <string name="mark_undone">未完了に戻す</string>
+    <string name="event_created_at_format">作成日時: %1$s</string>
     <string name="event_done_at_format">完了日時: %1$s</string>
     <string name="event_marked_done">完了にしました</string>
     <string name="event_marked_undone">未完了に戻しました</string>

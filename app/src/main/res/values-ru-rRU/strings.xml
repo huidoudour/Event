@@ -183,6 +183,7 @@
     <string name="event_status">Статус</string>
     <string name="mark_done">Отметить как выполненное</string>
     <string name="mark_undone">Снять отметку о выполнении</string>
+    <string name="event_created_at_format">Создано: %1$s</string>
     <string name="event_done_at_format">Выполнено: %1$s</string>
     <string name="event_marked_done">Отмечено как выполненное</string>
     <string name="event_marked_undone">Отметка о выполнении снята</string>
