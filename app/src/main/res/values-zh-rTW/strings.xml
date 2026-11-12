@@ -186,7 +186,6 @@
     <string name="mark_undone">取消完成</string>
     <string name="event_created_at_format">創建於 %1$s</string>
     <string name="event_updated_at_format">修改於 %1$s</string>
-    <string name="event_edit_history">修改記錄</string>
     <string name="event_done_at_format">完成於 %1$s</string>
     <string name="event_marked_done">已標記完成</string>
     <string name="event_marked_undone">已取消完成</string>

@@ -185,7 +185,6 @@
     <string name="mark_undone">未完了に戻す</string>
     <string name="event_created_at_format">作成日時: %1$s</string>
     <string name="event_updated_at_format">更新日時: %1$s</string>
-    <string name="event_edit_history">編集履歴</string>
     <string name="event_done_at_format">完了日時: %1$s</string>
     <string name="event_marked_done">完了にしました</string>
     <string name="event_marked_undone">未完了に戻しました</string>

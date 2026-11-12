@@ -289,34 +289,6 @@ fun EventDetailDialog(
                         )
                     }
                 }
-                // 修改记录：每编辑一次追加一条，逐条展示；数量多时限制高度并内部滚动
-                val editHistory = event.editHistory
-                if (editHistory.isNotEmpty()) {
-                    Spacer(Modifier.height(16.dp))
-                    Text(
-                        text = stringResource(R.string.event_edit_history),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Column(
-                        modifier = Modifier
-                            .heightIn(max = 132.dp)
-                            .verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(2.dp)
-                    ) {
-                        editHistory.forEach { modifiedAt ->
-                            Text(
-                                text = stringResource(
-                                    R.string.event_updated_at_format,
-                                    dateFormat.format(Date(modifiedAt))
-                                ),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.outline
-                            )
-                        }
-                    }
-                }
             }
         },
         confirmButton = {
@@ -325,7 +297,7 @@ fun EventDetailDialog(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // 左下角：创建时间；已完成时额外显示完成时间（默认列表视图不展示）
+                // 左下角：创建时间；每次修改逐条追加修改时间；已完成时额外显示完成时间（默认列表视图不展示）
                 // “创建于”使用不可变的 createdAt：eventTime 会被“修改时间”改写，不能当作创建时间
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(
@@ -336,6 +308,27 @@ fun EventDetailDialog(
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.outline
                     )
+                    // 修改记录跟随创建时间逐条展示；数量多时限制高度并内部滚动，避免撑高按钮行
+                    val editHistory = event.editHistory
+                    if (editHistory.isNotEmpty()) {
+                        Column(
+                            modifier = Modifier
+                                .heightIn(max = 120.dp)
+                                .verticalScroll(rememberScrollState()),
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            editHistory.forEach { modifiedAt ->
+                                Text(
+                                    text = stringResource(
+                                        R.string.event_updated_at_format,
+                                        dateFormat.format(Date(modifiedAt))
+                                    ),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.outline
+                                )
+                            }
+                        }
+                    }
                     val doneAt = event.doneAt
                     if (event.isDone && doneAt != null) {
                         Text(
