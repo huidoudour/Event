@@ -1,6 +1,8 @@
 package me.huidoudour.event.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -286,6 +289,34 @@ fun EventDetailDialog(
                         )
                     }
                 }
+                // 修改记录：每编辑一次追加一条，逐条展示；数量多时限制高度并内部滚动
+                val editHistory = event.editHistory
+                if (editHistory.isNotEmpty()) {
+                    Spacer(Modifier.height(16.dp))
+                    Text(
+                        text = stringResource(R.string.event_edit_history),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Column(
+                        modifier = Modifier
+                            .heightIn(max = 132.dp)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        editHistory.forEach { modifiedAt ->
+                            Text(
+                                text = stringResource(
+                                    R.string.event_updated_at_format,
+                                    dateFormat.format(Date(modifiedAt))
+                                ),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.outline
+                            )
+                        }
+                    }
+                }
             }
         },
         confirmButton = {
@@ -294,7 +325,7 @@ fun EventDetailDialog(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // 左下角：创建时间；修改过时额外显示最新修改时间；已完成时额外显示完成时间（默认列表视图不展示）
+                // 左下角：创建时间；已完成时额外显示完成时间（默认列表视图不展示）
                 // “创建于”使用不可变的 createdAt：eventTime 会被“修改时间”改写，不能当作创建时间
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(
@@ -305,18 +336,6 @@ fun EventDetailDialog(
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.outline
                     )
-                    // 每次编辑/改时间/改完成状态都会刷新 updatedAt，这里只展示最新一次修改时间；
-                    // 未修改过（updatedAt 与 createdAt 相同）时不显示，避免两行时间重复
-                    if (event.updatedAt > event.createdAt) {
-                        Text(
-                            text = stringResource(
-                                R.string.event_updated_at_format,
-                                dateFormat.format(Date(event.updatedAt))
-                            ),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.outline
-                        )
-                    }
                     val doneAt = event.doneAt
                     if (event.isDone && doneAt != null) {
                         Text(

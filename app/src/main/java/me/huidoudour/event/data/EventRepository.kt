@@ -49,7 +49,14 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
     fun insertAll(events: List<Event>) = eventDao.insertAll(events)
 
     fun update(event: Event) {
-        eventDao.update(event.copy(updatedAt = System.currentTimeMillis()))
+        val now = System.currentTimeMillis()
+        eventDao.update(
+            event.copy(
+                updatedAt = now,
+                // 每编辑一次追加一条修改记录，详情页按顺序逐条展示
+                editHistory = event.editHistory + now
+            )
+        )
     }
 
     /** 切换完成标记：完成时记录完成时间，取消完成时清空该时间 */

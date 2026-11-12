@@ -185,6 +185,7 @@
     <string name="mark_undone">Снять отметку о выполнении</string>
     <string name="event_created_at_format">Создано: %1$s</string>
     <string name="event_updated_at_format">Изменено: %1$s</string>
+    <string name="event_edit_history">История изменений</string>
     <string name="event_done_at_format">Выполнено: %1$s</string>
     <string name="event_marked_done">Отмечено как выполненное</string>
     <string name="event_marked_undone">Отметка о выполнении снята</string>

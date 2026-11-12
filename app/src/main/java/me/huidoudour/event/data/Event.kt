@@ -16,7 +16,9 @@ data class Event(
     /** 完成标记：true 表示该事件已做完 */
     val isDone: Boolean = false,
     /** 完成时间戳；未完成时为 null */
-    val doneAt: Long? = null
+    val doneAt: Long? = null,
+    /** 修改时间记录：每编辑一次事件（标题/描述/事件时间）就追加一条时间戳 */
+    val editHistory: List<Long> = emptyList()
 ) {
     constructor(title: String, description: String?, eventTime: Long) : this(
         title = title,
@@ -37,10 +39,11 @@ data class Event(
                 title == event.title &&
                 description == event.description &&
                 isDone == event.isDone &&
-                doneAt == event.doneAt
+                doneAt == event.doneAt &&
+                editHistory == event.editHistory
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(id, title, description, eventTime, createdAt, updatedAt, isDone, doneAt)
+        return Objects.hash(id, title, description, eventTime, createdAt, updatedAt, isDone, doneAt, editHistory)
     }
 }

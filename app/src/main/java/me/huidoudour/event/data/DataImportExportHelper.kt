@@ -21,7 +21,7 @@ class DataImportExportHelper(private val context: Context) {
     private fun buildJsonString(events: List<Event>): String? {
         if (events.isEmpty()) return null
         val array = JSONArray()
-        for ((_, title, description, eventTime, createdAt, updatedAt, isDone, doneAt) in events) {
+        for ((_, title, description, eventTime, createdAt, updatedAt, isDone, doneAt, editHistory) in events) {
             val obj = JSONObject()
             try {
                 obj.put(KEY_TITLE, title)
@@ -33,6 +33,10 @@ class DataImportExportHelper(private val context: Context) {
                 // 完成标记；未完成时不写入完成时间，避免空值语义不明确
                 obj.put(KEY_DONE, isDone)
                 doneAt?.let { obj.put(KEY_DONE_AT, DATE_FORMAT.get()!!.format(Date(it))) }
+                // 修改记录：按时间顺序保存每次编辑的毫秒时间戳
+                if (editHistory.isNotEmpty()) {
+                    obj.put(KEY_EDIT_HISTORY, JSONArray(editHistory))
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -126,6 +130,10 @@ class DataImportExportHelper(private val context: Context) {
                 // 避免「创建于/修改于」在恢复后被改写成导入时刻
                 val createdAt = obj.optLong("createdAt", 0L).takeIf { it > 0 } ?: eventTime
                 val updatedAt = obj.optLong("updatedAt", 0L).takeIf { it > 0 } ?: createdAt
+                // 旧备份没有修改记录列表：若修改时间晚于创建时间，补一条记录保留该信息
+                val editHistory = parseEditHistory(obj).ifEmpty {
+                    if (updatedAt > createdAt) listOf(updatedAt) else emptyList()
+                }
                 eventsToImport.add(
                     Event(
                         title = title,
@@ -134,7 +142,8 @@ class DataImportExportHelper(private val context: Context) {
                         createdAt = createdAt,
                         updatedAt = updatedAt,
                         isDone = isDone,
-                        doneAt = doneAt
+                        doneAt = doneAt,
+                        editHistory = editHistory
                     )
                 )
             }
@@ -174,6 +183,18 @@ class DataImportExportHelper(private val context: Context) {
             normalized.toLong()
         } catch (_: NumberFormatException) {
             System.currentTimeMillis()
+        }
+    }
+
+    /**
+     * 解析修改记录数组（毫秒时间戳）；字段缺失或格式不合法时返回空列表。
+     */
+    private fun parseEditHistory(obj: JSONObject): List<Long> {
+        val array = obj.optJSONArray(KEY_EDIT_HISTORY)
+            ?: obj.optJSONArray("editHistory")
+            ?: return emptyList()
+        return (0 until array.length()).mapNotNull { i ->
+            array.optLong(i, 0L).takeIf { it > 0 }
         }
     }
 
@@ -266,6 +287,7 @@ class DataImportExportHelper(private val context: Context) {
         private const val KEY_TIME = "事件时间"
         private const val KEY_DONE = "已完成"
         private const val KEY_DONE_AT = "完成时间"
+        private const val KEY_EDIT_HISTORY = "修改记录"
         // 数据交换格式固定用 Locale.US，避免随系统语言变化导致导出/导入不一致。
         // 精确到秒，保证备份/恢复与库内毫秒级 eventTime 的秒信息一致。
         // SimpleDateFormat 非线程安全，使用 ThreadLocal 避免并发导入/导出时共享状态。
