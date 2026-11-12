@@ -122,11 +122,17 @@ class DataImportExportHelper(private val context: Context) {
                     isDone = obj.optBoolean("isDone", false)
                     doneAt = parseOptionalTime(obj, "doneAt")
                 }
+                // 优先还原备份中的创建/修改时间；旧备份无这些字段时回退到事件时间，
+                // 避免「创建于/修改于」在恢复后被改写成导入时刻
+                val createdAt = obj.optLong("createdAt", 0L).takeIf { it > 0 } ?: eventTime
+                val updatedAt = obj.optLong("updatedAt", 0L).takeIf { it > 0 } ?: createdAt
                 eventsToImport.add(
                     Event(
                         title = title,
                         description = detail,
                         eventTime = eventTime,
+                        createdAt = createdAt,
+                        updatedAt = updatedAt,
                         isDone = isDone,
                         doneAt = doneAt
                     )

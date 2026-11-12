@@ -294,7 +294,7 @@ fun EventDetailDialog(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // 左下角：创建时间；已完成时额外显示完成时间（默认列表视图不展示）
+                // 左下角：创建时间；修改过时额外显示最新修改时间；已完成时额外显示完成时间（默认列表视图不展示）
                 // “创建于”使用不可变的 createdAt：eventTime 会被“修改时间”改写，不能当作创建时间
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(
@@ -305,6 +305,18 @@ fun EventDetailDialog(
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.outline
                     )
+                    // 每次编辑/改时间/改完成状态都会刷新 updatedAt，这里只展示最新一次修改时间；
+                    // 未修改过（updatedAt 与 createdAt 相同）时不显示，避免两行时间重复
+                    if (event.updatedAt > event.createdAt) {
+                        Text(
+                            text = stringResource(
+                                R.string.event_updated_at_format,
+                                dateFormat.format(Date(event.updatedAt))
+                            ),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
                     val doneAt = event.doneAt
                     if (event.isDone && doneAt != null) {
                         Text(

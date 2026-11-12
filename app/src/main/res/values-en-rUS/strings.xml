@@ -184,6 +184,7 @@
     <string name="mark_done">Mark as done</string>
     <string name="mark_undone">Mark as not done</string>
     <string name="event_created_at_format">Created at %1$s</string>
+    <string name="event_updated_at_format">Updated at %1$s</string>
     <string name="event_done_at_format">Done at %1$s</string>
     <string name="event_marked_done">Marked as done</string>
     <string name="event_marked_undone">Marked as not done</string>
