@@ -333,18 +333,18 @@ fun EventDetailDialog(
                     }
                     val status = event.status
                     val statusAt = event.statusAt
-                    // 详情页用等宽的三字状态名（如「他完成」），让状态时间与创建/修改时间对齐
+                    // 状态名与创建/修改时间同列：三字状态名 + 空格 + 时间戳，保证时间戳起始位置一致
                     Text(
                         text = if (statusAt != null) {
                             stringResource(
                                 R.string.event_status_detail_format,
-                                stringResource(status.detailLabelRes()),
+                                stringResource(status.labelRes()),
                                 dateFormat.format(Date(statusAt))
                             )
                         } else {
                             stringResource(
                                 R.string.event_status_value_format,
-                                stringResource(status.detailLabelRes())
+                                stringResource(status.labelRes())
                             )
                         },
                         style = MaterialTheme.typography.labelSmall,

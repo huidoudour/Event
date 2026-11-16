@@ -185,13 +185,12 @@
     <string name="status_none">Не выполнено</string>
     <string name="status_done">Выполнено</string>
     <string name="status_done_by_others">Выполнено другими</string>
-    <string name="status_done_by_others_short">Другими</string>
     <string name="status_unplanned">Не запланировано</string>
     <string name="status_irrelevant">Неактуально</string>
     <string name="event_created_at_format">Создано: %1$s</string>
     <string name="event_updated_at_format">Изменено: %1$s</string>
     <string name="event_status_value_format">%1$s</string>
-    <string name="event_status_detail_format">%1$s (%2$s)</string>
+    <string name="event_status_detail_format">%1$s %2$s</string>
     <string name="event_status_changed_format">Отмечено: %1$s</string>
     <string name="complete_selected">Завершить выбранные</string>
     <string name="completed_selected_format">Отмечено как выполненное: %1$d</string>
