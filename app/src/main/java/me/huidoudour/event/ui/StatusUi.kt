@@ -36,6 +36,16 @@ fun EventStatus.labelRes(): Int = when (this) {
     EventStatus.IRRELEVANT -> R.string.status_irrelevant
 }
 
+/**
+ * 详情页状态行的紧凑名称：[EventStatus.DONE_BY_OTHERS] 使用三字简称，
+ * 与「已完成 / 未计划 / 不相干」等宽，使状态时间与创建/修改时间对齐。
+ */
+@StringRes
+fun EventStatus.detailLabelRes(): Int = when (this) {
+    EventStatus.DONE_BY_OTHERS -> R.string.status_done_by_others_short
+    else -> labelRes()
+}
+
 /** 处理方式的图标：勾 / 人 / 日历取消 / 禁止 / 空心圆 */
 fun EventStatus.icon(): ImageVector = when (this) {
     EventStatus.NONE -> Icons.Outlined.RadioButtonUnchecked

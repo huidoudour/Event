@@ -185,12 +185,13 @@
     <string name="status_none">Not done</string>
     <string name="status_done">Completed</string>
     <string name="status_done_by_others">Done by others</string>
+    <string name="status_done_by_others_short">By others</string>
     <string name="status_unplanned">Not planned</string>
     <string name="status_irrelevant">Irrelevant</string>
     <string name="event_created_at_format">Created at %1$s</string>
     <string name="event_updated_at_format">Updated at %1$s</string>
-    <string name="event_status_value_format">Status: %1$s</string>
-    <string name="event_status_detail_format">Status: %1$s (%2$s)</string>
+    <string name="event_status_value_format">%1$s</string>
+    <string name="event_status_detail_format">%1$s (%2$s)</string>
     <string name="event_status_changed_format">Marked as %1$s</string>
     <string name="complete_selected">Complete selected</string>
     <string name="completed_selected_format">Marked %1$d item(s) as done</string>

@@ -184,12 +184,13 @@
     <string name="status_none">未完成</string>
     <string name="status_done">已完成</string>
     <string name="status_done_by_others">他人完成</string>
+    <string name="status_done_by_others_short">他完成</string>
     <string name="status_unplanned">未计划</string>
     <string name="status_irrelevant">不相干</string>
     <string name="event_created_at_format">创建于 %1$s</string>
     <string name="event_updated_at_format">修改于 %1$s</string>
-    <string name="event_status_value_format">状态：%1$s</string>
-    <string name="event_status_detail_format">状态：%1$s（%2$s）</string>
+    <string name="event_status_value_format">%1$s</string>
+    <string name="event_status_detail_format">%1$s（%2$s）</string>
     <string name="event_status_changed_format">已标记为%1$s</string>
     <string name="complete_selected">完成所选</string>
     <string name="completed_selected_format">已标记完成 %1$d 项</string>

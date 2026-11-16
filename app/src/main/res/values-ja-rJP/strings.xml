@@ -185,12 +185,13 @@
     <string name="status_none">未完了</string>
     <string name="status_done">完了</string>
     <string name="status_done_by_others">他人が完了</string>
+    <string name="status_done_by_others_short">他人完了</string>
     <string name="status_unplanned">未計画</string>
     <string name="status_irrelevant">無関係</string>
     <string name="event_created_at_format">作成日時: %1$s</string>
     <string name="event_updated_at_format">更新日時: %1$s</string>
-    <string name="event_status_value_format">ステータス: %1$s</string>
-    <string name="event_status_detail_format">ステータス: %1$s（%2$s）</string>
+    <string name="event_status_value_format">%1$s</string>
+    <string name="event_status_detail_format">%1$s（%2$s）</string>
     <string name="event_status_changed_format">「%1$s」に変更しました</string>
     <string name="complete_selected">選択項目を完了</string>
     <string name="completed_selected_format">%1$d 件を完了にしました</string>
