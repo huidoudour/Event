@@ -1,39 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-  <!-- 背景：圆角矩形 (#D8F5C5) -->
+  <!-- 由 doc/icons/sync_icons.py 生成：ic_launcher_foreground + ic_launcher_background，rounded 遮罩，请勿手改 -->
   <defs>
-    <clipPath id="roundedRect">
-      <rect x="0" y="0" width="512" height="512" rx="48" ry="48"/>
+    <clipPath id="mask">
+      <rect x="0" y="0" width="512" height="512" rx="37.925926" ry="37.925926"/>
     </clipPath>
   </defs>
-  
-  <!-- 背景层 -->
-  <rect x="0" y="0" width="512" height="512" fill="#D8F5C5" clip-path="url(#roundedRect)"/>
-  
-  <!-- 前景层：摩尔斯电码图案 (左偏 4dp) -->
-  <g transform="translate(-18.96, 0)" clip-path="url(#roundedRect)">
-    <!-- 第一排：点 划 划 -->
-    <!-- 点 -->
-    <circle cx="189.63" cy="179.63" r="18.96" fill="#2E7D32"/>
-    <!-- 划 -->
-    <rect x="227.55" y="189.11" width="66.36" height="9.48" fill="#2E7D32"/>
-    <!-- 划 -->
-    <rect x="322.39" y="189.11" width="66.36" height="9.48" fill="#2E7D32"/>
-    
-    <!-- 第二排：点 划 划 -->
-    <!-- 点 -->
-    <circle cx="189.63" cy="236.51" r="18.96" fill="#2E7D32"/>
-    <!-- 划 -->
-    <rect x="227.55" y="245.99" width="66.36" height="9.48" fill="#2E7D32"/>
-    <!-- 划 -->
-    <rect x="322.39" y="245.99" width="66.36" height="9.48" fill="#2E7D32"/>
-    
-    <!-- 第三排：点 划 划 -->
-    <!-- 点 -->
-    <circle cx="189.63" cy="293.39" r="18.96" fill="#2E7D32"/>
-    <!-- 划 -->
-    <rect x="227.55" y="302.87" width="66.36" height="9.48" fill="#2E7D32"/>
-    <!-- 划 -->
-    <rect x="322.39" y="302.87" width="66.36" height="9.48" fill="#2E7D32"/>
+  <g clip-path="url(#mask)">
+    <g transform="scale(4.740741)">
+      <path d="M8,0 h92 a8,8 0 0 1 8,8 v92 a8,8 0 0 1 -8,8 h-92 a8,8 0 0 1 -8,-8 v-92 a8,8 0 0 1 8,-8z" fill="#FFFFFF"/>
+    </g>
+    <g transform="scale(4.740741)">
+      <g transform="matrix(1 0 0 1 -5 0)">
+        <path d="M40.4,33.8 A6.2,6.2 0 1,1 40.4,46.2 A6.2,6.2 0 1,1 40.4,33.8 Z" fill="#2E7D32"/>
+        <path d="M49.2,37.8 L65.2,37.8 L65.2,42.2 L49.2,42.2 Z" fill="#2E7D32"/>
+        <path d="M67.8,37.8 L83.8,37.8 L83.8,42.2 L67.8,42.2 Z" fill="#4A8F4A"/>
+        <path d="M40.4,47.8 A6.2,6.2 0 1,1 40.4,60.2 A6.2,6.2 0 1,1 40.4,47.8 Z" fill="#2E7D32"/>
+        <path d="M49.2,51.8 L65.2,51.8 L65.2,56.2 L49.2,56.2 Z" fill="#2E7D32"/>
+        <path d="M67.8,51.8 L83.8,51.8 L83.8,56.2 L67.8,56.2 Z" fill="#4A8F4A"/>
+        <path d="M40.4,61.8 A6.2,6.2 0 1,1 40.4,74.2 A6.2,6.2 0 1,1 40.4,61.8 Z" fill="#2E7D32"/>
+        <path d="M49.2,65.8 L65.2,65.8 L65.2,70.2 L49.2,70.2 Z" fill="#2E7D32"/>
+        <path d="M67.8,65.8 L83.8,65.8 L83.8,70.2 L67.8,70.2 Z" fill="#4A8F4A"/>
+      </g>
+    </g>
   </g>
 </svg>

@@ -4,9 +4,9 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- 背景圆角矩形 -->
+    <!-- 背景圆角矩形 #D8F5C5 -->
     <path
-        android:fillColor="#D8F5C5"
+        android:fillColor="#FFFFFF"
         android:pathData="M8,0
                           h92
                           a8,8 0 0 1 8,8
