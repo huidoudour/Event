@@ -1,5 +1,6 @@
 package me.huidoudour.event.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -15,12 +16,12 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
+import me.huidoudour.event.data.EventStatus
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -329,17 +331,24 @@ fun EventDetailDialog(
                             }
                         }
                     }
-                    val doneAt = event.doneAt
-                    if (event.isDone && doneAt != null) {
-                        Text(
-                            text = stringResource(
-                                R.string.event_done_at_format,
-                                dateFormat.format(Date(doneAt))
-                            ),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
+                    val status = event.status
+                    val statusAt = event.statusAt
+                    Text(
+                        text = if (statusAt != null) {
+                            stringResource(
+                                R.string.event_status_detail_format,
+                                stringResource(status.labelRes()),
+                                dateFormat.format(Date(statusAt))
+                            )
+                        } else {
+                            stringResource(
+                                R.string.event_status_value_format,
+                                stringResource(status.labelRes())
+                            )
+                        },
+                        style = MaterialTheme.typography.labelSmall,
+                        color = status.tint()
+                    )
                 }
                 OutlinedButton(
                     onClick = onDismiss,
@@ -362,7 +371,7 @@ fun EventLongClickMenu(
     onDismiss: () -> Unit,
     onChangeTime: () -> Unit,
     onEdit: () -> Unit,
-    onToggleDone: () -> Unit,
+    onChangeStatus: () -> Unit,
     onDelete: () -> Unit
 ) {
     AlertDialog(
@@ -391,11 +400,13 @@ fun EventLongClickMenu(
                     label = stringResource(R.string.edit),
                     onClick = { onDismiss(); onEdit() }
                 )
-                // 卡片视图与列表视图共用此菜单：完成标记统一在这里切换
+                // 卡片视图与列表视图共用此菜单：处理方式统一在这里切换，
+                // 右侧显示当前状态，点开后再选择具体处理方式
                 LongClickMenuItem(
-                    icon = if (event.isDone) Icons.Outlined.RadioButtonUnchecked else Icons.Outlined.CheckCircle,
-                    label = stringResource(if (event.isDone) R.string.mark_undone else R.string.mark_done),
-                    onClick = { onDismiss(); onToggleDone() }
+                    icon = event.status.icon(),
+                    label = stringResource(R.string.mark_status),
+                    trailing = stringResource(event.status.labelRes()),
+                    onClick = { onDismiss(); onChangeStatus() }
                 )
                 LongClickMenuItem(
                     icon = Icons.Outlined.Delete,
@@ -420,11 +431,12 @@ fun EventLongClickMenu(
     )
 }
 
-/** 长按菜单操作行：左侧图标 + 标签，整行可点击的圆角 Surface */
+/** 长按菜单操作行：左侧图标 + 标签，整行可点击的圆角 Surface；可选右侧说明文字 */
 @Composable
 private fun LongClickMenuItem(
     icon: ImageVector,
     label: String,
+    trailing: String? = null,
     containerColor: Color = longClickMenuContainerColor(),
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
     iconTint: Color = MaterialTheme.colorScheme.primary,
@@ -451,8 +463,16 @@ private fun LongClickMenuItem(
                 text = label,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
-                color = contentColor
+                color = contentColor,
+                modifier = Modifier.weight(1f)
             )
+            if (trailing != null) {
+                Text(
+                    text = trailing,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
@@ -578,32 +598,42 @@ fun BatchDeleteConfirmDialog(
 }
 
 /**
- * 取消完成二次确认对话框：防止误触长按菜单时误取消完成标记
+ * 处理方式选择对话框：单选一种状态，点击即生效。
+ * 单个事件与批量标记共用同一套选项，仅标题不同。
  */
 @Composable
-fun UnmarkDoneConfirmDialog(
-    eventTitle: String,
+fun EventStatusDialog(
+    currentStatus: EventStatus,
     onDismiss: () -> Unit,
-    onConfirm: () -> Unit
+    onStatusSelected: (EventStatus) -> Unit,
+    @StringRes titleRes: Int = R.string.mark_status
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.confirm_unmark_done)) },
-        text = {
+        // 与长按菜单一致：撑满对话框窗口，避免 API 29 上内容偏左
+        modifier = Modifier.fillMaxWidth(),
+        title = {
             Text(
-                stringResource(R.string.confirm_unmark_done_message, eventTitle),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                text = stringResource(titleRes),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.SemiBold
             )
         },
-        confirmButton = {
-            Button(
-                onClick = { onConfirm(); onDismiss() },
-                shape = RoundedCornerShape(12.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-                colors = confirmButtonColors()
-            ) { Text(stringResource(R.string.confirm)) }
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                eventStatusPickerOrder.forEach { status ->
+                    StatusOptionRow(
+                        status = status,
+                        selected = status == currentStatus,
+                        onClick = {
+                            onStatusSelected(status)
+                            onDismiss()
+                        }
+                    )
+                }
+            }
         },
+        confirmButton = {},
         dismissButton = {
             OutlinedButton(
                 onClick = onDismiss,
@@ -614,6 +644,60 @@ fun UnmarkDoneConfirmDialog(
             ) { Text(stringResource(R.string.cancel)) }
         }
     )
+}
+
+/** 处理方式选项行：状态色圆底图标 + 名称，当前状态右侧显示对勾 */
+@Composable
+private fun StatusOptionRow(
+    status: EventStatus,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    val tint = status.tint()
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(14.dp),
+        color = if (selected) {
+            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
+        } else {
+            longClickMenuContainerColor()
+        },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
+                    .background(status.containerTint(), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = status.icon(),
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                    tint = tint
+                )
+            }
+            Spacer(Modifier.width(12.dp))
+            Text(
+                text = stringResource(status.labelRes()),
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                modifier = Modifier.weight(1f)
+            )
+            if (selected) {
+                Icon(
+                    imageVector = Icons.Outlined.Check,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    }
 }
 
 /**

@@ -59,25 +59,29 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
         )
     }
 
-    /** 切换完成标记：完成时记录完成时间，取消完成时清空该时间 */
-    fun setDone(event: Event, done: Boolean) {
+    /** 设置处理方式：标记时记录设置时间，恢复为「未完成」时清空该时间 */
+    fun setStatus(event: Event, status: EventStatus) {
         val now = System.currentTimeMillis()
         eventDao.update(
             event.copy(
-                isDone = done,
-                doneAt = if (done) now else null,
+                status = status,
+                statusAt = if (status == EventStatus.NONE) null else now,
                 updatedAt = now
             )
         )
     }
 
-    /** 批量标记完成：同一批操作共用同一个完成时间 */
-    fun markDone(events: List<Event>) {
+    /** 批量设置处理方式：同一批操作共用同一个设置时间 */
+    fun setStatus(events: List<Event>, status: EventStatus) {
         if (events.isEmpty()) return
         val now = System.currentTimeMillis()
         eventDao.updateAll(
             events.map {
-                it.copy(isDone = true, doneAt = now, updatedAt = now)
+                it.copy(
+                    status = status,
+                    statusAt = if (status == EventStatus.NONE) null else now,
+                    updatedAt = now
+                )
             }
         )
     }

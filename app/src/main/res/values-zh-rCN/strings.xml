@@ -178,20 +178,21 @@
     <string name="close_search">关闭搜索</string>
     <string name="no_search_results">未找到匹配的事件</string>
 
-    <!-- 完成标记 -->
+    <!-- 处理方式 -->
     <string name="event_status">状态</string>
-    <string name="mark_done">标记完成</string>
-    <string name="mark_undone">取消完成</string>
+    <string name="mark_status">标记状态</string>
+    <string name="status_none">未完成</string>
+    <string name="status_done">已完成</string>
+    <string name="status_done_by_others">他人完成</string>
+    <string name="status_unplanned">未计划</string>
+    <string name="status_irrelevant">不相干</string>
     <string name="event_created_at_format">创建于 %1$s</string>
     <string name="event_updated_at_format">修改于 %1$s</string>
-    <string name="event_done_at_format">完成于 %1$s</string>
-    <string name="event_marked_done">已标记完成</string>
-    <string name="event_marked_undone">已取消完成</string>
+    <string name="event_status_value_format">状态：%1$s</string>
+    <string name="event_status_detail_format">状态：%1$s（%2$s）</string>
+    <string name="event_status_changed_format">已标记为%1$s</string>
     <string name="complete_selected">完成所选</string>
     <string name="completed_selected_format">已标记完成 %1$d 项</string>
     <string name="selected_all_done">所选事件均已完成</string>
-    <string name="confirm_unmark_done">确认取消完成</string>
-    <string name="confirm_unmark_done_message">确定将事件"%1$s"标记为未完成吗？</string>
-    <string name="done">已完成</string>
 
 </resources>

@@ -179,20 +179,21 @@
     <string name="close_search">Закрыть поиск</string>
     <string name="no_search_results">Совпадающих событий не найдено</string>
 
-    <!-- Отметка о выполнении -->
+    <!-- Статус -->
     <string name="event_status">Статус</string>
-    <string name="mark_done">Отметить как выполненное</string>
-    <string name="mark_undone">Снять отметку о выполнении</string>
+    <string name="mark_status">Изменить статус</string>
+    <string name="status_none">Не выполнено</string>
+    <string name="status_done">Выполнено</string>
+    <string name="status_done_by_others">Выполнено другими</string>
+    <string name="status_unplanned">Не запланировано</string>
+    <string name="status_irrelevant">Неактуально</string>
     <string name="event_created_at_format">Создано: %1$s</string>
     <string name="event_updated_at_format">Изменено: %1$s</string>
-    <string name="event_done_at_format">Выполнено: %1$s</string>
-    <string name="event_marked_done">Отмечено как выполненное</string>
-    <string name="event_marked_undone">Отметка о выполнении снята</string>
+    <string name="event_status_value_format">Статус: %1$s</string>
+    <string name="event_status_detail_format">Статус: %1$s (%2$s)</string>
+    <string name="event_status_changed_format">Отмечено: %1$s</string>
     <string name="complete_selected">Завершить выбранные</string>
     <string name="completed_selected_format">Отмечено как выполненное: %1$d</string>
     <string name="selected_all_done">Все выбранные события уже выполнены</string>
-    <string name="confirm_unmark_done">Снять отметку о выполнении</string>
-    <string name="confirm_unmark_done_message">Снять отметку о выполнении с события "%1$s"?</string>
-    <string name="done">Выполнено</string>
 
 </resources>

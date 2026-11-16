@@ -13,10 +13,10 @@ data class Event(
     val eventTime: Long,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis(),
-    /** 完成标记：true 表示该事件已做完 */
-    val isDone: Boolean = false,
-    /** 完成时间戳；未完成时为 null */
-    val doneAt: Long? = null,
+    /** 处理方式：未标记 / 已完成 / 他人完成 / 未计划 / 不相干 */
+    val status: EventStatus = EventStatus.NONE,
+    /** 处理方式的设置时间戳；未标记时为 null */
+    val statusAt: Long? = null,
     /** 修改时间记录：每编辑一次事件（标题/描述/事件时间）就追加一条时间戳 */
     val editHistory: List<Long> = emptyList()
 ) {
@@ -38,12 +38,12 @@ data class Event(
                 updatedAt == event.updatedAt &&
                 title == event.title &&
                 description == event.description &&
-                isDone == event.isDone &&
-                doneAt == event.doneAt &&
+                status == event.status &&
+                statusAt == event.statusAt &&
                 editHistory == event.editHistory
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(id, title, description, eventTime, createdAt, updatedAt, isDone, doneAt, editHistory)
+        return Objects.hash(id, title, description, eventTime, createdAt, updatedAt, status, statusAt, editHistory)
     }
 }

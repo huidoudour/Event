@@ -48,7 +48,7 @@ interface EventDao {
     @Update
     fun update(event: Event)
 
-    /** 批量更新（用于批量标记完成等场景），Room 会在单个事务中完成 */
+    /** 批量更新（用于批量设置处理方式等场景），Room 会在单个事务中完成 */
     @Update
     fun updateAll(events: List<Event>)
 

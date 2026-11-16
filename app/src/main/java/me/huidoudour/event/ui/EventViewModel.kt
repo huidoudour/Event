@@ -16,6 +16,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import me.huidoudour.event.data.Event
 import me.huidoudour.event.data.EventDatabase
 import me.huidoudour.event.data.EventRepository
+import me.huidoudour.event.data.EventStatus
 
 class EventViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -70,14 +71,14 @@ class EventViewModel(application: Application) : AndroidViewModel(application) {
         runOnIo { repository.update(event) }
     }
 
-    /** 设置事件的完成标记（done=true 时同时记录完成时间） */
-    fun setEventDone(event: Event, done: Boolean) {
-        runOnIo { repository.setDone(event, done) }
+    /** 设置事件的处理方式（标记时同时记录设置时间） */
+    fun setEventStatus(event: Event, status: EventStatus) {
+        runOnIo { repository.setStatus(event, status) }
     }
 
-    /** 批量标记完成（调用方应先过滤掉已完成的事件） */
-    fun completeEvents(events: List<Event>) {
-        runOnIo { repository.markDone(events) }
+    /** 批量设置处理方式（调用方应先过滤掉状态未变化的事件） */
+    fun setEventsStatus(events: List<Event>, status: EventStatus) {
+        runOnIo { repository.setStatus(events, status) }
     }
 
     fun refreshEvents() {

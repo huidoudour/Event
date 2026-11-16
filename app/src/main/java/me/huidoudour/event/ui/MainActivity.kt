@@ -66,6 +66,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import me.huidoudour.event.R
 import me.huidoudour.event.data.DataImportExportHelper
 import me.huidoudour.event.data.Event
+import me.huidoudour.event.data.EventStatus
 import me.huidoudour.event.ui.components.PredictiveBackPage
 import me.huidoudour.event.util.BaseActivity
 import me.huidoudour.event.util.IconColorHelper
@@ -234,7 +235,7 @@ class MainActivity : BaseActivity() {
         var showClear by remember { mutableStateOf(false) }
         var showBatchDelete by remember { mutableStateOf(false) }
         var showDateTime by remember { mutableStateOf<Event?>(null) }
-        var showUnmarkConfirm by remember { mutableStateOf<Event?>(null) }
+        var showStatus by remember { mutableStateOf<Event?>(null) }
         var multiSelect by remember { mutableStateOf(false) }
         var selIds by remember { mutableStateOf(setOf<Long>()) }
         // 新增完成后把该 ID 交给列表：滚动到新条目，并仅在卡片模式播放一次进入动画。
@@ -309,15 +310,17 @@ class MainActivity : BaseActivity() {
                     else events.map { it.id }.toSet()
                 },
                 onCompleteSelected = {
-                    // 已完成的事件无需重复标记，仅处理所选中的未完成项
-                    val targets = events.filter { it.id in selIds && !it.isDone }
+                    // 已是「已完成」的事件无需重复标记，仅处理所选中的其它事件
+                    val targets = events.filter {
+                        it.id in selIds && it.status != EventStatus.DONE
+                    }
                     when {
                         selIds.isEmpty() ->
                             Toast.makeText(context, R.string.selected_count_0, Toast.LENGTH_SHORT).show()
                         targets.isEmpty() ->
                             Toast.makeText(context, R.string.selected_all_done, Toast.LENGTH_SHORT).show()
                         else -> {
-                            viewModel.completeEvents(targets)
+                            viewModel.setEventsStatus(targets, EventStatus.DONE)
                             Toast.makeText(
                                 context,
                                 getString(R.string.completed_selected_format, targets.size),
@@ -519,13 +522,19 @@ class MainActivity : BaseActivity() {
             EventDetailDialog(event = event, onDismiss = { showDetail = null })
         }
 
-        showUnmarkConfirm?.let { event ->
-            UnmarkDoneConfirmDialog(
-                eventTitle = event.title,
-                onDismiss = { showUnmarkConfirm = null },
-                onConfirm = {
-                    viewModel.setEventDone(event, false)
-                    Toast.makeText(this, R.string.event_marked_undone, Toast.LENGTH_SHORT).show()
+        showStatus?.let { event ->
+            EventStatusDialog(
+                currentStatus = event.status,
+                onDismiss = { showStatus = null },
+                onStatusSelected = { status ->
+                    if (status != event.status) {
+                        viewModel.setEventStatus(event, status)
+                        Toast.makeText(
+                            this,
+                            getString(R.string.event_status_changed_format, getString(status.labelRes())),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             )
         }
@@ -540,14 +549,8 @@ class MainActivity : BaseActivity() {
                 onEdit = {
                     showEdit = event
                 },
-                onToggleDone = {
-                    if (event.isDone) {
-                        // 取消完成需二次确认，避免长按菜单误触直接取消标记
-                        showUnmarkConfirm = event
-                    } else {
-                        viewModel.setEventDone(event, true)
-                        Toast.makeText(this, R.string.event_marked_done, Toast.LENGTH_SHORT).show()
-                    }
+                onChangeStatus = {
+                    showStatus = event
                 },
                 onDelete = {
                     showDelete = event
@@ -690,7 +693,8 @@ class MainActivity : BaseActivity() {
         return try {
             val events = repository.getAllEventsSync()
             if (events.isEmpty()) return null
-            val json = buildExportJson(events) ?: return null
+            // 与设置页导出共用同一套序列化逻辑，避免两条导出路径产生不同的 JSON 字段
+            val json = dataHelper.buildJsonString(events) ?: return null
             val dir = File(cacheDir, "shared")
             if (!dir.exists()) dir.mkdirs()
             val file = File(dir, "events_backup_${System.currentTimeMillis()}.json")
@@ -701,27 +705,6 @@ class MainActivity : BaseActivity() {
             Log.e(TAG, "writeExportJsonToCache: failed", e)
             null
         }
-    }
-
-    /** 构建导出 JSON 字符串（与 DataImportExportHelper 格式一致） */
-    private fun buildExportJson(events: List<Event>): String? {
-        if (events.isEmpty()) return null
-        // 每个导出任务只创建一个日期格式实例，避免在循环中反复 new
-        // 精确到秒，与库内 eventTime 的秒信息保持一致
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
-        val sb = StringBuilder("[\n")
-        events.forEachIndexed { index, event ->
-            if (index > 0) sb.append(",\n")
-            sb.append("  {\n")
-            sb.append("    \"事件标题\": \"${event.title.replace("\\", "\\\\").replace("\"", "\\\"")}\",\n")
-            sb.append("    \"事件详情\": \"${(event.description ?: "").replace("\\", "\\\\").replace("\"", "\\\"")}\",\n")
-            sb.append("    \"事件时间\": \"${dateFormat.format(Date(event.eventTime))}\",\n")
-            sb.append("    \"createdAt\": ${event.createdAt},\n")
-            sb.append("    \"updatedAt\": ${event.updatedAt}\n")
-            sb.append("  }")
-        }
-        sb.append("\n]")
-        return sb.toString()
     }
 
     /** 通过 ACTION_SEND 将临时文件分享给 FileManager */

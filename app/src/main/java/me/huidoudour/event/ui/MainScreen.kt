@@ -84,6 +84,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import me.huidoudour.event.R
 import me.huidoudour.event.data.Event
+import me.huidoudour.event.data.EventStatus
 import me.huidoudour.event.util.ViewModeHelper
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -350,7 +351,15 @@ fun MainScreenContent(
                         }
                     } else {
                         // ── 表格视图 ── 保留卡片边框，左右保留 6dp 边距，横向可滑动查看完整数据
-                        val colWidths = remember(events) { calculateColumnWidths(events, tableDateFormat) }
+                        val colWidths = remember(events) {
+                            calculateColumnWidths(events, tableDateFormat) { event ->
+                                when (event.status) {
+                                    EventStatus.NONE -> "-"
+                                    EventStatus.DONE -> context.getString(R.string.done_short)
+                                    else -> context.getString(event.status.labelRes())
+                                }
+                            }
+                        }
                         val horizontalScrollState = rememberScrollState()
                         Box(
                             modifier = Modifier
@@ -560,10 +569,10 @@ private fun EventCard(
                         modifier = Modifier.padding(top = 8.dp)
                     )
                 }
-                // 完成标记 — 仅已完成时显示，位于卡片右侧，不改变卡片高度
-                if (event.isDone) {
+                // 处理方式标记 — 未标记时不显示，位于卡片右侧，不改变卡片高度
+                if (event.status != EventStatus.NONE) {
                     Spacer(Modifier.width(12.dp))
-                    DoneMark()
+                    StatusMark(status = event.status)
                 }
             }
         }
@@ -571,24 +580,22 @@ private fun EventCard(
 }
 
 /**
- * 完成标记：沿用顶部工具栏 ic 图标圆形区域的底色（softIconButtonBg），
- * 内嵌与工具栏图标一致的前景色对勾，仅已完成时显示。
+ * 处理方式标记：状态色圆底 + 对应图标（完成 / 他人完成 / 未计划 / 不相干），
+ * 复用工具栏图标的圆形尺寸，不改变卡片高度。
  */
 @Composable
-private fun DoneMark(modifier: Modifier = Modifier) {
-    val containerColor = softIconButtonBg()
-    val contentColor = if (isDarkColorScheme()) MaterialTheme.colorScheme.onSurface else Color.Black
+private fun StatusMark(status: EventStatus, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .size(22.dp)
-            .background(containerColor, CircleShape)
+            .background(status.containerTint(), CircleShape)
             .padding(4.dp),
         contentAlignment = Alignment.Center
     ) {
         Icon(
-            painter = painterResource(R.drawable.ic_check),
-            contentDescription = stringResource(R.string.done),
-            tint = contentColor,
+            imageVector = status.icon(),
+            contentDescription = stringResource(status.labelRes()),
+            tint = status.tint(),
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -774,15 +781,20 @@ private fun TableRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
-            // 完成状态 — 已完成显示 OK（加粗），未完成显示 -
+            // 状态 — 已完成沿用 OK 简称，其它处理方式显示本地化名称，未标记显示 -
+            val status = event.status
             Text(
-                text = if (event.isDone) stringResource(R.string.done_short) else "-",
+                text = when (status) {
+                    EventStatus.NONE -> "-"
+                    EventStatus.DONE -> stringResource(R.string.done_short)
+                    else -> stringResource(status.labelRes())
+                },
                 modifier = Modifier
                     .width(colWidths.status)
                     .padding(start = 12.dp, end = 12.dp),
                 style = MaterialTheme.typography.bodySmall,
-                fontWeight = if (event.isDone) FontWeight.Bold else FontWeight.Normal,
-                color = if (event.isDone) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                fontWeight = if (status != EventStatus.NONE) FontWeight.Bold else FontWeight.Normal,
+                color = if (status != EventStatus.NONE) status.tint() else MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
         }
@@ -817,12 +829,13 @@ data class TableColumnWidths(
     val status: Dp,
 )
 
-/** 表格状态列中"已完成"的文本标识，同时用于列宽估算 */
-private const val DONE_TEXT = "OK"
-
 /** 根据数据内容计算各列宽度（每字符 ≈8dp，取 min 下限 + 数据最长值，并以 max 上限截断）
  *  单元格本身已有 2 行省略/分号换行，列宽无需随最长文本无限增长 */
-private fun calculateColumnWidths(events: List<Event>, dateFormat: SimpleDateFormat): TableColumnWidths {
+private fun calculateColumnWidths(
+    events: List<Event>,
+    dateFormat: SimpleDateFormat,
+    statusText: (Event) -> String
+): TableColumnWidths {
     fun maxLen(selector: (Event) -> String): Int =
         if (events.isEmpty()) 1 else events.maxOf { selector(it).length }
     fun toDp(n: Int): Dp = (n * 8).coerceAtLeast(0).dp
@@ -835,8 +848,8 @@ private fun calculateColumnWidths(events: List<Event>, dateFormat: SimpleDateFor
         desc  = clamp(maxLen { it.description?.takeIf { d -> d.isNotBlank() } ?: "-" }, 120.dp, 260.dp),
         // 时间列含秒共 19 字符（≈152dp），再预留左右各 12dp 内边距，避免被压缩换行
         time  = clamp(maxLen { dateFormat.format(Date(it.eventTime)) }, 176.dp, 200.dp),
-        // 状态列内容只有 OK / -，下限需容纳表头"状态"与英文 Status，避免被压缩换行
-        status = clamp(maxLen { if (it.isDone) DONE_TEXT else "-" }, 72.dp, 96.dp),
+        // 状态列可能显示"未计划/他人完成/不相干"等较长文案，上限放宽到 160dp（俄语等长文案）
+        status = clamp(maxLen(statusText), 72.dp, 160.dp),
     )
 }
 

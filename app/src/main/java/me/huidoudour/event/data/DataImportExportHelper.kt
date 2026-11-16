@@ -18,24 +18,36 @@ import java.util.Locale
  */
 class DataImportExportHelper(private val context: Context) {
 
-    private fun buildJsonString(events: List<Event>): String? {
+    /**
+     * 构建导出 JSON 字符串；无数据时返回 null。
+     * 同时写入新版「处理方式」字段与旧版「已完成」字段，保证导出文件可被新旧版本读取。
+     */
+    fun buildJsonString(events: List<Event>): String? {
         if (events.isEmpty()) return null
         val array = JSONArray()
-        for ((_, title, description, eventTime, createdAt, updatedAt, isDone, doneAt, editHistory) in events) {
+        for (event in events) {
             val obj = JSONObject()
             try {
-                obj.put(KEY_TITLE, title)
-                obj.put(KEY_DETAIL, description ?: "")
-                obj.put(KEY_TIME, DATE_FORMAT.get()!!.format(Date(eventTime)))
+                obj.put(KEY_TITLE, event.title)
+                obj.put(KEY_DETAIL, event.description ?: "")
+                obj.put(KEY_TIME, DATE_FORMAT.get()!!.format(Date(event.eventTime)))
                 // 保存 createdAt 和 updatedAt 以保持原始时间戳
-                obj.put("createdAt", createdAt)
-                obj.put("updatedAt", updatedAt)
-                // 完成标记；未完成时不写入完成时间，避免空值语义不明确
-                obj.put(KEY_DONE, isDone)
-                doneAt?.let { obj.put(KEY_DONE_AT, DATE_FORMAT.get()!!.format(Date(it))) }
+                obj.put("createdAt", event.createdAt)
+                obj.put("updatedAt", event.updatedAt)
+                // 处理方式；未标记时不写入设置时间，避免空值语义不明确
+                obj.put(KEY_STATUS, event.status.name)
+                event.statusAt?.let { obj.put(KEY_STATUS_AT, DATE_FORMAT.get()!!.format(Date(it))) }
+                // 旧版仅有完成标记：他人完成在执行语义上也算「已完成」，
+                // 旧版本读取时至少能还原出已了结状态
+                val legacyDone = event.status == EventStatus.DONE ||
+                    event.status == EventStatus.DONE_BY_OTHERS
+                obj.put(KEY_DONE, legacyDone)
+                if (legacyDone) {
+                    event.statusAt?.let { obj.put(KEY_DONE_AT, DATE_FORMAT.get()!!.format(Date(it))) }
+                }
                 // 修改记录：按时间顺序保存每次编辑的毫秒时间戳
-                if (editHistory.isNotEmpty()) {
-                    obj.put(KEY_EDIT_HISTORY, JSONArray(editHistory))
+                if (event.editHistory.isNotEmpty()) {
+                    obj.put(KEY_EDIT_HISTORY, JSONArray(event.editHistory))
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -108,23 +120,24 @@ class DataImportExportHelper(private val context: Context) {
                 val title: String
                 val detail: String?
                 val eventTime: Long
-                val isDone: Boolean
-                val doneAt: Long?
 
                 if (obj.has(KEY_TITLE)) {
                     // ── 新格式（中文字段）──
                     title = obj.optString(KEY_TITLE, "")
                     detail = obj.optString(KEY_DETAIL, "")
                     eventTime = parseTime(obj.optString(KEY_TIME, ""))
-                    isDone = obj.optBoolean(KEY_DONE, false)
-                    doneAt = parseOptionalTime(obj, KEY_DONE_AT)
                 } else {
                     // ── 旧格式（英文字段）──
                     title = obj.optString("title", "")
                     detail = obj.optString("description", "")
                     eventTime = obj.optLong("eventTime", System.currentTimeMillis())
-                    isDone = obj.optBoolean("isDone", false)
-                    doneAt = parseOptionalTime(obj, "doneAt")
+                }
+                // 处理方式：优先读取新版字段，缺失时回退到旧版「已完成」标记
+                val status = parseStatus(obj)
+                val statusAt = if (status == EventStatus.NONE) null else {
+                    parseOptionalTime(obj, KEY_STATUS_AT)
+                        ?: parseOptionalTime(obj, KEY_DONE_AT)
+                        ?: parseOptionalTime(obj, "doneAt")
                 }
                 // 优先还原备份中的创建/修改时间；旧备份无这些字段时回退到事件时间，
                 // 避免「创建于/修改于」在恢复后被改写成导入时刻
@@ -141,8 +154,8 @@ class DataImportExportHelper(private val context: Context) {
                         eventTime = eventTime,
                         createdAt = createdAt,
                         updatedAt = updatedAt,
-                        isDone = isDone,
-                        doneAt = doneAt,
+                        status = status,
+                        statusAt = statusAt,
                         editHistory = editHistory
                     )
                 )
@@ -196,6 +209,21 @@ class DataImportExportHelper(private val context: Context) {
         return (0 until array.length()).mapNotNull { i ->
             array.optLong(i, 0L).takeIf { it > 0 }
         }
+    }
+
+    /**
+     * 解析处理方式：优先读取新版「处理方式」字段（枚举名），
+     * 字段缺失或为空时回退到旧版的「已完成」/「isDone」布尔标记。
+     */
+    private fun parseStatus(obj: JSONObject): EventStatus {
+        val raw = obj.optString(KEY_STATUS)
+        if (raw.isNotBlank()) return EventStatus.fromStorage(raw)
+        val legacyDone = if (obj.has(KEY_DONE)) {
+            obj.optBoolean(KEY_DONE, false)
+        } else {
+            obj.optBoolean("isDone", false)
+        }
+        return if (legacyDone) EventStatus.DONE else EventStatus.NONE
     }
 
     /**
@@ -287,6 +315,8 @@ class DataImportExportHelper(private val context: Context) {
         private const val KEY_TIME = "事件时间"
         private const val KEY_DONE = "已完成"
         private const val KEY_DONE_AT = "完成时间"
+        private const val KEY_STATUS = "处理方式"
+        private const val KEY_STATUS_AT = "状态时间"
         private const val KEY_EDIT_HISTORY = "修改记录"
         // 数据交换格式固定用 Locale.US，避免随系统语言变化导致导出/导入不一致。
         // 精确到秒，保证备份/恢复与库内毫秒级 eventTime 的秒信息一致。
