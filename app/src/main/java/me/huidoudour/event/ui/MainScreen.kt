@@ -353,11 +353,8 @@ fun MainScreenContent(
                         // ── 表格视图 ── 保留卡片边框，左右保留 6dp 边距，横向可滑动查看完整数据
                         val colWidths = remember(events) {
                             calculateColumnWidths(events, tableDateFormat) { event ->
-                                when (event.status) {
-                                    EventStatus.NONE -> "-"
-                                    EventStatus.DONE -> context.getString(R.string.done_short)
-                                    else -> context.getString(event.status.labelRes())
-                                }
+                                if (event.status == EventStatus.NONE) "-"
+                                else context.getString(event.status.labelRes())
                             }
                         }
                         val horizontalScrollState = rememberScrollState()
@@ -781,14 +778,10 @@ private fun TableRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
-            // 状态 — 已完成沿用 OK 简称，其它处理方式显示本地化名称，未标记显示 -
+            // 状态 — 未标记显示 -，其余显示对应的处理方式名称
             val status = event.status
             Text(
-                text = when (status) {
-                    EventStatus.NONE -> "-"
-                    EventStatus.DONE -> stringResource(R.string.done_short)
-                    else -> stringResource(status.labelRes())
-                },
+                text = if (status == EventStatus.NONE) "-" else stringResource(status.labelRes()),
                 modifier = Modifier
                     .width(colWidths.status)
                     .padding(start = 12.dp, end = 12.dp),

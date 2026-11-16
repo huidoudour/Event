@@ -194,6 +194,5 @@
     <string name="complete_selected">完成所选</string>
     <string name="completed_selected_format">已标记完成 %1$d 项</string>
     <string name="selected_all_done">所选事件均已完成</string>
-    <string name="done_short" translatable="false">OK</string>
 
 </resources>
