@@ -4,7 +4,7 @@ agp = "9.5.1"
 kotlin = "2.4.21"
 composeBom = "2026.09.00"
 # Material3 Expressive（ContainedLoadingIndicator）需要 1.5.x，高于 BOM 内置的 1.4.0
-composeMaterial3 = "1.5.0-rc01"
+composeMaterial3 = "1.6.0-alpha01"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
