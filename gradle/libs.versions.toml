@@ -2,7 +2,7 @@
 #noinspection AndroidGradlePluginVersion
 agp = "9.5.1"
 kotlin = "2.4.21"
-composeBom = "2026.09.00"
+composeBom = "2026.11.01"
 # Material3 Expressive（ContainedLoadingIndicator）需要 1.5.x，高于 BOM 内置的 1.4.0
 composeMaterial3 = "1.5.0-rc01"
 junit = "4.13.2"
