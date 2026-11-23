@@ -36,6 +36,7 @@ tasks.matching { it.name.startsWith("assemble") || it.name.startsWith("bundle") 
 
 android {
     namespace = "me.huidoudour.event"
+    ndkVersion = "27.0.12077973"
     buildToolsVersion = "37.0.0"
     compileSdk {
         version = release(37) {
@@ -121,8 +122,6 @@ android {
         )
     }
 
-    ndkVersion = "27.0.12077973"
-
     lint {
         warningsAsErrors = false
         abortOnError = true
@@ -161,7 +160,8 @@ androidComponents {
 }
 
 kotlin {
-    jvmToolchain(17)
+    // 与 compileOptions / CI 保持一致，使用 JDK 21；避免 Gradle 再去下载 JDK 17
+    jvmToolchain(21)
 }
 
 dependencies {

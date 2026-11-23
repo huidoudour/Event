@@ -9,7 +9,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import io.requery.android.database.sqlite.RequerySQLiteOpenHelperFactory
 
-@Database(entities = [Event::class], version = 6, exportSchema = false)
+@Database(entities = [Event::class], version = 7, exportSchema = false)
 @TypeConverters(EventConverters::class)
 abstract class EventDatabase : RoomDatabase() {
     abstract fun eventDao(): EventDao
@@ -64,6 +64,13 @@ abstract class EventDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // 添加状态变更记录列：逗号分隔的“状态名:时间戳”，旧数据默认为空串
+                db.execSQL("ALTER TABLE events ADD COLUMN statusHistory TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
         fun getDatabase(context: Context): EventDatabase {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: Room.databaseBuilder(
@@ -71,7 +78,7 @@ abstract class EventDatabase : RoomDatabase() {
                     EventDatabase::class.java,
                     "event_database"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
                     .fallbackToDestructiveMigration(false)
                     .openHelperFactory(RequerySQLiteOpenHelperFactory())
                     .build()

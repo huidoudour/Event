@@ -49,6 +49,19 @@ class DataImportExportHelper(private val context: Context) {
                 if (event.editHistory.isNotEmpty()) {
                     obj.put(KEY_EDIT_HISTORY, JSONArray(event.editHistory))
                 }
+                // 状态变更记录：旧状态 + 设置时间，用于还原「曾经设置过又取消」的展示轨迹
+                if (event.statusHistory.isNotEmpty()) {
+                    val historyArray = JSONArray()
+                    event.statusHistory.forEach { change ->
+                        historyArray.put(
+                            JSONObject().apply {
+                                put(KEY_STATUS, change.status.name)
+                                put(KEY_STATUS_AT, DATE_FORMAT.get()!!.format(Date(change.at)))
+                            }
+                        )
+                    }
+                    obj.put(KEY_STATUS_HISTORY, historyArray)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -156,7 +169,8 @@ class DataImportExportHelper(private val context: Context) {
                         updatedAt = updatedAt,
                         status = status,
                         statusAt = statusAt,
-                        editHistory = editHistory
+                        editHistory = editHistory,
+                        statusHistory = parseStatusHistory(obj)
                     )
                 )
             }
@@ -208,6 +222,21 @@ class DataImportExportHelper(private val context: Context) {
             ?: return emptyList()
         return (0 until array.length()).mapNotNull { i ->
             array.optLong(i, 0L).takeIf { it > 0 }
+        }
+    }
+
+    /**
+     * 解析状态变更记录数组；字段缺失（旧备份）或单条格式不合法时跳过，返回空列表。
+     */
+    private fun parseStatusHistory(obj: JSONObject): List<StatusChange> {
+        val array = obj.optJSONArray(KEY_STATUS_HISTORY) ?: return emptyList()
+        return (0 until array.length()).mapNotNull { i ->
+            val item = array.optJSONObject(i) ?: return@mapNotNull null
+            val status = EventStatus.fromStorage(item.optString(KEY_STATUS))
+            // 「未标记」不是用户设置过的状态，不还原
+            if (status == EventStatus.NONE) return@mapNotNull null
+            val at = parseOptionalTime(item, KEY_STATUS_AT) ?: return@mapNotNull null
+            StatusChange(status, at)
         }
     }
 
@@ -318,6 +347,7 @@ class DataImportExportHelper(private val context: Context) {
         private const val KEY_STATUS = "处理方式"
         private const val KEY_STATUS_AT = "状态时间"
         private const val KEY_EDIT_HISTORY = "修改记录"
+        private const val KEY_STATUS_HISTORY = "状态记录"
         // 数据交换格式固定用 Locale.US，避免随系统语言变化导致导出/导入不一致。
         // 精确到秒，保证备份/恢复与库内毫秒级 eventTime 的秒信息一致。
         // SimpleDateFormat 非线程安全，使用 ThreadLocal 避免并发导入/导出时共享状态。

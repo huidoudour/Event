@@ -18,7 +18,9 @@ data class Event(
     /** 处理方式的设置时间戳；未标记时为 null */
     val statusAt: Long? = null,
     /** 修改时间记录：每编辑一次事件（标题/描述/事件时间）就追加一条时间戳 */
-    val editHistory: List<Long> = emptyList()
+    val editHistory: List<Long> = emptyList(),
+    /** 处理方式变更记录：每切换一次状态就追加被替换下来的旧状态 */
+    val statusHistory: List<StatusChange> = emptyList()
 ) {
     constructor(title: String, description: String?, eventTime: Long) : this(
         title = title,
@@ -40,10 +42,14 @@ data class Event(
                 description == event.description &&
                 status == event.status &&
                 statusAt == event.statusAt &&
-                editHistory == event.editHistory
+                editHistory == event.editHistory &&
+                statusHistory == event.statusHistory
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(id, title, description, eventTime, createdAt, updatedAt, status, statusAt, editHistory)
+        return Objects.hash(
+            id, title, description, eventTime, createdAt, updatedAt,
+            status, statusAt, editHistory, statusHistory
+        )
     }
 }

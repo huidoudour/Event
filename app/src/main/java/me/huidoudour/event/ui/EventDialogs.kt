@@ -45,6 +45,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.jeziellago.compose.markdowntext.MarkdownText
@@ -300,16 +301,30 @@ fun EventDetailDialog(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // 左下角：创建时间；每次修改逐条追加修改时间；已完成时额外显示完成时间（默认列表视图不展示）
-                // “创建于”使用不可变的 createdAt：eventTime 会被“修改时间”改写，不能当作创建时间
+                // eventTime 可被“修改日期时间”改写，createdAt 是不可变的真实创建时间。
+                // 事件时间被修改后：旧的“创建于”保持正常文案与样式，仅加删除线；
+                // 下方再以“创建于”格式显示修改后的时间，作为新的创建时间。
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    val timeModified = event.eventTime != event.createdAt
                     Text(
                         text = stringResource(
                             R.string.event_created_at_format,
                             dateFormat.format(Date(event.createdAt))
                         ),
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.outline
+                        color = MaterialTheme.colorScheme.outline,
+                        textDecoration = if (timeModified) TextDecoration.LineThrough else null
                     )
+                    if (timeModified) {
+                        Text(
+                            text = stringResource(
+                                R.string.event_created_at_format,
+                                dateFormat.format(Date(event.eventTime))
+                            ),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
                     // 修改记录跟随创建时间逐条展示；数量多时限制高度并内部滚动，避免撑高按钮行
                     val editHistory = event.editHistory
                     if (editHistory.isNotEmpty()) {
@@ -333,7 +348,31 @@ fun EventDetailDialog(
                     }
                     val status = event.status
                     val statusAt = event.statusAt
+                    // 状态变更记录：被替换掉的旧状态逐条展示并加删除线（如「已完成」后又取消），
+                    // 当前状态保持正常样式显示在最后。与修改记录一样限制高度并内部滚动，避免撑高按钮行。
                     // 状态名与创建/修改时间同列：三字状态名 + 空格 + 时间戳，保证时间戳起始位置一致
+                    val statusHistory = event.statusHistory
+                    if (statusHistory.isNotEmpty()) {
+                        Column(
+                            modifier = Modifier
+                                .heightIn(max = 120.dp)
+                                .verticalScroll(rememberScrollState()),
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            statusHistory.forEach { change ->
+                                Text(
+                                    text = stringResource(
+                                        R.string.event_status_detail_format,
+                                        stringResource(change.status.labelRes()),
+                                        dateFormat.format(Date(change.at))
+                                    ),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = change.status.tint(),
+                                    textDecoration = TextDecoration.LineThrough
+                                )
+                            }
+                        }
+                    }
                     Text(
                         text = if (statusAt != null) {
                             stringResource(

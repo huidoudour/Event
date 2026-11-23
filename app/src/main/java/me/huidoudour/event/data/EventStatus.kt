@@ -31,3 +31,14 @@ enum class EventStatus {
             entries.firstOrNull { it.name == value?.trim() } ?: NONE
     }
 }
+
+/**
+ * 处理方式的一次历史记录：被替换下来的旧状态及其设置时间。
+ *
+ * 事件状态每变更一次就向 [Event.statusHistory] 追加一条，详情页以删除线展示，
+ * 让用户能看到「曾经标记为已完成、随后又被取消」这类变化轨迹。
+ */
+data class StatusChange(
+    val status: EventStatus,
+    val at: Long
+)

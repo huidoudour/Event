@@ -59,13 +59,14 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
         )
     }
 
-    /** 设置处理方式：标记时记录设置时间，恢复为「未完成」时清空该时间 */
+    /** 设置处理方式：切换时把旧状态连同设置时间追加进变更记录，恢复为「未标记」时清空当前设置时间 */
     fun setStatus(event: Event, status: EventStatus) {
         val now = System.currentTimeMillis()
         eventDao.update(
             event.copy(
                 status = status,
                 statusAt = if (status == EventStatus.NONE) null else now,
+                statusHistory = event.statusHistoryAfter(status),
                 updatedAt = now
             )
         )
@@ -80,11 +81,23 @@ class EventRepository(context: Context, private val eventDao: EventDao) {
                 it.copy(
                     status = status,
                     statusAt = if (status == EventStatus.NONE) null else now,
+                    statusHistory = it.statusHistoryAfter(status),
                     updatedAt = now
                 )
             }
         )
     }
+
+    /**
+     * 状态真正发生变化且旧状态不是「未标记」时，把旧状态与它的设置时间追加到变更记录；
+     * 旧状态为「未标记」没有展示价值，不记录。
+     */
+    private fun Event.statusHistoryAfter(newStatus: EventStatus): List<StatusChange> =
+        if (status != newStatus && status != EventStatus.NONE) {
+            statusHistory + StatusChange(status, statusAt ?: updatedAt)
+        } else {
+            statusHistory
+        }
 
     fun delete(event: Event) = eventDao.delete(event)
 
