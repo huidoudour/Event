@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-val baseVersionName = "2.0-beta1"
+val baseVersionName = "2.1"
 val backVersionCode = 144
 
 fun Project.gitCommitCount(): Int = try {
