@@ -9,8 +9,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -65,7 +63,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.huidoudour.event.R
-import me.huidoudour.event.util.IconColorHelper
 import me.huidoudour.event.util.LocaleHelper
 import me.huidoudour.event.util.ThemeHelper
 import me.huidoudour.event.util.UpdateChecker
@@ -109,8 +106,7 @@ fun SettingsScreenContent(
     onImport: () -> Unit,
     isAscending: Boolean = true,
     onSortOrderChanged: (Boolean) -> Unit = {},
-    onThemeChanged: (Int) -> Unit = {},
-    onNeedsRecreate: () -> Unit = {}
+    onThemeChanged: (Int) -> Unit = {}
 ) {
     val context = LocalContext.current
     val resources = LocalResources.current
@@ -344,34 +340,7 @@ fun SettingsScreenContent(
                 )
             }
             // ==================== 关于 ====================
-            var showIconColorDialog by remember { mutableStateOf(false) }
-            val currentIconColor = IconColorHelper.getIconColor(context)
-            if (showIconColorDialog) {
-                val iconColorNames = arrayOf(
-                    stringResource(R.string.default_icon),
-                    stringResource(R.string.colorful_icon)
-                )
-                SingleChoiceDialog(
-                    title = stringResource(R.string.select_icon_color),
-                    items = iconColorNames,
-                    checkedIndex = currentIconColor.coerceIn(0, 1),
-                    onDismiss = { showIconColorDialog = false },
-                    onConfirm = { idx ->
-                        if (idx != currentIconColor) {
-                            IconColorHelper.setIconColor(context, idx)
-                            IconColorHelper.applyIconColor(context, idx)
-                            onNeedsRecreate()
-                        }
-                        showIconColorDialog = false
-                    }
-                )
-            }
-
-            // 标题与上面两组共用 SettingGroup 的标题布局；长按标题打开图标颜色选择
-            SettingGroup(
-                titleRes = R.string.about,
-                onTitleLongClick = { showIconColorDialog = true }
-            ) {
+            SettingGroup(titleRes = R.string.about) {
                 SettingsCard(
                     iconRes = R.drawable.ic_version,
                     titleRes = R.string.about_app,
@@ -558,7 +527,6 @@ private fun SettingsCard(
 private fun SettingGroup(
     titleRes: Int,
     showTitle: Boolean = true,
-    onTitleLongClick: (() -> Unit)? = null,
     items: @Composable () -> Unit
 ) {
     Column(
@@ -573,18 +541,6 @@ private fun SettingGroup(
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
-                    .then(
-                        if (onTitleLongClick != null) {
-                            Modifier.combinedClickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null,
-                                onClick = {},
-                                onLongClick = onTitleLongClick
-                            )
-                        } else {
-                            Modifier
-                        }
-                    )
             )
         }
         Column(

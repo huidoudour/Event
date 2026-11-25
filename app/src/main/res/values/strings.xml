@@ -112,7 +112,6 @@
     <string name="theme_color_settings">主题色</string>
     <string name="select_theme_color">选择主题色</string>
     <string name="theme_color_changed">主题色已更改</string>
-    <string name="settings_applied">设置已应用</string>
     <string name="default_color">跟随系统色</string>
     <string name="pink_color">粉色</string>
     <string name="blue_color">蓝色</string>
@@ -120,19 +119,6 @@
     <string name="orange_color">橙色</string>
     <string name="red_color">红色</string>
     <string name="cyan_color">青色</string>
-
-    <!-- 图标颜色选择 -->
-    <string name="select_icon_color">选择图标颜色</string>
-    <string name="default_icon">默认图标</string>
-    <string name="colorful_icon">彩色图标</string>
-    <string name="red_icon">红色图标</string>
-    <string name="blue_icon">蓝色图标</string>
-    <string name="yellow_icon">黄色图标</string>
-    <string name="purple_icon">紫色图标</string>
-    <string name="orange_icon">橙色图标</string>
-    <string name="cyan_icon">青色图标</string>
-    <string name="pink_icon">粉色图标</string>
-    <string name="icon_color_changed">图标颜色已更改</string>
 
     <!-- 数据展示视图 -->
     <string name="data_view">视图</string>

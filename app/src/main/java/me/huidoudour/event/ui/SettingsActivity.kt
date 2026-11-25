@@ -181,10 +181,6 @@ class SettingsActivity : BaseActivity() {
                         onThemeChanged = { theme ->
                             ThemeHelper.saveTheme(this@SettingsActivity, theme)
                             recreate()
-                        },
-                        onNeedsRecreate = {
-                            Toast.makeText(this, R.string.settings_applied, Toast.LENGTH_SHORT).show()
-                            recreate()
                         }
                     )
                 }

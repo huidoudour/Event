@@ -69,7 +69,6 @@ import me.huidoudour.event.data.Event
 import me.huidoudour.event.data.EventStatus
 import me.huidoudour.event.ui.components.PredictiveBackPage
 import me.huidoudour.event.util.BaseActivity
-import me.huidoudour.event.util.IconColorHelper
 import me.huidoudour.event.util.ThemeHelper
 import me.huidoudour.event.util.ViewModeHelper
 import java.io.File
@@ -184,11 +183,6 @@ class MainActivity : BaseActivity() {
             ) {
                 MainScreen(viewModel = viewModel)
             }
-        }
-
-        // 图标状态同步 — 延迟到首帧后执行，不阻塞启动
-        window.decorView.post {
-            IconColorHelper.ensureIconColor(this)
         }
     }
 
@@ -443,10 +437,6 @@ class MainActivity : BaseActivity() {
                                 },
                                 onThemeChanged = { theme ->
                                     ThemeHelper.saveTheme(this@MainActivity, theme)
-                                    recreate()
-                                },
-                                onNeedsRecreate = {
-                                    Toast.makeText(context, R.string.settings_applied, Toast.LENGTH_SHORT).show()
                                     recreate()
                                 }
                             )

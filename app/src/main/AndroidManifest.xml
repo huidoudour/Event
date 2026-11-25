@@ -26,37 +26,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Event">
 
+        <!-- 启动入口：彩色图标为唯一入口，不再通过 activity-alias 切换图标 -->
         <activity
             android:name=".ui.MainActivity"
-            android:exported="false"
-            android:enabled="true" />
-
-        <activity-alias
-            android:name=".MainActivityAliasDefault"
-            android:targetActivity=".ui.MainActivity"
             android:exported="true"
-            android:icon="@mipmap/ic_launcher"
-            android:roundIcon="@mipmap/ic_launcher_round"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity-alias>
+        </activity>
 
-        <activity-alias
-            android:name=".MainActivityAliasColorful"
-            android:targetActivity=".ui.MainActivity"
-            android:exported="true"
-            android:icon="@mipmap/ic_launcher_colorful"
-            android:roundIcon="@mipmap/ic_launcher_round_colorful"
-            android:enabled="false">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity-alias>
-        
         <activity
             android:name=".ui.SettingsActivity"
             android:exported="true"

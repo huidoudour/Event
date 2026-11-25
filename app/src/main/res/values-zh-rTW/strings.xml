@@ -113,12 +113,6 @@
     <string name="red_color">紅色</string>
     <string name="cyan_color">青色</string>
 
-    <!-- 圖標顏色選擇 -->
-    <string name="select_icon_color">選擇圖標顏色</string>
-    <string name="default_icon">預設圖標</string>
-    <string name="colorful_icon">彩色圖標</string>
-    <string name="icon_color_changed">圖標顏色已更改</string>
-
     <!-- 清除按钮提示 -->
     <string name="long_press_to_clear">長按此按鈕可清空全部數據</string>
     <string name="confirm">確認</string>
@@ -164,14 +158,6 @@
     <string name="follow_system">跟隨系統</string>
     <string name="clear">清空</string>
     <string name="close">關閉</string>
-    <string name="settings_applied">設置已應用</string>
-    <string name="blue_icon">藍色圖標</string>
-    <string name="cyan_icon">青色圖標</string>
-    <string name="orange_icon">橙色圖標</string>
-    <string name="pink_icon">粉色圖標</string>
-    <string name="purple_icon">紫色圖標</string>
-    <string name="red_icon">紅色圖標</string>
-    <string name="yellow_icon">黃色圖標</string>
 
     <!-- 搜尋 -->
     <string name="search">搜尋</string>
