@@ -38,6 +38,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldDecorator
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.SelectAll
@@ -62,17 +65,21 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -865,6 +872,22 @@ private fun SearchField(
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
+    // 搜索框内部状态：内部编辑上报父层，父层重置（清空/退出搜索）时回写内部
+    val currentQuery by rememberUpdatedState(query)
+    val currentOnQueryChange by rememberUpdatedState(onQueryChange)
+    val textState = rememberTextFieldState(query)
+    LaunchedEffect(textState) {
+        snapshotFlow { textState.text.toString() }
+            .collect { text -> if (text != currentQuery) currentOnQueryChange(text) }
+    }
+    LaunchedEffect(currentQuery) {
+        if (textState.text.toString() != currentQuery) {
+            textState.edit {
+                replace(0, length, currentQuery)
+                selection = TextRange(currentQuery.length)
+            }
+        }
+    }
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -880,24 +903,27 @@ private fun SearchField(
             modifier = Modifier.size(20.dp)
         )
         BasicTextField(
-            value = query,
-            onValueChange = onQueryChange,
+            state = textState,
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 10.dp),
-            singleLine = true,
+                .padding(start = 10.dp)
+                .focusRequester(focusRequester),
+            lineLimits = TextFieldLineLimits.SingleLine,
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             textStyle = TextStyle(color = textColor, fontSize = 16.sp),
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            decorationBox = { innerTextField ->
-                Box(contentAlignment = Alignment.CenterStart) {
-                    if (query.isEmpty()) {
-                        Text(
-                            text = stringResource(R.string.search_hint),
-                            style = TextStyle(color = hintColor, fontSize = 16.sp)
-                        )
+            decorator = object : TextFieldDecorator {
+                @Composable
+                override fun Decoration(innerTextField: @Composable () -> Unit) {
+                    Box(contentAlignment = Alignment.CenterStart) {
+                        if (textState.text.isEmpty()) {
+                            Text(
+                                text = stringResource(R.string.search_hint),
+                                style = TextStyle(color = hintColor, fontSize = 16.sp)
+                            )
+                        }
+                        innerTextField()
                     }
-                    innerTextField()
                 }
             }
         )

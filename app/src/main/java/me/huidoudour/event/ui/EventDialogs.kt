@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
@@ -32,10 +34,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -64,8 +63,8 @@ fun AddEventDialog(
     onDismiss: () -> Unit,
     onConfirm: (title: String, description: String) -> Unit
 ) {
-    var title by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+    val titleState = rememberTextFieldState()
+    val descriptionState = rememberTextFieldState()
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -76,31 +75,29 @@ fun AddEventDialog(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
+                    state = titleState,
                     label = { Text(stringResource(R.string.event_title)) },
-                    singleLine = true,
+                    lineLimits = TextFieldLineLimits.SingleLine,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
+                    state = descriptionState,
                     label = { Text(stringResource(R.string.event_description)) },
                     modifier = Modifier.fillMaxWidth(),
-                    minLines = 1,
-                    maxLines = 10
+                    lineLimits = TextFieldLineLimits.MultiLine(1, 10)
                 )
             }
         },
         confirmButton = {
             Button(
                 onClick = {
+                    val title = titleState.text.toString()
                     if (title.isNotBlank()) {
-                        onConfirm(title, description)
+                        onConfirm(title, descriptionState.text.toString())
                         onDismiss()
                     }
                 },
-                enabled = title.isNotBlank(),
+                enabled = titleState.text.isNotBlank(),
                 shape = RoundedCornerShape(12.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                 colors = confirmButtonColors()
@@ -124,8 +121,8 @@ fun EditEventDialog(
     onDismiss: () -> Unit,
     onConfirm: (title: String, description: String) -> Unit
 ) {
-    var title by remember { mutableStateOf(event.title) }
-    var description by remember { mutableStateOf(event.description ?: "") }
+    val titleState = rememberTextFieldState(event.title)
+    val descriptionState = rememberTextFieldState(event.description ?: "")
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -136,31 +133,29 @@ fun EditEventDialog(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 OutlinedTextField(
-                    value = title,
-                    onValueChange = { title = it },
+                    state = titleState,
                     label = { Text(stringResource(R.string.event_title)) },
-                    singleLine = true,
+                    lineLimits = TextFieldLineLimits.SingleLine,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
+                    state = descriptionState,
                     label = { Text(stringResource(R.string.event_description)) },
                     modifier = Modifier.fillMaxWidth(),
-                    minLines = 1,
-                    maxLines = 10
+                    lineLimits = TextFieldLineLimits.MultiLine(1, 10)
                 )
             }
         },
         confirmButton = {
             Button(
                 onClick = {
+                    val title = titleState.text.toString()
                     if (title.isNotBlank()) {
-                        onConfirm(title, description)
+                        onConfirm(title, descriptionState.text.toString())
                         onDismiss()
                     }
                 },
-                enabled = title.isNotBlank(),
+                enabled = titleState.text.isNotBlank(),
                 shape = RoundedCornerShape(12.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                 colors = confirmButtonColors()
@@ -187,7 +182,7 @@ fun DeleteConfirmDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
-    var input by remember { mutableStateOf("") }
+    val inputState = rememberTextFieldState()
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -217,10 +212,9 @@ fun DeleteConfirmDialog(
                 )
                 Spacer(Modifier.height(16.dp))
                 OutlinedTextField(
-                    value = input,
-                    onValueChange = { input = it },
+                    state = inputState,
                     label = { Text(stringResource(R.string.please_type_del)) },
-                    singleLine = true,
+                    lineLimits = TextFieldLineLimits.SingleLine,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -228,12 +222,12 @@ fun DeleteConfirmDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    if (input == "d") {
+                    if (inputState.text.toString() == "d") {
                         onConfirm()
                         onDismiss()
                     }
                 },
-                enabled = input == "d",
+                enabled = inputState.text.toString() == "d",
                 shape = RoundedCornerShape(12.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                 colors = confirmButtonColors()
@@ -541,7 +535,7 @@ fun ClearAllConfirmDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
-    var input by remember { mutableStateOf("") }
+    val inputState = rememberTextFieldState()
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -573,10 +567,9 @@ fun ClearAllConfirmDialog(
                 )
                 Spacer(Modifier.height(16.dp))
                 OutlinedTextField(
-                    value = input,
-                    onValueChange = { input = it },
+                    state = inputState,
                     label = { Text(stringResource(R.string.please_type_clear)) },
-                    singleLine = true,
+                    lineLimits = TextFieldLineLimits.SingleLine,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -584,12 +577,12 @@ fun ClearAllConfirmDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    if (input == "clear") {
+                    if (inputState.text.toString() == "clear") {
                         onConfirm()
                         onDismiss()
                     }
                 },
-                enabled = input == "clear",
+                enabled = inputState.text.toString() == "clear",
                 shape = RoundedCornerShape(12.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                 colors = confirmButtonColors()
